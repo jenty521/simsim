@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /calc.html
+Allow: /index.html
+Disallow:
