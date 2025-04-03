@@ -9,14 +9,25 @@
         body {
             font-family: 'Fredoka One', cursive;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #e6ecf0; /* 밝은 회색보다 눈에 편한 블루그레이 계열 */
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .calculator-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .calculator {
-            background-color: #fff;
+            background-color: #ffffff;
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -26,100 +37,102 @@
         }
         .display {
             grid-column: span 4;
-            background-color: #eee;
+            background-color: #f9fafb;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 10px;
             font-size: 2em;
             text-align: right;
+			color: #333;
         }
         button {
             font-family: 'Fredoka One', cursive;
-            font-size: 1.5em;
-            padding: 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.1s;
+            color: white;
+			font-size: 1.5em;
+			padding: 20px;
+			border: none;
+			border-radius: 10px;
+			cursor: pointer;
+			transition: transform 0.1s;
         }
         button:active {
             transform: scale(0.95);
         }
         .digit {
-            background-color: #90EE90; /* Light green */
+            background-color: #4caf50; /* 진한 초록 */
             color: white;
         }
         .operator {
-            background-color: #FFA500; /* Orange */
+            background-color: #6c63ff; /* 중간 퍼플 */
             color: white;
         }
         .clear {
-            background-color: #FF6347; /* Tomato red */
+            background-color: #f44336; /* 선명한 레드 */
             color: white;
             grid-column: span 2;
         }
         .equals {
-            background-color: #4682B4; /* Steel blue */
+            background-color: #2196f3; /* 딥 블루 */
             color: white;
             grid-column: span 2;
         }
         .zero {
             grid-column: span 2;
         }
+        .instructions {
+            background-color: #546e7a; /* 블루그레이 */
+			color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            max-width: 350px;
+        }
     </style>
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
      crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1 style="font-family: 'Fredoka One', cursive; color: #FFD700; text-align: center;">Kid’s Fun Calculator</h1>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- [디스플레이, 반응형] 최상단 고정광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="8566506642"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-    <div class="calculator">
-        <div class="display" id="display">0</div>
-        <button class="clear digit" onclick="clearDisplay()">C</button>
-        <button class="operator" onclick="appendCharacter('(')">(</button>
-        <button class="operator" onclick="appendCharacter(')')">)</button>
-        <button class="digit" onclick="appendCharacter('7')">7</button>
-        <button class="digit" onclick="appendCharacter('8')">8</button>
-        <button class="digit" onclick="appendCharacter('9')">9</button>
-        <button class="operator" onclick="appendCharacter('/')">÷</button>
-        <button class="digit" onclick="appendCharacter('4')">4</button>
-        <button class="digit" onclick="appendCharacter('5')">5</button>
-        <button class="digit" onclick="appendCharacter('6')">6</button>
-        <button class="operator" onclick="appendCharacter('*')">×</button>
-        <button class="digit" onclick="appendCharacter('1')">1</button>
-        <button class="digit" onclick="appendCharacter('2')">2</button>
-        <button class="digit" onclick="appendCharacter('3')">3</button>
-        <button class="operator" onclick="appendCharacter('-')">-</button>
-        <button class="digit zero" onclick="appendCharacter('0')">0</button>
-        <button class="digit" onclick="appendCharacter('.')">.</button>
-        <button class="equals" onclick="calculate()">=</button>
-        <button class="operator" onclick="appendCharacter('+')">+</button>
+    <h1>Kid’s Fun Calculator</h1>
+    <div class="calculator-wrapper">
+        <div class="calculator">
+            <div class="display" id="display">0</div>
+            <button class="clear digit" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendCharacter('(')">(</button>
+            <button class="operator" onclick="appendCharacter(')')">)</button>
+            <button class="digit" onclick="appendCharacter('7')">7</button>
+            <button class="digit" onclick="appendCharacter('8')">8</button>
+            <button class="digit" onclick="appendCharacter('9')">9</button>
+            <button class="operator" onclick="appendCharacter('/')">÷</button>
+            <button class="digit" onclick="appendCharacter('4')">4</button>
+            <button class="digit" onclick="appendCharacter('5')">5</button>
+            <button class="digit" onclick="appendCharacter('6')">6</button>
+            <button class="operator" onclick="appendCharacter('*')">×</button>
+            <button class="digit" onclick="appendCharacter('1')">1</button>
+            <button class="digit" onclick="appendCharacter('2')">2</button>
+            <button class="digit" onclick="appendCharacter('3')">3</button>
+            <button class="operator" onclick="appendCharacter('-')">-</button>
+            <button class="digit zero" onclick="appendCharacter('0')">0</button>
+            <button class="digit" onclick="appendCharacter('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+            <button class="operator" onclick="appendCharacter('+')">+</button>
+        </div>
+        <p class="instructions">
+            사용 방법: 숫자와 기호 (+, -, ×, ÷)를 눌러 수식을 만들고, =을 눌러 정답을 확인하세요. C를 누르면 초기화됩니다.
+        </p>
     </div>
 	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
      crossorigin="anonymous"></script>
-<!-- [디스플레이, 반응형] 최상단 고정광고 -->
+<!-- [디스플레이, 반응형] 하단광고 -->
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="8566506642"
+     data-ad-slot="5073984195"
      data-ad-format="auto"
      data-full-width-responsive="true"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
-    <p style="background-color: #87CEEB; color: white; padding: 10px; border-radius: 10px; text-align: center; margin-top: 20px;">How to use: Press numbers and signs (+, -, ×, ÷) to make a sum, then press = to see the answer. Press C to start over.</p>
-
     <script>
         let displayValue = '0';
         const display = document.getElementById('display');
@@ -164,8 +177,17 @@
             }
         }
 
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('click', playSound);
+        // 키보드 입력 처리
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            const validKeys = '0123456789+-*/().';
+            if (validKeys.includes(key)) {
+                appendCharacter(key);
+            } else if (key === 'Enter') {
+                calculate();
+            } else if (key === 'c' || key === 'C') {
+                clearDisplay();
+            }
         });
     </script>
 </body>
