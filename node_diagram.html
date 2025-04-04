@@ -346,7 +346,7 @@
 
             // 요소 그리기 함수
             function drawElement(element) {
-                ctx.fillStyle = element.fillColor || '#ffffff';
+                ctx.fillStyle = element.tempFillColor || element.fillColor || '#ffffff'; // 임시 색상 우선 적용
                 ctx.strokeStyle = element.strokeColor || '#000000';
                 ctx.lineWidth = element.strokeWidth || 2;
                 
@@ -618,8 +618,10 @@
                         startX = x;
                         startY = y;
                         selectedElements.forEach(el => {
-                            el.dragOffsetX = x - el.x;
-                            el.dragOffsetY = y - el.y;
+                            if (el.type !== 'line') {
+                                el.dragOffsetX = x - el.x;
+                                el.dragOffsetY = y - el.y;
+                            }
                         });
                         updatePropertiesPanel();
                     } else if (element) {
@@ -676,6 +678,30 @@
                             if (element.type !== 'line') {
                                 element.x = element.x + dx;
                                 element.y = element.y + dy;
+
+                                // 연결선과 겹침 체크
+                                let intersectedLine = null;
+                                for (let i = 0; i < elements.length; i++) {
+                                    const el = elements[i];
+                                    if (el.type === 'line' && el.startShape && el.endShape && el !== element) {
+                                        const edges = getClosestEdge(el.startShape, el.endShape);
+                                        const distance = distanceToLine(
+                                            element.x + element.width / 2,
+                                            element.y + element.height / 2,
+                                            edges.start.x, edges.start.y,
+                                            edges.end.x, edges.end.y
+                                        );
+                                        if (distance < 20) {
+                                            intersectedLine = el;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (intersectedLine) {
+                                    element.tempFillColor = '#90caf9'; // 추가 가능 상태 색상
+                                } else {
+                                    delete element.tempFillColor; // 원래 색상으로 복원
+                                }
                             }
                         });
                         startX = x;
@@ -766,8 +792,11 @@
                         const index = elements.indexOf(intersectedLine);
                         if (index !== -1) elements.splice(index, 1);
 
+                        delete movedShape.tempFillColor; // 추가 완료 후 색상 복원
                         selectedElements = [];
                         updatePropertiesPanel();
+                    } else {
+                        delete movedShape.tempFillColor; // 겹침 없으면 색상 복원
                     }
                 }
 
