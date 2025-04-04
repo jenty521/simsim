@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /calc.html
 Allow: /index.html
+Allow: /addline_blog.htm
 Disallow:
