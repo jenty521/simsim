@@ -231,6 +231,17 @@
         
         <div class="properties-panel">
             <div class="properties-title">속성</div>
+            <div id="creation-mode" class="property-group">
+                <div class="property-row">
+                    <label>생성 모드</label>
+                    <div>
+                        <input type="radio" id="continuous-creation" name="creation-mode" value="continuous" checked>
+                        <label for="continuous-creation">연속 생성</label>
+                        <input type="radio" id="single-creation" name="creation-mode" value="single">
+                        <label for="single-creation">단일 생성 후 선택</label>
+                    </div>
+                </div>
+            </div>
             <div id="shape-properties" class="property-group">
                 <div class="property-row">
                     <label>채우기 색상</label>
@@ -302,6 +313,12 @@
             let contextMenu = null;
             let selectedLineType = null;
             let connectingShape = null;
+            let creationMode = 'continuous';
+            let copiedElement = null; // 복사된 요소 저장
+            let scale = 1; // 확대/축소 비율
+            let offsetX = 0, offsetY = 0; // 캔버스 이동 오프셋
+            let isPanning = false; // 휠 버튼으로 이동 중인지
+            let panStartX, panStartY;
 
             // 캔버스 크기 설정
             function resizeCanvas() {
@@ -314,16 +331,16 @@
             function getClosestEdge(startShape, endShape) {
                 if (!startShape || !endShape) return { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } };
                 const startEdges = [
-                    { angle: 0, x: startShape.x + startShape.width, y: startShape.y + startShape.height / 2 }, // 우측 (0°)
-                    { angle: 90, x: startShape.x + startShape.width / 2, y: startShape.y }, // 상단 (90°)
-                    { angle: 180, x: startShape.x, y: startShape.y + startShape.height / 2 }, // 좌측 (180°)
-                    { angle: 270, x: startShape.x + startShape.width / 2, y: startShape.y + startShape.height } // 하단 (270°)
+                    { angle: 0, x: startShape.x + startShape.width, y: startShape.y + startShape.height / 2 },
+                    { angle: 90, x: startShape.x + startShape.width / 2, y: startShape.y },
+                    { angle: 180, x: startShape.x, y: startShape.y + startShape.height / 2 },
+                    { angle: 270, x: startShape.x + startShape.width / 2, y: startShape.y + startShape.height }
                 ];
                 const endEdges = [
-                    { angle: 0, x: endShape.x + endShape.width, y: endShape.y + endShape.height / 2 }, // 우측
-                    { angle: 90, x: endShape.x + endShape.width / 2, y: endShape.y }, // 상단
-                    { angle: 180, x: endShape.x, y: endShape.y + endShape.height / 2 }, // 좌측
-                    { angle: 270, x: endShape.x + endShape.width / 2, y: endShape.y + endShape.height } // 하단
+                    { angle: 0, x: endShape.x + endShape.width, y: endShape.y + endShape.height / 2 },
+                    { angle: 90, x: endShape.x + endShape.width / 2, y: endShape.y },
+                    { angle: 180, x: endShape.x, y: endShape.y + endShape.height / 2 },
+                    { angle: 270, x: endShape.x + endShape.width / 2, y: endShape.y + endShape.height }
                 ];
 
                 let minDist = Infinity;
@@ -346,7 +363,10 @@
 
             // 요소 그리기 함수
             function drawElement(element) {
-                ctx.fillStyle = element.tempFillColor || element.fillColor || '#ffffff'; // 임시 색상 우선 적용
+                ctx.save();
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scale, scale);
+                ctx.fillStyle = element.tempFillColor || element.fillColor || '#ffffff';
                 ctx.strokeStyle = element.strokeColor || '#000000';
                 ctx.lineWidth = element.strokeWidth || 2;
                 
@@ -378,7 +398,7 @@
                         ctx.stroke();
                         break;
                     case 'line':
-                        if (!element.startShape || !element.endShape) return; // null 참조 무시
+                        if (!element.startShape || !element.endShape) return;
                         const edges = getClosestEdge(element.startShape, element.endShape);
                         const start = edges.start;
                         const end = edges.end;
@@ -412,11 +432,12 @@
                         ctx.fillText(element.text, element.x, element.y + element.fontSize);
                         break;
                 }
+                ctx.restore();
             }
 
             // 화살표 그리기
             function drawArrowHead(fromX, fromY, toX, toY) {
-                const headLength = 10;
+                const headLength = 10 / scale; // 스케일에 따라 크기 조정
                 const dx = toX - fromX;
                 const dy = toY - fromY;
                 const angle = Math.atan2(dy, dx);
@@ -431,10 +452,14 @@
 
             // 핸들 그리기
             function drawHandle(x, y) {
+                ctx.save();
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scale, scale);
                 ctx.fillStyle = '#3d5afe';
-                ctx.fillRect(x - 3, y - 3, 6, 6);
+                ctx.fillRect(x - 3 / scale, y - 3 / scale, 6 / scale, 6 / scale);
                 ctx.strokeStyle = '#ffffff';
-                ctx.strokeRect(x - 3, y - 3, 6, 6);
+                ctx.strokeRect(x - 3 / scale, y - 3 / scale, 6 / scale, 6 / scale);
+                ctx.restore();
             }
 
             // 선택 핸들 그리기
@@ -442,9 +467,12 @@
                 if (selectedElements.length === 0) return;
                 if (selectedElements.length === 1) {
                     const element = selectedElements[0];
+                    ctx.save();
+                    ctx.translate(offsetX, offsetY);
+                    ctx.scale(scale, scale);
                     ctx.strokeStyle = '#3d5afe';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([5, 3]);
+                    ctx.lineWidth = 1 / scale;
+                    ctx.setLineDash([5 / scale, 3 / scale]);
                     if (element.type === 'line' && element.startShape && element.endShape) {
                         const edges = getClosestEdge(element.startShape, element.endShape);
                         ctx.beginPath();
@@ -455,25 +483,30 @@
                         drawHandle(edges.end.x, edges.end.y);
                     } else if (element.type !== 'line') {
                         ctx.beginPath();
-                        ctx.rect(element.x - 2, element.y - 2, element.width + 4, element.height + 4);
+                        ctx.rect(element.x - 2 / scale, element.y - 2 / scale, element.width + 4 / scale, element.height + 4 / scale);
                         ctx.stroke();
                         drawHandle(element.x, element.y);
                         drawHandle(element.x + element.width, element.y);
                         drawHandle(element.x, element.y + element.height);
                         drawHandle(element.x + element.width, element.y + element.height);
                     }
+                    ctx.restore();
                 } else {
                     const bounds = getSelectionBounds();
+                    ctx.save();
+                    ctx.translate(offsetX, offsetY);
+                    ctx.scale(scale, scale);
                     ctx.strokeStyle = '#3d5afe';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([5, 3]);
+                    ctx.lineWidth = 1 / scale;
+                    ctx.setLineDash([5 / scale, 3 / scale]);
                     ctx.beginPath();
-                    ctx.rect(bounds.x - 2, bounds.y - 2, bounds.width + 4, bounds.height + 4);
+                    ctx.rect(bounds.x - 2 / scale, bounds.y - 2 / scale, bounds.width + 4 / scale, bounds.height + 4 / scale);
                     ctx.stroke();
                     drawHandle(bounds.x, bounds.y);
                     drawHandle(bounds.x + bounds.width, bounds.y);
                     drawHandle(bounds.x, bounds.y + bounds.height);
                     drawHandle(bounds.x + bounds.width, bounds.y + bounds.height);
+                    ctx.restore();
                 }
                 ctx.setLineDash([]);
             }
@@ -484,10 +517,14 @@
                 elements.forEach(element => drawElement(element));
                 if (tempElement) drawElement(tempElement);
                 if (selectionRect) {
+                    ctx.save();
+                    ctx.translate(offsetX, offsetY);
+                    ctx.scale(scale, scale);
                     ctx.strokeStyle = '#3d5afe';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([5, 3]);
+                    ctx.lineWidth = 1 / scale;
+                    ctx.setLineDash([5 / scale, 3 / scale]);
                     ctx.strokeRect(selectionRect.x, selectionRect.y, selectionRect.width, selectionRect.height);
+                    ctx.restore();
                     ctx.setLineDash([]);
                 }
                 drawSelectionHandles();
@@ -530,12 +567,20 @@
             document.querySelectorAll('.property-input').forEach(input => {
                 input.addEventListener('change', updateSelectedElement);
             });
+
+            // 생성 모드 라디오 버튼 이벤트
+            document.querySelectorAll('input[name="creation-mode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    creationMode = this.value;
+                });
+            });
             
             // 캔버스 이벤트
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseup', handleMouseUp);
             canvas.addEventListener('contextmenu', handleContextMenu);
+            canvas.addEventListener('wheel', handleWheel);
 
             // 컨텍스트 메뉴 닫기
             document.addEventListener('click', () => {
@@ -548,43 +593,79 @@
             function handleContextMenu(e) {
                 e.preventDefault();
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left - offsetX) / scale;
+                const y = (e.clientY - rect.top - offsetY) / scale;
                 const element = getElementAt(x, y);
                 
-                if (element && element.type !== 'line' && element.type !== 'text') {
-                    if (contextMenu) contextMenu.remove();
-                    contextMenu = document.createElement('div');
-                    contextMenu.className = 'context-menu';
-                    contextMenu.style.left = `${e.clientX}px`;
-                    contextMenu.style.top = `${e.clientY}px`;
+                if (contextMenu) contextMenu.remove();
+                contextMenu = document.createElement('div');
+                contextMenu.className = 'context-menu';
+                contextMenu.style.left = `${e.clientX}px`;
+                contextMenu.style.top = `${e.clientY}px`;
+
+                if (element && element.type !== 'line') {
                     const options = [
-                        { label: '직선 연결', value: 'straight' },
-                        { label: '꺾인 선 연결', value: 'bent' },
-                        { label: '화살표 연결', value: 'arrow' },
-                        { label: '양끝 화살표 연결', value: 'double-arrow' }
+                        { label: '직선 연결', value: 'straight', action: () => { selectedLineType = 'straight'; connectingShape = element; } },
+                        { label: '꺾인 선 연결', value: 'bent', action: () => { selectedLineType = 'bent'; connectingShape = element; } },
+                        { label: '화살표 연결', value: 'arrow', action: () => { selectedLineType = 'arrow'; connectingShape = element; } },
+                        { label: '양끝 화살표 연결', value: 'double-arrow', action: () => { selectedLineType = 'double-arrow'; connectingShape = element; } },
+                        { label: '맨 앞으로', value: 'front', action: () => { selectedElements = [element]; bringToFront(); } },
+                        { label: '맨 뒤로', value: 'back', action: () => { selectedElements = [element]; sendToBack(); } },
+                        { label: '복사하기', value: 'copy', action: () => { copiedElement = JSON.parse(JSON.stringify(element)); } }
                     ];
                     options.forEach(option => {
                         const item = document.createElement('div');
                         item.className = 'context-menu-item';
                         item.textContent = option.label;
                         item.addEventListener('click', () => {
-                            selectedLineType = option.value;
-                            connectingShape = element;
+                            option.action();
                             contextMenu.remove();
                             contextMenu = null;
+                            drawDiagram();
                         });
                         contextMenu.appendChild(item);
                     });
+                } else if (copiedElement) {
+                    const pasteOption = {
+                        label: '붙여넣기', 
+                        value: 'paste', 
+                        action: () => {
+                            const pastedElement = JSON.parse(JSON.stringify(copiedElement));
+                            pastedElement.x = x;
+                            pastedElement.y = y;
+                            elements.push(pastedElement);
+                            selectedElements = [pastedElement];
+                            updatePropertiesPanel();
+                        }
+                    };
+                    const item = document.createElement('div');
+                    item.className = 'context-menu-item';
+                    item.textContent = pasteOption.label;
+                    item.addEventListener('click', () => {
+                        pasteOption.action();
+                        contextMenu.remove();
+                        contextMenu = null;
+                        drawDiagram();
+                    });
+                    contextMenu.appendChild(item);
+                }
+                if (contextMenu.children.length > 0) {
                     document.body.appendChild(contextMenu);
                 }
             }
             
             function handleMouseDown(e) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left - offsetX) / scale;
+                const y = (e.clientY - rect.top - offsetY) / scale;
                 
+                if (e.button === 1) { // 휠 버튼
+                    isPanning = true;
+                    panStartX = e.clientX;
+                    panStartY = e.clientY;
+                    canvas.style.cursor = 'grabbing';
+                    return;
+                }
                 if (e.button === 2) return; // 우클릭은 컨텍스트 메뉴로 처리
                 
                 if (connectingShape) {
@@ -657,11 +738,22 @@
             
             function handleMouseMove(e) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left - offsetX) / scale;
+                const y = (e.clientY - rect.top - offsetY) / scale;
                 
                 document.getElementById('coordinates').textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
                 
+                if (isPanning) {
+                    const dx = e.clientX - panStartX;
+                    const dy = e.clientY - panStartY;
+                    offsetX += dx;
+                    offsetY += dy;
+                    panStartX = e.clientX;
+                    panStartY = e.clientY;
+                    drawDiagram();
+                    return;
+                }
+
                 if (!isDrawing) return;
                 
                 if (currentTool === 'select') {
@@ -698,9 +790,9 @@
                                     }
                                 }
                                 if (intersectedLine) {
-                                    element.tempFillColor = '#90caf9'; // 추가 가능 상태 색상
+                                    element.tempFillColor = '#90caf9';
                                 } else {
-                                    delete element.tempFillColor; // 원래 색상으로 복원
+                                    delete element.tempFillColor;
                                 }
                             }
                         });
@@ -717,8 +809,14 @@
             
             function handleMouseUp(e) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left - offsetX) / scale;
+                const y = (e.clientY - rect.top - offsetY) / scale;
+
+                if (e.button === 1) { // 휠 버튼
+                    isPanning = false;
+                    canvas.style.cursor = 'default';
+                    return;
+                }
 
                 if (isDrawing && currentTool !== 'select' && tempElement) {
                     tempElement.width = x - startX;
@@ -740,6 +838,12 @@
                     elements.push(tempElement);
                     selectedElements = [tempElement];
                     updatePropertiesPanel();
+
+                    if (creationMode === 'single') {
+                        document.querySelectorAll('.toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+                        document.getElementById('select-tool').classList.add('active');
+                        currentTool = 'select';
+                    }
                 } else if (currentTool === 'select' && selectionRect) {
                     selectionRect = null;
                 } else if (currentTool === 'select' && selectedElements.length === 1 && selectedElements[0].type !== 'line') {
@@ -755,7 +859,7 @@
                                 edges.start.x, edges.start.y,
                                 edges.end.x, edges.end.y
                             );
-                            if (distance < 20) { // 겹침 감지 범위
+                            if (distance < 20) {
                                 intersectedLine = element;
                                 break;
                             }
@@ -768,7 +872,6 @@
                         const strokeColor = intersectedLine.strokeColor;
                         const strokeWidth = intersectedLine.strokeWidth;
 
-                        // A-C 연결선 생성
                         elements.push({
                             type: 'line',
                             startShape: startShape,
@@ -778,7 +881,6 @@
                             strokeWidth: strokeWidth
                         });
 
-                        // C-B 연결선 생성
                         elements.push({
                             type: 'line',
                             startShape: movedShape,
@@ -788,21 +890,41 @@
                             strokeWidth: strokeWidth
                         });
 
-                        // A-B 연결선 삭제
                         const index = elements.indexOf(intersectedLine);
                         if (index !== -1) elements.splice(index, 1);
 
-                        delete movedShape.tempFillColor; // 추가 완료 후 색상 복원
+                        delete movedShape.tempFillColor;
                         selectedElements = [];
                         updatePropertiesPanel();
                     } else {
-                        delete movedShape.tempFillColor; // 겹침 없으면 색상 복원
+                        delete movedShape.tempFillColor;
                     }
                 }
 
                 isDrawing = false;
                 resizing = false;
                 tempElement = null;
+                drawDiagram();
+            }
+
+            function handleWheel(e) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9; // 위로: 확대, 아래로: 축소
+                const newScale = scale * zoomFactor;
+
+                if (newScale < 0.2 || newScale > 5) return; // 확대/축소 제한
+
+                const worldXBefore = (mouseX - offsetX) / scale;
+                const worldYBefore = (mouseY - offsetY) / scale;
+                scale = newScale;
+                const worldXAfter = (mouseX - offsetX) / scale;
+                const worldYAfter = (mouseY - offsetY) / scale;
+                offsetX += (worldXBefore - worldXAfter) * scale;
+                offsetY += (worldYBefore - worldYAfter) * scale;
+
                 drawDiagram();
             }
             
@@ -813,7 +935,24 @@
                 const rectHeight = Math.abs(selectionRect.height);
                 
                 elements.forEach(element => {
-                    if (element.type !== 'line') {
+                    if (element.type === 'line' && element.startShape && element.endShape) {
+                        const edges = getClosestEdge(element.startShape, element.endShape);
+                        const startInRect = (
+                            edges.start.x >= rectX && edges.start.x <= rectX + rectWidth &&
+                            edges.start.y >= rectY && edges.start.y <= rectY + rectHeight
+                        );
+                        const endInRect = (
+                            edges.end.x >= rectX && edges.end.x <= rectX + rectWidth &&
+                            edges.end.y >= rectY && edges.end.y <= rectY + rectHeight
+                        );
+                        const intersects = lineIntersectsRect(
+                            edges.start.x, edges.start.y, edges.end.x, edges.end.y,
+                            rectX, rectY, rectX + rectWidth, rectY + rectHeight
+                        );
+                        if (startInRect || endInRect || intersects) {
+                            if (!selectedElements.includes(element)) selectedElements.push(element);
+                        }
+                    } else if (element.type !== 'line') {
                         const inRect = (
                             element.x >= rectX && element.x + element.width <= rectX + rectWidth &&
                             element.y >= rectY && element.y + element.height <= rectY + rectHeight
@@ -823,6 +962,21 @@
                         }
                     }
                 });
+            }
+
+            function lineIntersectsRect(x1, y1, x2, y2, rx1, ry1, rx2, ry2) {
+                const left = Math.min(rx1, rx2);
+                const right = Math.max(rx1, rx2);
+                const top = Math.min(ry1, ry2);
+                const bottom = Math.max(ry1, ry2);
+                
+                const denom = (x1 - x2) * (top - bottom) - (y1 - y2) * (left - right);
+                if (denom === 0) return false;
+                
+                const t = ((x1 - left) * (top - bottom) - (y1 - top) * (left - right)) / denom;
+                const u = -((x1 - x2) * (y1 - top) - (y1 - y2) * (x1 - left)) / denom;
+                
+                return t >= 0 && t <= 1 && u >= 0 && u <= 1;
             }
 
             function getSelectionBounds() {
@@ -860,7 +1014,7 @@
                     { pos: 'br', x: bounds.x + bounds.width, y: bounds.y + bounds.height }
                 ];
                 for (let handle of handles) {
-                    if (Math.abs(x - handle.x) < 6 && Math.abs(y - handle.y) < 6) {
+                    if (Math.abs(x - handle.x) < 6 / scale && Math.abs(y - handle.y) < 6 / scale) {
                         return handle.pos;
                     }
                 }
@@ -911,7 +1065,7 @@
                     if (element.type === 'line' && element.startShape && element.endShape) {
                         const edges = getClosestEdge(element.startShape, element.endShape);
                         const distance = distanceToLine(x, y, edges.start.x, edges.start.y, edges.end.x, edges.end.y);
-                        if (distance < 10) return element; // 감지 범위 증가
+                        if (distance < 10 / scale) return element;
                     } else if (element.type !== 'line') {
                         if (x >= element.x && x <= element.x + element.width && y >= element.y && y <= element.y + element.height) {
                             return element;
@@ -1081,7 +1235,10 @@
                         endShape: el.endShape ? elements.indexOf(el.endShape) : null
                     })),
                     version: '1.0',
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    scale: scale,
+                    offsetX: offsetX,
+                    offsetY: offsetY
                 };
                 const dataStr = JSON.stringify(diagramData);
                 const blob = new Blob([dataStr], { type: 'application/json' });
@@ -1112,6 +1269,9 @@
                                     startShape: el.startShape !== null ? data.elements[el.startShape] : null,
                                     endShape: el.endShape !== null ? data.elements[el.endShape] : null
                                 }));
+                                scale = data.scale || 1;
+                                offsetX = data.offsetX || 0;
+                                offsetY = data.offsetY || 0;
                                 selectedElements = [];
                                 updatePropertiesPanel();
                                 drawDiagram();
@@ -1153,12 +1313,26 @@
 
             // 키보드 이벤트
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Delete' && selectedElements.length > 0) {
+                if (e.ctrlKey && e.key === 'c' && selectedElements.length === 1 && selectedElements[0].type !== 'line') {
+                    copiedElement = JSON.parse(JSON.stringify(selectedElements[0]));
+                    e.preventDefault();
+                } else if (e.ctrlKey && e.key === 'v' && copiedElement) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (canvas.width / 2 - offsetX) / scale;
+                    const y = (canvas.height / 2 - offsetY) / scale;
+                    const pastedElement = JSON.parse(JSON.stringify(copiedElement));
+                    pastedElement.x = x;
+                    pastedElement.y = y;
+                    elements.push(pastedElement);
+                    selectedElements = [pastedElement];
+                    updatePropertiesPanel();
+                    drawDiagram();
+                    e.preventDefault();
+                } else if (e.key === 'Delete' && selectedElements.length > 0) {
                     selectedElements.forEach(element => {
                         const index = elements.indexOf(element);
                         if (index !== -1) {
                             elements.splice(index, 1);
-                            // 연결선 삭제 로직
                             elements = elements.filter(el => {
                                 if (el.type === 'line') {
                                     return !(el.startShape === element || el.endShape === element);
@@ -1170,6 +1344,34 @@
                     selectedElements = [];
                     updatePropertiesPanel();
                     drawDiagram();
+                } else if (e.shiftKey && e.key === 'ArrowUp') {
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = canvas.width / 2;
+                    const mouseY = canvas.height / 2;
+                    const worldXBefore = (mouseX - offsetX) / scale;
+                    const worldYBefore = (mouseY - offsetY) / scale;
+                    scale *= 1.1;
+                    if (scale > 5) scale = 5;
+                    const worldXAfter = (mouseX - offsetX) / scale;
+                    const worldYAfter = (mouseY - offsetY) / scale;
+                    offsetX += (worldXBefore - worldXAfter) * scale;
+                    offsetY += (worldYBefore - worldYAfter) * scale;
+                    drawDiagram();
+                    e.preventDefault();
+                } else if (e.shiftKey && e.key === 'ArrowDown') {
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = canvas.width / 2;
+                    const mouseY = canvas.height / 2;
+                    const worldXBefore = (mouseX - offsetX) / scale;
+                    const worldYBefore = (mouseY - offsetY) / scale;
+                    scale *= 0.9;
+                    if (scale < 0.2) scale = 0.2;
+                    const worldXAfter = (mouseX - offsetX) / scale;
+                    const worldYAfter = (mouseY - offsetY) / scale;
+                    offsetX += (worldXBefore - worldXAfter) * scale;
+                    offsetY += (worldYBefore - worldYAfter) * scale;
+                    drawDiagram();
+                    e.preventDefault();
                 }
             });
         });
