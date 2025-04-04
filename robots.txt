@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /calc.html
 Allow: /index.html
-Allow: /addline_blog.htm
+Allow: /addline_blog.html
+Allow: /unit-converter.html
 Disallow:
