@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단위 변환기 (Unit Converter)</title>
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --background-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+
+    .category-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .category-btn {
+      background-color: var(--background-color);
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 10px 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .category-btn i {
+      font-size: 1.2rem;
+    }
+
+    .category-btn:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .category-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .converter-content {
+      margin-top: 20px;
+    }
+
+    .conversion-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .input-group label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .input-group .input-wrapper {
+      display: flex;
+      width: 100%;
+    }
+
+    .input-wrapper input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius) 0 0 var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .input-wrapper select {
+      width: 40%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-left: none;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      font-size: 1rem;
+      background-color: white;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .input-wrapper select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .swap-btn {
+      align-self: center;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .swap-btn:hover {
+      background-color: var(--secondary-color);
+      transform: rotate(180deg);
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 15px;
+      background-color: #f0f7ff;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .result p {
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .formula {
+      margin-top: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .recent-conversions {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .recent-conversions h3 {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    .history-list {
+      list-style-type: none;
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+
+    .history-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* 평수 계산기 추가 스타일 */
+    .pyeong-calculator {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f0f7ff;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .pyeong-calculator h3 {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pyeong-calculator .input-row {
+      display: flex;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .pyeong-calculator .input-group {
+      flex: 1;
+    }
+
+    .pyeong-results {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+    }
+
+    .pyeong-results div {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .pyeong-results div:last-child {
+      margin-bottom: 0;
+      padding-top: 8px;
+      border-top: 1px dashed #ccc;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .input-wrapper {
+        flex-direction: column;
+      }
+
+      .input-wrapper input {
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        border: 2px solid #ddd;
+      }
+
+      .input-wrapper select {
+        width: 100%;
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        border: 2px solid #ddd;
+        border-top: none;
+      }
+
+      .pyeong-calculator .input-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+  <!-- Material Icons CDN -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>단위 변환기</h1>
+    <p class="subtitle">길이, 무게, 온도, 면적, 부피 등 다양한 단위 변환을 손쉽게 이용하세요</p>
+  </header>
+
+  <div class="container">
+    <div class="category-selector">
+      <button class="category-btn active" data-category="length">
+        <i class="material-icons">straighten</i> 길이
+      </button>
+      <button class="category-btn" data-category="weight">
+        <i class="material-icons">fitness_center</i> 무게
+      </button>
+      <button class="category-btn" data-category="temperature">
+        <i class="material-icons">thermostat</i> 온도
+      </button>
+      <button class="category-btn" data-category="area">
+        <i class="material-icons">crop_square</i> 면적
+      </button>
+      <button class="category-btn" data-category="volume">
+        <i class="material-icons">view_in_ar</i> 부피
+      </button>
+     <!-- <button class="category-btn" data-category="pyeong">
+        <i class="material-icons">home</i> 평수
+      </button> -->
+    </div>
+
+    <div class="converter-content">
+      <div class="conversion-controls" id="standard-converter">
+        <div class="input-group">
+          <label for="fromValue">변환할 값</label>
+          <div class="input-wrapper">
+            <input type="number" id="fromValue" placeholder="값을 입력하세요">
+            <select id="fromUnit">
+              <!-- Length units -->
+              <option value="meter">미터(m)</option>
+              <option value="kilometer">킬로미터(km)</option>
+              <option value="centimeter">센티미터(cm)</option>
+              <option value="millimeter">밀리미터(mm)</option>
+              <option value="mile">마일(mi)</option>
+              <option value="yard">야드(yd)</option>
+              <option value="foot">피트(ft)</option>
+              <option value="inch">인치(in)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="swap-btn">↕</button>
+
+        <div class="input-group">
+          <label for="toValue">변환된 값</label>
+          <div class="input-wrapper">
+            <input type="number" id="toValue" disabled>
+            <select id="toUnit">
+              <!-- Length units -->
+              <option value="meter">미터(m)</option>
+              <option value="kilometer">킬로미터(km)</option>
+              <option value="centimeter">센티미터(cm)</option>
+              <option value="millimeter">밀리미터(mm)</option>
+              <option value="mile">마일(mi)</option>
+              <option value="yard">야드(yd)</option>
+              <option value="foot">피트(ft)</option>
+              <option value="inch">인치(in)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 평수 계산기 섹션 -->
+      <div class="pyeong-calculator" id="pyeong-calculator" style="display: none;">
+        <h3><i class="material-icons">home</i> 평수 계산기</h3>
+        
+        <div class="input-row">
+          <div class="input-group">
+            <label for="width">가로 길이 (m)</label>
+            <input type="number" id="width" placeholder="가로 길이를 입력하세요">
+          </div>
+          
+          <div class="input-group">
+            <label for="height">세로 길이 (m)</label>
+            <input type="number" id="height" placeholder="세로 길이를 입력하세요">
+          </div>
+        </div>
+        
+        <button class="category-btn" id="calculate-pyeong" style="width: 100%;">
+          <i class="material-icons">calculate</i> 계산하기
+        </button>
+        
+        <div class="pyeong-results" id="pyeong-results">
+          <div>
+            <span>면적 (m²)</span>
+            <span id="square-meters">0</span>
+          </div>
+          <div>
+            <span>평수 (평)</span>
+            <span id="pyeong-value">0</span>
+          </div>
+          <div>
+            <span>아파트 분양면적 (m²)</span>
+            <span id="apartment-area">0</span>
+          </div>
+          <div>
+            <span>전용면적 비율 (약 84%)</span>
+            <span id="exclusive-area">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result-area">
+        <p id="resultText">변환 결과가 여기에 표시됩니다</p>
+        <div class="formula" id="formula"></div>
+      </div>
+    </div>
+  </div>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+  <section class="recent-conversions">
+    <h3>최근 변환 기록</h3>
+    <ul class="history-list" id="historyList">
+      <!-- History items will be added here dynamically -->
+    </ul>
+  </section>
+
+  <script>
+    // 현재 선택된 카테고리
+    let currentCategory = 'length';
+    
+    // 카테고리별 단위 정보 객체
+    const unitCategories = {
+      length: [
+        { value: 'meter', text: '미터(m)' },
+        { value: 'kilometer', text: '킬로미터(km)' },
+        { value: 'centimeter', text: '센티미터(cm)' },
+        { value: 'millimeter', text: '밀리미터(mm)' },
+        { value: 'mile', text: '마일(mi)' },
+        { value: 'yard', text: '야드(yd)' },
+        { value: 'foot', text: '피트(ft)' },
+        { value: 'inch', text: '인치(in)' }
+      ],
+      weight: [
+        { value: 'kilogram', text: '킬로그램(kg)' },
+        { value: 'gram', text: '그램(g)' },
+        { value: 'milligram', text: '밀리그램(mg)' },
+        { value: 'pound', text: '파운드(lb)' },
+        { value: 'ounce', text: '온스(oz)' },
+        { value: 'ton', text: '톤(t)' }
+      ],
+      temperature: [
+        { value: 'celsius', text: '섭씨(°C)' },
+        { value: 'fahrenheit', text: '화씨(°F)' },
+        { value: 'kelvin', text: '켈빈(K)' }
+      ],
+      area: [
+        { value: 'squareMeter', text: '제곱미터(m²)' },
+        { value: 'squareKilometer', text: '제곱킬로미터(km²)' },
+        { value: 'hectare', text: '헥타르(ha)' },
+        { value: 'squareFoot', text: '제곱피트(ft²)' },
+        { value: 'squareYard', text: '제곱야드(yd²)' },
+        { value: 'acre', text: '에이커(ac)' },
+        { value: 'pyeong', text: '평' }
+      ],
+      volume: [
+        { value: 'cubicMeter', text: '세제곱미터(m³)' },
+        { value: 'liter', text: '리터(L)' },
+        { value: 'milliliter', text: '밀리리터(mL)' },
+        { value: 'gallon', text: '갤런(gal)' },
+        { value: 'quart', text: '쿼트(qt)' },
+        { value: 'pint', text: '파인트(pt)' },
+        { value: 'fluidOunce', text: '액량 온스(fl oz)' }
+      ],
+      pyeong: [] // 평수 계산기는 특별 처리
+    };
+
+    // 단위 변환에 사용되는 변환 계수 (기준 단위로부터의 변환 비율)
+    const conversionFactors = {
+      // 길이 (meter 기준)
+      length: {
+        meter: 1,
+        kilometer: 0.001,
+        centimeter: 100,
+        millimeter: 1000,
+        mile: 0.000621371,
+        yard: 1.09361,
+        foot: 3.28084,
+        inch: 39.3701
+      },
+      // 무게 (kilogram 기준)
+      weight: {
+        kilogram: 1,
+        gram: 1000,
+        milligram: 1000000,
+        pound: 2.20462,
+        ounce: 35.274,
+        ton: 0.001
+      },
+      // 면적 (squareMeter 기준)
+      area: {
+        squareMeter: 1,
+        squareKilometer: 0.000001,
+        hectare: 0.0001,
+        squareFoot: 10.7639,
+        squareYard: 1.19599,
+        acre: 0.000247105,
+        pyeong: 0.3025
+      },
+      // 부피 (cubicMeter 기준)
+      volume: {
+        cubicMeter: 1,
+        liter: 1000,
+        milliliter: 1000000,
+        gallon: 264.172,
+        quart: 1056.69,
+        pint: 2113.38,
+        fluidOunce: 33814.0
+      }
+    };
+
+    // DOM 요소 참조
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const fromValueInput = document.getElementById('fromValue');
+    const toValueInput = document.getElementById('toValue');
+    const fromUnitSelect = document.getElementById('fromUnit');
+    const toUnitSelect = document.getElementById('toUnit');
+    const swapButton = document.querySelector('.swap-btn');
+    const resultText = document.getElementById('resultText');
+    const formulaText = document.getElementById('formula');
+    const historyList = document.getElementById('historyList');
+    const standardConverter = document.getElementById('standard-converter');
+    const pyeongCalculator = document.getElementById('pyeong-calculator');
+    const resultArea = document.getElementById('result-area');
+
+    // 카테고리 버튼 클릭 이벤트 핸들러
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // 이전 활성 버튼에서 'active' 클래스 제거
+        document.querySelector('.category-btn.active').classList.remove('active');
+        // 클릭된 버튼에 'active' 클래스 추가
+        button.classList.add('active');
+        
+        // 현재 카테고리 업데이트
+        currentCategory = button.dataset.category;
+        
+        // 평수 계산기 표시 여부 설정
+        if (currentCategory === 'pyeong') {
+          standardConverter.style.display = 'none';
+          pyeongCalculator.style.display = 'block';
+          resultArea.style.display = 'none';
+        } else {
+          standardConverter.style.display = 'flex';
+          pyeongCalculator.style.display = 'none';
+          resultArea.style.display = 'block';
+          
+          // 카테고리에 맞는 단위 옵션으로 변경
+          updateUnitOptions();
+        }
+        
+        // 입력 값 초기화 및 결과 초기화
+        fromValueInput.value = '';
+        toValueInput.value = '';
+        resultText.textContent = '변환 결과가 여기에 표시됩니다';
+        formulaText.textContent = '';
+      });
+    });
+
+    // 카테고리에 따라 단위 드롭다운 옵션을 업데이트하는 함수
+    function updateUnitOptions() {
+      // 드롭다운 옵션 초기화
+      fromUnitSelect.innerHTML = '';
+      toUnitSelect.innerHTML = '';
+      
+      // 현재 카테고리의 단위 목록
+      const units = unitCategories[currentCategory];
+      
+      // 각 단위를 드롭다운에 추가
+      units.forEach(unit => {
+        const fromOption = document.createElement('option');
+        fromOption.value = unit.value;
+        fromOption.textContent = unit.text;
+        fromUnitSelect.appendChild(fromOption);
+        
+        const toOption = document.createElement('option');
+        toOption.value = unit.value;
+        toOption.textContent = unit.text;
+        toUnitSelect.appendChild(toOption);
+      });
+      
+      // 온도의 경우 기본값 설정
+      if (currentCategory === 'temperature') {
+        fromUnitSelect.value = 'celsius';
+        toUnitSelect.value = 'fahrenheit';
+      }
+      // 다른 카테고리의 경우, 첫 번째와 두 번째 옵션을 기본값으로 설정
+      else if (units.length > 1) {
+        fromUnitSelect.value = units[0].value;
+        toUnitSelect.value = units[1].value;
+      }
+    }
+
+    // 단위 변환 함수
+    function convertUnits() {
+      const fromValue = parseFloat(fromValueInput.value);
+      
+      // 입력값이 유효하지 않은 경우 처리
+      if (isNaN(fromValue)) {
+        toValueInput.value = '';
+        resultText.textContent = '유효한 숫자를 입력하세요';
+        formulaText.textContent = '';
+        return;
+      }
+      
+      const fromUnit = fromUnitSelect.value;
+      const toUnit = toUnitSelect.value;
+      
+      let result, formula;
+      
+      // 온도 변환 (특별 처리)
+      if (currentCategory === 'temperature') {
+        result = convertTemperature(fromValue, fromUnit, toUnit);
+        formula = getTemperatureFormula(fromValue, fromUnit, toUnit);
+      } 
+      // 일반 단위 변환 (선형 변환)
+      else {
+        const factors = conversionFactors[currentCategory];
+        // 기준 단위로 변환 후 다시 목표 단위로 변환
+        result = fromValue / factors[fromUnit] * factors[toUnit];
+        formula = `${fromValue} ${getUnitText(fromUnit)} × (${factors[toUnit]} / ${factors[fromUnit]}) = ${result.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${getUnitText(toUnit)}`;
+      }
+      
+      // 결과 표시
+      toValueInput.value = result;
+      resultText.textContent = `${fromValue.toLocaleString()} ${getUnitText(fromUnit)} = ${result.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${getUnitText(toUnit)}`;
+      formulaText.textContent = formula;
+      
+      // 변환 기록 추가
+      addToHistory(fromValue, fromUnit, result, toUnit);
+    }
+
+    // 온도 변환 함수
+    function convertTemperature(value, fromUnit, toUnit) {
+      // 모든 온도를 켈빈으로 변환 후 목표 단위로 변환
+      let kelvin;
+      
+      // 입력 온도를 켈빈으로 변환
+      switch (fromUnit) {
+        case 'celsius':
+          kelvin = value + 273.15;
+          break;
+        case 'fahrenheit':
+          kelvin = (value + 459.67) * 5/9;
+          break;
+        case 'kelvin':
+          kelvin = value;
+          break;
+      }
+      
+      // 켈빈에서 목표 온도 단위로 변환
+      switch (toUnit) {
+        case 'celsius':
+          return kelvin - 273.15;
+        case 'fahrenheit':
+          return kelvin * 9/5 - 459.67;
+        case 'kelvin':
+          return kelvin;
+      }
+    }
+
+    // 온도 변환 공식 문자열 생성
+    function getTemperatureFormula(value, fromUnit, toUnit) {
+      if (fromUnit === toUnit) {
+        return `${value} ${getUnitText(fromUnit)} = ${value} ${getUnitText(toUnit)}`;
+      }
+      
+      let formula = '';
+      
+      // 온도 변환 공식
+      if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
+        const result = value * 9/5 + 32;
+        formula = `(${value} × 9/5) + 32 = ${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} °F`;
+      } 
+      else if (fromUnit === 'celsius' && toUnit === 'kelvin') {
+        const result = value + 273.15;
+        formula = `${value} + 273.15 = ${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} K`;
+      } 
+      else if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
+        const result = (value - 32) * 5/9;
+        formula = `(${value} - 32) × 5/9 = ${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} °C`;
+      } 
+      else if (fromUnit === 'fahrenheit' && toUnit === 'kelvin') {
+        const result = (value + 459.67) * 5/9;
+        formula = `(${value} + 459.67) × 5/9 = ${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} K`;
+      } 
+      else if (fromUnit === 'kelvin' && toUnit === 'celsius') {
+        const result = value - 273.15;
+        formula = `${value} - 273.15 = ${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} °C`;
+      } 
+      else if (fromUnit === 'kelvin' && toUnit === 'fahrenheit') {
+        const result = value * 9/5 - 459.67;
+        formula = `(${value} × 9/5) - 459.67 = ${result.toLocaleString(undefined, { maximumFractionDigits: 2 })} °F`;
+      }
+      
+      return formula;
+    }
+
+    // 단위값에 대한 표시 텍스트 가져오기
+    function getUnitText(unitValue) {
+      const units = unitCategories[currentCategory];
+      const unit = units.find(u => u.value === unitValue);
+      return unit ? unit.text : unitValue;
+    }
+
+    // 변환 기록 추가 함수
+    function addToHistory(fromValue, fromUnit, toValue, toUnit) {
+      // 최대 5개 기록만 유지
+      if (historyList.children.length >= 5) {
+        historyList.removeChild(historyList.lastChild);
+      }
+      
+      const historyItem = document.createElement('li');
+      historyItem.className = 'history-item';
+      historyItem.innerHTML = `
+        <span>${fromValue.toLocaleString()} ${getUnitText(fromUnit)}</span>
+        <span>➜</span>
+        <span>${toValue.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${getUnitText(toUnit)}</span>
+      `;
+      
+      // 목록의 맨 위에 추가
+      historyList.insertBefore(historyItem, historyList.firstChild);
+      
+      // 기록 항목 클릭 시 해당 변환을 다시 수행
+      historyItem.addEventListener('click', () => {
+        currentCategory = getCategoryForUnit(fromUnit);
+        
+        // 카테고리 버튼 업데이트
+        categoryButtons.forEach(button => {
+          if (button.dataset.category === currentCategory) {
+            document.querySelector('.category-btn.active').classList.remove('active');
+            button.classList.add('active');
+          }
+        });
+        
+        // 평수 계산기 표시 여부 설정
+        if (currentCategory === 'pyeong') {
+          standardConverter.style.display = 'none';
+          pyeongCalculator.style.display = 'block';
+          resultArea.style.display = 'none';
+        } else {
+          standardConverter.style.display = 'flex';
+          pyeongCalculator.style.display = 'none';
+          resultArea.style.display = 'block';
+          
+          updateUnitOptions();
+          
+          // 값과 단위 설정
+          fromValueInput.value = fromValue;
+          fromUnitSelect.value = fromUnit;
+          toUnitSelect.value = toUnit;
+          
+          // 변환 수행
+          convertUnits();
+        }
+      });
+    }
+
+    // 단위에 해당하는 카테고리 찾기 함수
+    function getCategoryForUnit(unit) {
+      for (const category in unitCategories) {
+        const units = unitCategories[category];
+        if (units.some(u => u.value === unit)) {
+          return category;
+        }
+      }
+      return 'length'; // 기본값
+    }
+
+    // 입력값 변경 시 자동 변환
+    fromValueInput.addEventListener('input', convertUnits);
+    fromUnitSelect.addEventListener('change', convertUnits);
+    toUnitSelect.addEventListener('change', convertUnits);
+
+    // 단위 스왑 기능
+    swapButton.addEventListener('click', () => {
+      const tempUnit = fromUnitSelect.value;
+      fromUnitSelect.value = toUnitSelect.value;
+      toUnitSelect.value = tempUnit;
+      
+      if (fromValueInput.value) {
+        const tempValue = toValueInput.value;
+        fromValueInput.value = tempValue;
+        convertUnits();
+      }
+    });
+
+    // 초기화: 첫 번째 카테고리(길이) 단위 옵션으로 설정
+    updateUnitOptions();
+  </script>
+</body>
+</html>
