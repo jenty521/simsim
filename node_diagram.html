@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>간단한 다이어그램 에디터</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -167,15 +168,50 @@
         .context-menu-item:hover {
             background-color: #f0f0f0;
         }
+        .flowchart-menu {
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 200px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+        .flowchart-item {
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+        }
+        .flowchart-item:hover {
+            background-color: #f0f0f0;
+            border-color: #3d5afe;
+        }
+        .flowchart-item svg {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body>
     <div class="top-bar">
         <div class="app-title">간단한 다이어그램 에디터</div>
         <div class="flex-row">
+            <button id="save-image-btn" class="tool-btn">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M19 7v2h-4V7h4m0 4h-4v2h4v-2m0 4h-4v2h4v-2m-6-8H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9l-6-6zm-1 14H7v-5h5v5z"/>
+                </svg>
+            </button>
             <button id="save-btn" class="tool-btn">
                 <svg class="tool-icon" viewBox="0 0 24 24">
-                    <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+                    <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10 référ
+
+v4z"/>
                 </svg>
             </button>
             <button id="load-btn" class="tool-btn">
@@ -198,27 +234,57 @@
                     <path d="M3 3h18v2H3zm0 4h10v2H3zm0 4h14v2H3zm0 4h18v2H3z" />
                 </svg>
             </button>
-            <button id="select-tool" class="tool-btn active">
+            <button id="select-tool" class="tool-btn active" title="선택">
                 <svg class="tool-icon" viewBox="0 0 24 24">
                     <path d="M17 5.92L9 2v18H7v-1.73c-1.79.35-3 .99-3 1.73 0 1.1 2.69 2 6 2s6-.9 6-2c0-.99-2.16-1.81-5-1.97V8.98l6-3.06z"/>
                 </svg>
             </button>
-            <button id="rectangle-tool" class="tool-btn">
+            <button id="rectangle-tool" class="tool-btn" title="사각형">
                 <svg class="tool-icon" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                    <path d="M19 3H5v16h14V3z"/>
                 </svg>
             </button>
-            <button id="ellipse-tool" class="tool-btn">
+            <button id="ellipse-tool" class="tool-btn" title="원">
                 <svg class="tool-icon" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
                 </svg>
             </button>
-            <button id="diamond-tool" class="tool-btn">
+            <button id="diamond-tool" class="tool-btn" title="다이아몬드">
                 <svg class="tool-icon" viewBox="0 0 24 24">
                     <path d="M12 2L2 12l10 10 10-10z"/>
                 </svg>
             </button>
-            <button id="text-tool" class="tool-btn">
+            <button id="parallelogram-tool" class="tool-btn" title="평행사변형">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M8 4h10l-4 12H4z"/>
+                </svg>
+            </button>
+            <button id="trapezoid-tool" class="tool-btn" title="사다리꼴">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M6 4h12l-4 12H10z"/>
+                </svg>
+            </button>
+            <button id="hexagon-tool" class="tool-btn" title="육각형">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M12 2l6 5v8l-6 5-6-5V7z"/>
+                </svg>
+            </button>
+            <button id="octagon-tool" class="tool-btn" title="팔각형">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M8 4l4-4 4 4v4l4 4-4 4h-4l-4-4z"/>
+                </svg>
+            </button>
+            <button id="triangle-tool" class="tool-btn" title="삼각형">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M12 2l10 20H2z"/>
+                </svg>
+            </button>
+            <button id="cylinder-tool" class="tool-btn" title="원통">
+                <svg class="tool-icon" viewBox="0 0 24 24">
+                    <path d="M6 4a6 2 0 0112 0v16a6 2 0 01-12 0z"/>
+                </svg>
+            </button>
+            <button id="text-tool" class="tool-btn" title="텍스트">
                 <svg class="tool-icon" viewBox="0 0 24 24">
                     <path d="M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z"/>
                 </svg>
@@ -235,9 +301,9 @@
                 <div class="property-row">
                     <label>생성 모드</label>
                     <div>
-                        <input type="radio" id="continuous-creation" name="creation-mode" value="continuous" checked>
+                        <input type="radio" id="continuous-creation" name="creation-mode" value="continuous" >
                         <label for="continuous-creation">연속 생성</label>
-                        <input type="radio" id="single-creation" name="creation-mode" value="single">
+                        <input type="radio" id="single-creation" name="creation-mode" value="single" checked >
                         <label for="single-creation">단일 생성 후 선택</label>
                     </div>
                 </div>
@@ -311,23 +377,22 @@
             let resizeHandle = null;
             let selectionRect = null;
             let contextMenu = null;
+            let flowchartMenu = null;
             let selectedLineType = null;
             let connectingShape = null;
-            let creationMode = 'continuous';
-            let copiedElement = null; // 복사된 요소 저장
-            let scale = 1; // 확대/축소 비율
-            let offsetX = 0, offsetY = 0; // 캔버스 이동 오프셋
-            let isPanning = false; // 휠 버튼으로 이동 중인지
+            let creationMode = 'single';
+            let copiedElement = null;
+            let scale = 1;
+            let offsetX = 0, offsetY = 0;
+            let isPanning = false;
             let panStartX, panStartY;
 
-            // 캔버스 크기 설정
             function resizeCanvas() {
                 canvas.width = canvasContainer.clientWidth;
                 canvas.height = canvasContainer.clientHeight;
                 drawDiagram();
             }
 
-            // 가장 가까운 면 계산
             function getClosestEdge(startShape, endShape) {
                 if (!startShape || !endShape) return { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } };
                 const startEdges = [
@@ -361,7 +426,6 @@
                 return { start: closestStart, end: closestEnd };
             }
 
-            // 요소 그리기 함수
             function drawElement(element) {
                 ctx.save();
                 ctx.translate(offsetX, offsetY);
@@ -392,6 +456,86 @@
                         ctx.moveTo(element.x + element.width / 2, element.y);
                         ctx.lineTo(element.x + element.width, element.y + element.height / 2);
                         ctx.lineTo(element.x + element.width / 2, element.y + element.height);
+                        ctx.lineTo(element.x, element.y + element.height / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'parallelogram':
+                        ctx.beginPath();
+                        ctx.moveTo(element.x + element.width * 0.25, element.y);
+                        ctx.lineTo(element.x + element.width, element.y);
+                        ctx.lineTo(element.x + element.width * 0.75, element.y + element.height);
+                        ctx.lineTo(element.x, element.y + element.height);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'trapezoid':
+                        ctx.beginPath();
+                        ctx.moveTo(element.x + element.width * 0.25, element.y);
+                        ctx.lineTo(element.x + element.width * 0.75, element.y);
+                        ctx.lineTo(element.x + element.width, element.y + element.height);
+                        ctx.lineTo(element.x, element.y + element.height);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'hexagon':
+                        ctx.beginPath();
+                        ctx.moveTo(element.x + element.width * 0.25, element.y);
+                        ctx.lineTo(element.x + element.width * 0.75, element.y);
+                        ctx.lineTo(element.x + element.width, element.y + element.height * 0.5);
+                        ctx.lineTo(element.x + element.width * 0.75, element.y + element.height);
+                        ctx.lineTo(element.x + element.width * 0.25, element.y + element.height);
+                        ctx.lineTo(element.x, element.y + element.height * 0.5);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'octagon':
+                        ctx.beginPath();
+                        const side = Math.min(element.width, element.height) * 0.3;
+                        ctx.moveTo(element.x + side, element.y);
+                        ctx.lineTo(element.x + element.width - side, element.y);
+                        ctx.lineTo(element.x + element.width, element.y + side);
+                        ctx.lineTo(element.x + element.width, element.y + element.height - side);
+                        ctx.lineTo(element.x + element.width - side, element.y + element.height);
+                        ctx.lineTo(element.x + side, element.y + element.height);
+                        ctx.lineTo(element.x, element.y + element.height - side);
+                        ctx.lineTo(element.x, element.y + side);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'triangle':
+                        ctx.beginPath();
+                        ctx.moveTo(element.x + element.width / 2, element.y);
+                        ctx.lineTo(element.x + element.width, element.y + element.height);
+                        ctx.lineTo(element.x, element.y + element.height);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'cylinder':
+                        ctx.beginPath();
+                        ctx.ellipse(element.x + element.width / 2, element.y, element.width / 2, element.height * 0.2, 0, Math.PI, 0);
+                        ctx.ellipse(element.x + element.width / 2, element.y + element.height, element.width / 2, element.height * 0.2, 0, 0, Math.PI);
+                        ctx.moveTo(element.x, element.y + element.height * 0.2);
+                        ctx.lineTo(element.x, element.y + element.height * 0.8);
+                        ctx.moveTo(element.x + element.width, element.y + element.height * 0.2);
+                        ctx.lineTo(element.x + element.width, element.y + element.height * 0.8);
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'arrow':
+                        ctx.beginPath();
+                        ctx.moveTo(element.x, element.y + element.height / 2);
+                        ctx.lineTo(element.x + element.width * 0.7, element.y + element.height / 2);
+                        ctx.lineTo(element.x + element.width * 0.7, element.y);
+                        ctx.lineTo(element.x + element.width, element.y + element.height / 2);
+                        ctx.lineTo(element.x + element.width * 0.7, element.y + element.height);
+                        ctx.lineTo(element.x + element.width * 0.7, element.y + element.height / 2);
                         ctx.lineTo(element.x, element.y + element.height / 2);
                         ctx.closePath();
                         ctx.fill();
@@ -435,9 +579,8 @@
                 ctx.restore();
             }
 
-            // 화살표 그리기
             function drawArrowHead(fromX, fromY, toX, toY) {
-                const headLength = 10 / scale; // 스케일에 따라 크기 조정
+                const headLength = 10 / scale;
                 const dx = toX - fromX;
                 const dy = toY - fromY;
                 const angle = Math.atan2(dy, dx);
@@ -450,26 +593,21 @@
                 ctx.fill();
             }
 
-            // 핸들 그리기
             function drawHandle(x, y) {
+                ctx.fillStyle = '#3d5afe';
+                const handleSize = 6 / scale;
+                ctx.fillRect(x - handleSize / 2, y - handleSize / 2, handleSize, handleSize);
+                ctx.strokeStyle = '#ffffff';
+                ctx.strokeRect(x - handleSize / 2, y - handleSize / 2, handleSize, handleSize);
+            }
+
+            function drawSelectionHandles() {
+                if (selectedElements.length === 0) return;
                 ctx.save();
                 ctx.translate(offsetX, offsetY);
                 ctx.scale(scale, scale);
-                ctx.fillStyle = '#3d5afe';
-                ctx.fillRect(x - 3 / scale, y - 3 / scale, 6 / scale, 6 / scale);
-                ctx.strokeStyle = '#ffffff';
-                ctx.strokeRect(x - 3 / scale, y - 3 / scale, 6 / scale, 6 / scale);
-                ctx.restore();
-            }
-
-            // 선택 핸들 그리기
-            function drawSelectionHandles() {
-                if (selectedElements.length === 0) return;
                 if (selectedElements.length === 1) {
                     const element = selectedElements[0];
-                    ctx.save();
-                    ctx.translate(offsetX, offsetY);
-                    ctx.scale(scale, scale);
                     ctx.strokeStyle = '#3d5afe';
                     ctx.lineWidth = 1 / scale;
                     ctx.setLineDash([5 / scale, 3 / scale]);
@@ -490,12 +628,8 @@
                         drawHandle(element.x, element.y + element.height);
                         drawHandle(element.x + element.width, element.y + element.height);
                     }
-                    ctx.restore();
                 } else {
                     const bounds = getSelectionBounds();
-                    ctx.save();
-                    ctx.translate(offsetX, offsetY);
-                    ctx.scale(scale, scale);
                     ctx.strokeStyle = '#3d5afe';
                     ctx.lineWidth = 1 / scale;
                     ctx.setLineDash([5 / scale, 3 / scale]);
@@ -506,12 +640,11 @@
                     drawHandle(bounds.x + bounds.width, bounds.y);
                     drawHandle(bounds.x, bounds.y + bounds.height);
                     drawHandle(bounds.x + bounds.width, bounds.y + bounds.height);
-                    ctx.restore();
                 }
                 ctx.setLineDash([]);
+                ctx.restore();
             }
 
-            // 다이어그램 그리기 함수
             function drawDiagram() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 elements.forEach(element => drawElement(element));
@@ -533,12 +666,15 @@
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
             
-            // 도구 버튼 이벤트 리스너
             document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function(e) {
                     const toolId = this.id;
                     if (toolId === 'save-btn') {
                         saveDiagram();
+                        return;
+                    }
+                    if (toolId === 'save-image-btn') {
+                        saveCanvasAsImage();
                         return;
                     }
                     if (toolId === 'load-btn') {
@@ -553,7 +689,7 @@
                         sendToBack();
                         return;
                     }
-                    
+                   
                     document.querySelectorAll('.toolbar .tool-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     currentTool = toolId.replace('-tool', '');
@@ -563,32 +699,43 @@
                 });
             });
             
-            // 속성 입력 이벤트 리스너
             document.querySelectorAll('.property-input').forEach(input => {
                 input.addEventListener('change', updateSelectedElement);
             });
 
-            // 생성 모드 라디오 버튼 이벤트
             document.querySelectorAll('input[name="creation-mode"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     creationMode = this.value;
                 });
             });
             
-            // 캔버스 이벤트
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseup', handleMouseUp);
             canvas.addEventListener('contextmenu', handleContextMenu);
             canvas.addEventListener('wheel', handleWheel);
 
-            // 컨텍스트 메뉴 닫기
-            document.addEventListener('click', () => {
-                if (contextMenu) {
+            document.addEventListener('click', (e) => {
+                if (contextMenu && !contextMenu.contains(e.target)) {
                     contextMenu.remove();
                     contextMenu = null;
                 }
+                if (flowchartMenu && !flowchartMenu.contains(e.target) ) {
+                    flowchartMenu.remove();
+                    flowchartMenu = null;
+                }
             });
+
+            function saveCanvasAsImage() {
+                html2canvas(canvas).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `diagram-${new Date().toISOString().slice(0,10)}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            }
+
+         
 
             function handleContextMenu(e) {
                 e.preventDefault();
@@ -659,14 +806,14 @@
                 const x = (e.clientX - rect.left - offsetX) / scale;
                 const y = (e.clientY - rect.top - offsetY) / scale;
                 
-                if (e.button === 1) { // 휠 버튼
+                if (e.button === 1) {
                     isPanning = true;
                     panStartX = e.clientX;
                     panStartY = e.clientY;
                     canvas.style.cursor = 'grabbing';
                     return;
                 }
-                if (e.button === 2) return; // 우클릭은 컨텍스트 메뉴로 처리
+                if (e.button === 2) return;
                 
                 if (connectingShape) {
                     const targetShape = getElementAt(x, y);
@@ -743,11 +890,24 @@
                 
                 document.getElementById('coordinates').textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
                 
+                if (currentTool === 'select' && !isDrawing) {
+                    const handle = getResizeHandle(x, y);
+                    if (handle) {
+                        if (handle === 'tl' || handle === 'br') {
+                            canvas.style.cursor = 'nwse-resize';
+                        } else if (handle === 'tr' || handle === 'bl') {
+                            canvas.style.cursor = 'nesw-resize';
+                        }
+                    } else {
+                        canvas.style.cursor = 'default';
+                    }
+                }
+
                 if (isPanning) {
-                    const dx = e.clientX - panStartX;
-                    const dy = e.clientY - panStartY;
-                    offsetX += dx;
-                    offsetY += dy;
+                    const dx = (e.clientX - panStartX) / scale;
+                    const dy = (e.clientY - panStartY) / scale;
+                    offsetX += dx * scale;
+                    offsetY += dy * scale;
                     panStartX = e.clientX;
                     panStartY = e.clientY;
                     drawDiagram();
@@ -771,7 +931,6 @@
                                 element.x = element.x + dx;
                                 element.y = element.y + dy;
 
-                                // 연결선과 겹침 체크
                                 let intersectedLine = null;
                                 for (let i = 0; i < elements.length; i++) {
                                     const el = elements[i];
@@ -812,7 +971,7 @@
                 const x = (e.clientX - rect.left - offsetX) / scale;
                 const y = (e.clientY - rect.top - offsetY) / scale;
 
-                if (e.button === 1) { // 휠 버튼
+                if (e.button === 1) {
                     isPanning = false;
                     canvas.style.cursor = 'default';
                     return;
@@ -912,18 +1071,19 @@
                 const rect = canvas.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const mouseY = e.clientY - rect.top;
-                const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9; // 위로: 확대, 아래로: 축소
+
+                const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
                 const newScale = scale * zoomFactor;
 
-                if (newScale < 0.2 || newScale > 5) return; // 확대/축소 제한
+                if (newScale < 0.2 || newScale > 5) return;
 
                 const worldXBefore = (mouseX - offsetX) / scale;
                 const worldYBefore = (mouseY - offsetY) / scale;
+
                 scale = newScale;
-                const worldXAfter = (mouseX - offsetX) / scale;
-                const worldYAfter = (mouseY - offsetY) / scale;
-                offsetX += (worldXBefore - worldXAfter) * scale;
-                offsetY += (worldYBefore - worldYAfter) * scale;
+
+                offsetX = mouseX - worldXBefore * scale;
+                offsetY = mouseY - worldYBefore * scale;
 
                 drawDiagram();
             }
@@ -957,7 +1117,7 @@
                             element.x >= rectX && element.x + element.width <= rectX + rectWidth &&
                             element.y >= rectY && element.y + element.height <= rectY + rectHeight
                         );
-                        if (inRect && !selectedElements.includes(element)) {
+                        if (inRect &&!selectedElements.includes(element)) {
                             selectedElements.push(element);
                         }
                     }
@@ -1014,7 +1174,8 @@
                     { pos: 'br', x: bounds.x + bounds.width, y: bounds.y + bounds.height }
                 ];
                 for (let handle of handles) {
-                    if (Math.abs(x - handle.x) < 6 / scale && Math.abs(y - handle.y) < 6 / scale) {
+                    const handleSize = 6 / scale;
+                    if (Math.abs(x - handle.x) < handleSize && Math.abs(y - handle.y) < handleSize) {
                         return handle.pos;
                     }
                 }
@@ -1311,7 +1472,6 @@
                 }
             }
 
-            // 키보드 이벤트
             document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey && e.key === 'c' && selectedElements.length === 1 && selectedElements[0].type !== 'line') {
                     copiedElement = JSON.parse(JSON.stringify(selectedElements[0]));
@@ -1344,34 +1504,6 @@
                     selectedElements = [];
                     updatePropertiesPanel();
                     drawDiagram();
-                } else if (e.shiftKey && e.key === 'ArrowUp') {
-                    const rect = canvas.getBoundingClientRect();
-                    const mouseX = canvas.width / 2;
-                    const mouseY = canvas.height / 2;
-                    const worldXBefore = (mouseX - offsetX) / scale;
-                    const worldYBefore = (mouseY - offsetY) / scale;
-                    scale *= 1.1;
-                    if (scale > 5) scale = 5;
-                    const worldXAfter = (mouseX - offsetX) / scale;
-                    const worldYAfter = (mouseY - offsetY) / scale;
-                    offsetX += (worldXBefore - worldXAfter) * scale;
-                    offsetY += (worldYBefore - worldYAfter) * scale;
-                    drawDiagram();
-                    e.preventDefault();
-                } else if (e.shiftKey && e.key === 'ArrowDown') {
-                    const rect = canvas.getBoundingClientRect();
-                    const mouseX = canvas.width / 2;
-                    const mouseY = canvas.height / 2;
-                    const worldXBefore = (mouseX - offsetX) / scale;
-                    const worldYBefore = (mouseY - offsetY) / scale;
-                    scale *= 0.9;
-                    if (scale < 0.2) scale = 0.2;
-                    const worldXAfter = (mouseX - offsetX) / scale;
-                    const worldYAfter = (mouseY - offsetY) / scale;
-                    offsetX += (worldXBefore - worldXAfter) * scale;
-                    offsetY += (worldYBefore - worldYAfter) * scale;
-                    drawDiagram();
-                    e.preventDefault();
                 }
             });
         });
