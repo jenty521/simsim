@@ -3,4 +3,5 @@ Allow: /calc.html
 Allow: /index.html
 Allow: /addline_blog.html
 Allow: /unit-converter.html
+Allow: /node_diagram.html
 Disallow:
