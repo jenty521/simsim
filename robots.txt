@@ -5,4 +5,5 @@ Allow: /addline_blog.html
 Allow: /unit-converter.html
 Allow: /node_diagram.html
 Allow: /regex.html
+Allow: /regex_en.html
 Disallow:
