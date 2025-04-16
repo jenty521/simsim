@@ -8,4 +8,6 @@ Allow: /regex.html
 Allow: /regex_en.html
 Allow: /qr_maker_en.html
 Allow: /qr_maker.html
+Allow: /image_size_converter_en.html
+Allow: /image_size_converter.html
 Disallow:
