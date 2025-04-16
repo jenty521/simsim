@@ -173,7 +173,6 @@
 
     <script>
         function showAd(callback) {
-            // 전면 광고 표시
             const adContainer = document.createElement('div');
             adContainer.style.position = 'fixed';
             adContainer.style.top = '0';
@@ -193,21 +192,31 @@
             adContent.style.maxWidth = '90%';
             adContent.style.maxHeight = '90%';
             adContent.style.overflow = 'auto';
+            adContent.style.position = 'relative';
             
-            // 광고 스크립트 삽입
-            const adScript = document.createElement('script');
-            adScript.innerHTML = `
-                (adsbygoogle = window.adsbygoogle || []).push({
-                    google_ad_client: "ca-pub-4624141391435876",
-                    enable_page_level_ads: true
-                });
-            `;
+            // 광고 요소 생성
+            const adElement = document.createElement('ins');
+            adElement.className = 'adsbygoogle';
+            adElement.style.display = 'block';
+            adElement.style.width = '100%';
+            adElement.style.height = '100%';
+            adElement.setAttribute('data-ad-client', 'ca-pub-4624141391435876');
+            adElement.setAttribute('data-ad-slot', '8572412553');
+            adElement.setAttribute('data-ad-format', 'auto');
+            adElement.setAttribute('data-full-width-responsive', 'true');
             
-            adContent.appendChild(adScript);
+            adContent.appendChild(adElement);
             adContainer.appendChild(adContent);
             document.body.appendChild(adContainer);
 
-            // 광고 닫기 버튼 추가
+            // 광고 로드
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {
+                console.error('광고 로드 실패:', e);
+            }
+
+            // 닫기 버튼 추가
             const closeBtn = document.createElement('button');
             closeBtn.textContent = '닫기';
             closeBtn.style.position = 'absolute';
@@ -219,12 +228,21 @@
             closeBtn.style.border = 'none';
             closeBtn.style.borderRadius = '5px';
             closeBtn.style.cursor = 'pointer';
+            closeBtn.style.zIndex = '1001';
+            
             closeBtn.onclick = function() {
                 document.body.removeChild(adContainer);
-                // 콜백 함수 실행
                 if (callback) callback();
             };
-            adContainer.appendChild(closeBtn);
+            adContent.appendChild(closeBtn);
+
+            // 5초 후 자동으로 닫기
+            setTimeout(() => {
+                if (document.body.contains(adContainer)) {
+                    document.body.removeChild(adContainer);
+                    if (callback) callback();
+                }
+            }, 5000);
         }
 
         function generateQR() {
@@ -278,11 +296,11 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
     crossorigin="anonymous"></script>
-<!-- [디스플레이, 반응형] 하단광고 -->
+<!-- 전면광고1 -->
 <ins class="adsbygoogle"
     style="display:block"
     data-ad-client="ca-pub-4624141391435876"
-    data-ad-slot="5073984195"
+    data-ad-slot="8572412553"
     data-ad-format="auto"
     data-full-width-responsive="true"></ins>
 <script>
