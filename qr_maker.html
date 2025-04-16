@@ -4,12 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="무료 온라인 QR 코드 생성기 - URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환. 모바일 친화적이고 사용하기 쉬운 인터페이스로 누구나 쉽게 QR 코드를 만들 수 있습니다.">
-    <meta name="keywords" content="QR코드 생성기, 무료 QR코드, 온라인 QR코드, QR코드 만들기, QR코드 생성, QR코드 변환">
+    <meta name="keywords" content="QR코드 생성기, 무료 QR코드, 온라인 QR코드, QR코드 만들기, QR코드 생성, QR코드 변환, QR코드 제작">
     <meta name="author" content="QR 코드 생성기">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://your-domain.com/qr_maker.html">
+    
+    <!-- Open Graph 태그 -->
     <meta property="og:title" content="무료 온라인 QR 코드 생성기 - 간편한 QR 코드 만들기">
     <meta property="og:description" content="URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환하는 무료 온라인 툴입니다.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.com/qr_maker.html">
+    <meta property="og:image" content="https://your-domain.com/qr-preview.png">
+    <meta property="og:site_name" content="무료 QR 코드 생성기">
+    
+    <!-- 네이버 웹마스터 도구 -->
+    <meta name="naver-site-verification" content="your-naver-verification-code">
+    
+    <!-- Twitter 카드 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="무료 온라인 QR 코드 생성기 - 간편한 QR 코드 만들기">
+    <meta name="twitter:description" content="URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환하는 무료 온라인 툴입니다.">
+    <meta name="twitter:image" content="https://your-domain.com/qr-preview.png">
+    
     <title>무료 온라인 QR 코드 생성기 | 간편한 QR 코드 만들기</title>
+    
+    <!-- Schema.org 마크업 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "무료 온라인 QR 코드 생성기",
+      "description": "URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환하는 무료 온라인 툴입니다.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      }
+    }
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         :root {
@@ -172,6 +207,8 @@
     </div>
 
     <script>
+        let adsbygoogle = window.adsbygoogle || [];  // 전역 변수 선언
+
         function showAd(callback) {
             const adContainer = document.createElement('div');
             adContainer.style.position = 'fixed';
@@ -181,47 +218,70 @@
             adContainer.style.height = '100%';
             adContainer.style.backgroundColor = 'rgba(0,0,0,0.5)';
             adContainer.style.zIndex = '1000';
-            adContainer.style.display = 'flex';
+            adContainer.style.display = 'none';
             adContainer.style.justifyContent = 'center';
             adContainer.style.alignItems = 'center';
-            
+
             const adContent = document.createElement('div');
             adContent.style.backgroundColor = 'white';
             adContent.style.padding = '20px';
             adContent.style.borderRadius = '10px';
-            adContent.style.maxWidth = '90%';
-            adContent.style.maxHeight = '90%';
-            adContent.style.overflow = 'auto';
+            adContent.style.width = '336px';
+            adContent.style.height = '280px';
             adContent.style.position = 'relative';
-            
-            // 광고 요소 생성
-            const adElement = document.createElement('ins');
-            adElement.className = 'adsbygoogle';
-            adElement.style.display = 'block';
-            adElement.style.width = '100%';
-            adElement.style.height = '100%';
-            adElement.setAttribute('data-ad-client', 'ca-pub-4624141391435876');
-            adElement.setAttribute('data-ad-slot', '8572412553');
-            adElement.setAttribute('data-ad-format', 'auto');
-            adElement.setAttribute('data-full-width-responsive', 'true');
-            
-            adContent.appendChild(adElement);
+
+            const adIns = document.createElement('ins');
+            adIns.className = 'adsbygoogle';
+            adIns.style.display = 'block';
+            adIns.style.width = '336px';
+            adIns.style.height = '280px';
+            adIns.setAttribute('data-ad-client', 'ca-pub-4624141391435876');
+            adIns.setAttribute('data-ad-slot', '8572412553');
+            adIns.setAttribute('data-ad-format', 'rectangle');
+            adIns.setAttribute('data-full-width-responsive', 'false');
+
+            adContent.appendChild(adIns);
             adContainer.appendChild(adContent);
             document.body.appendChild(adContainer);
 
-            // 광고 로드
+            // 광고 로드 시도
+            let adLoadTimeout = setTimeout(() => {
+                console.error('광고 로드 시간 초과');
+                if (document.body.contains(adContainer)) {
+                    document.body.removeChild(adContainer);
+                    if (callback) callback();
+                }
+            }, 3000);
+
             try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
+                adContainer.style.display = 'flex';
+                (adsbygoogle = window.adsbygoogle || []).push({
+                    callback: function(e) {
+                        clearTimeout(adLoadTimeout);
+                        if (e && e.type === 'adError') {
+                            console.error('광고 로드 오류:', e);
+                            if (document.body.contains(adContainer)) {
+                                document.body.removeChild(adContainer);
+                                if (callback) callback();
+                            }
+                        }
+                    }
+                });
             } catch (e) {
-                console.error('광고 로드 실패:', e);
+                console.error('광고 로딩 오류:', e);
+                clearTimeout(adLoadTimeout);
+                if (document.body.contains(adContainer)) {
+                    document.body.removeChild(adContainer);
+                    if (callback) callback();
+                }
+                return;
             }
 
-            // 닫기 버튼 추가
             const closeBtn = document.createElement('button');
             closeBtn.textContent = '닫기';
             closeBtn.style.position = 'absolute';
-            closeBtn.style.top = '10px';
-            closeBtn.style.right = '10px';
+            closeBtn.style.top = '-30px';
+            closeBtn.style.right = '0';
             closeBtn.style.padding = '5px 10px';
             closeBtn.style.backgroundColor = '#6366f1';
             closeBtn.style.color = 'white';
@@ -229,20 +289,14 @@
             closeBtn.style.borderRadius = '5px';
             closeBtn.style.cursor = 'pointer';
             closeBtn.style.zIndex = '1001';
-            
-            closeBtn.onclick = function() {
-                document.body.removeChild(adContainer);
-                if (callback) callback();
-            };
-            adContent.appendChild(closeBtn);
 
-            // 5초 후 자동으로 닫기
-            setTimeout(() => {
+            closeBtn.onclick = function () {
                 if (document.body.contains(adContainer)) {
                     document.body.removeChild(adContainer);
                     if (callback) callback();
                 }
-            }, 5000);
+            };
+            adContent.appendChild(closeBtn);
         }
 
         function generateQR() {
@@ -252,11 +306,10 @@
                 return;
             }
 
-            showAd(function() {
+            showAd(function () {
                 const qrcodeDiv = document.getElementById('qrcode');
                 qrcodeDiv.innerHTML = '';
                 
-                // Canvas 요소 생성
                 const canvas = document.createElement('canvas');
                 qrcodeDiv.appendChild(canvas);
                 
@@ -272,7 +325,6 @@
                         console.error(error);
                         alert('QR 코드 생성 중 오류가 발생했습니다.');
                     } else {
-                        // QR 코드 생성 성공 시 다운로드 버튼 표시
                         document.getElementById('downloadBtn').style.display = 'block';
                     }
                 });
@@ -286,7 +338,7 @@
                 return;
             }
 
-            showAd(function() {
+            showAd(function () {
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
                 link.href = canvas.toDataURL('image/png');
