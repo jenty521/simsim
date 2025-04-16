@@ -6,4 +6,6 @@ Allow: /unit-converter.html
 Allow: /node_diagram.html
 Allow: /regex.html
 Allow: /regex_en.html
+Allow: /qr_maker_en.html
+Allow: /qr_maker.html
 Disallow:
