@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description" content="무료 다이어그램 에디터, 무료로 웹에서 쉽게 다이어그램을 생성하고 이미지로 저장할수 있습니다.">
-    <meta name="keywords" content="무료 다이어그램 에디터">
-    <title>무료 다이어그램 에디터</title>
+    <title>간단한 다이어그램 에디터</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -371,23 +371,22 @@
             z-index: 10;
             box-shadow: 0 0 5px rgba(61, 90, 254, 0.3);
         }
-    </style>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7NY0VN0ECJ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-7NY0VN0ECJ');
-</script>
+        .footer {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .ad-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+       
+    </style>
 </head>
 <body>
-   <div class="menu-bar">
-        <a href="#">홈</a>
-        <a href="https://www.naver.com" target="_blank">네이버</a>
-        <a href="https://www.kakao.com" target="_blank">카카오</a>
-    </div>
 
     <div class="top-bar">
         <div class="app-title">웹 다이어그램 에디터</div>
@@ -413,7 +412,7 @@
                 </button>
                 <button id="select-tool" class="tool-btn active" title="선택">
                     <svg class="tool-icon" viewBox="0 0 24 24">
-                        <path d="M17 5.92L9 2v18H7v-1.73c-1.79.35-3 .99-3 1.73 0 1.1 2.69 2 6 2s6-.9 6-2c0-.99-2.16-1.81-5-1.97V8.98l6-3.06z"/>
+                        <path d="M7,0.5l4.5,13.5l2-4l4,4l3-3l-4-4l4-2L7,0.5z"/>
                     </svg>
                 </button>
             </div>
@@ -596,6 +595,23 @@
     <div class="status-bar">
         <span id="coordinates">X: 0, Y: 0</span>
     </div>
+    
+    <footer class="footer">
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+                crossorigin="anonymous"></script>
+            <!-- [디스플레이, 반응형] 하단광고 -->
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-4624141391435876"
+                data-ad-slot="5073984195"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </footer>
     
     <script>
 	document.addEventListener('DOMContentLoaded', function() {
@@ -2555,10 +2571,10 @@
 			document.getElementById('stroke-color-preview').style.backgroundColor = element.strokeColor || '#000000';
 			document.getElementById('stroke-width').value = element.strokeWidth || 2;
 			document.getElementById('stroke-style').value = element.strokeStyle || 'solid';
-			document.getElementById('pos-x').value = Math.round(element.x);
-			document.getElementById('pos-y').value = Math.round(element.y);
-			document.getElementById('pos-width').value = Math.round(element.width);
-			document.getElementById('pos-height').value = Math.round(element.height);
+			document.getElementById('pos-x').value = Math.round(element.x || 0);
+			document.getElementById('pos-y').value = Math.round(element.y || 0);
+			document.getElementById('pos-width').value = Math.round(element.width || 100);
+			document.getElementById('pos-height').value = Math.round(element.height || 100);
 			if (element.type !== 'line') {
 				document.getElementById('text-properties').classList.remove('hidden');
 				if (element.textFragments && element.textFragments.length > 0) {
