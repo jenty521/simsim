@@ -68,6 +68,12 @@
         const messageElement = document.getElementById('message');
         const appLink = document.getElementById('appLink');
 
+        // 로그 기록 (디버깅용)
+        console.log('URL:', window.location.href);
+        console.log('Error:', error);
+        console.log('Error Code:', errorCode);
+        console.log('Error Description:', errorDesc);
+
         // 오류 메시지 표시
         if (error || errorCode === 'otp_expired' || window.location.href.indexOf('error_code=otp_expired') > -1) {
             statusElement.textContent = '인증 완료';
@@ -80,6 +86,12 @@
             messageElement.textContent = '인증이 완료되었습니다. 앱으로 이동하여 로그인해주세요.';
             appLink.style.display = 'inline-block';
         }
+
+        // 앱으로 즉시 이동
+        document.getElementById('appLink').onclick = function() {
+            window.location.href = 'focusmate://login-callback';
+            return false;
+        };
 
         // 3초 후 자동으로 앱으로 이동
         setTimeout(() => {
