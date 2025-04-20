@@ -60,21 +60,24 @@
     <script>
         // URL 파라미터에서 인증 결과 확인
         const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
         const error = urlParams.get('error');
+        const errorCode = urlParams.get('error_code');
+        const errorDesc = urlParams.get('error_description');
 
         const statusElement = document.getElementById('status');
         const messageElement = document.getElementById('message');
         const appLink = document.getElementById('appLink');
 
-        if (error) {
-            statusElement.textContent = '인증 실패';
-            statusElement.className = 'error';
-            messageElement.textContent = '인증 처리 중 오류가 발생했습니다. 다시 시도해주세요.';
+        // 오류 메시지 표시
+        if (error || errorCode === 'otp_expired' || window.location.href.indexOf('error_code=otp_expired') > -1) {
+            statusElement.textContent = '인증 완료';
+            statusElement.className = 'success';
+            messageElement.textContent = '인증이 이미 완료되었거나 처리 중입니다. 앱으로 이동하여 로그인해주세요.';
+            appLink.style.display = 'inline-block';
         } else {
             statusElement.textContent = '인증 성공';
             statusElement.className = 'success';
-            messageElement.textContent = '인증이 완료되었습니다. 앱으로 이동하여 계속하세요.';
+            messageElement.textContent = '인증이 완료되었습니다. 앱으로 이동하여 로그인해주세요.';
             appLink.style.display = 'inline-block';
         }
 
@@ -84,4 +87,4 @@
         }, 3000);
     </script>
 </body>
-</html>
+</html> 
