@@ -15,4 +15,5 @@ Allow: /make_easy_password.html
 Allow: /make_easy_pallet.html
 Allow: /calc_between_date.html
 Allow: /calc_bmi_health.html
+Allow: /calc_easy_ja.html
 Disallow:
