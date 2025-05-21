@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="실제 크기의 온라인 눈금자와 각도기 - 정확한 측정을 위한 무료 도구입니다. 픽셀, 인치, 센티미터 단위 지원.">
+    <meta name="keywords" content="온라인 눈금자, 디지털 눈금자, 온라인 각도기, 인치 눈금자, cm 눈금자, 화면 측정 도구, 픽셀 눈금자">
+    <meta name="author" content="온라인 측정 도구">
+    <meta name="robots" content="index, follow">
+    <title>정확한 온라인 눈금자 및 각도기 측정 도구 | 픽셀, 인치, CM 단위 지원</title>
+    
+    <!-- 파비콘 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📏</text></svg>">
+    
+    <!-- 모바일 테마 색상 -->
+    <meta name="theme-color" content="#4285f4">
+    
+    <!-- Open Graph / 소셜 미디어 공유 메타 태그 -->
+    <meta property="og:title" content="정확한 온라인 눈금자 및 각도기 측정 도구">
+    <meta property="og:description" content="실제 크기의 온라인 눈금자와 각도기 - 정확한 측정을 위한 무료 도구입니다. 픽셀, 인치, 센티미터 단위 지원.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/online-ruler">
+    <meta property="og:image" content="https://example.com/images/ruler-preview.jpg">
+    
+    <!-- Twitter 카드 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="정확한 온라인 눈금자 및 각도기 측정 도구">
+    <meta name="twitter:description" content="실제 크기의 온라인 눈금자와 각도기 - 정확한 측정을 위한 무료 도구입니다. 픽셀, 인치, 센티미터 단위 지원.">
+    <meta name="twitter:image" content="https://example.com/images/ruler-preview.jpg">
+    
+    <!-- Schema.org 마크업 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "온라인 눈금자 및 각도기 측정 도구",
+        "description": "실제 크기의 온라인 눈금자와 각도기 - 정확한 측정을 위한 무료 도구입니다. 픽셀, 인치, 센티미터 단위 지원.",
+        "url": "https://example.com/online-ruler",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "실제 크기 눈금자",
+            "단위 변환 (픽셀, 인치, 센티미터)",
+            "각도기 기능",
+            "화면 크기 감지",
+            "모바일 및 데스크톱 호환"
+        ]
+    }
+    </script>
+    
+    <style>
+        /* 리셋 및 기본 스타일 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 접근성 유틸리티 */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* 헤더 스타일 */
+        header {
+            background-color: #4285f4;
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo svg {
+            margin-right: 0.5rem;
+            width: 2rem;
+            height: 2rem;
+        }
+        
+        /* 내비게이션 스타일 */
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover, nav a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+        
+        /* 메인 컨텐츠 */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        /* 도구 선택 메뉴 */
+        .tool-selector {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0 2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tool-btn {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tool-btn:hover, .tool-btn:focus {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+            outline: none;
+        }
+        
+        .tool-btn.active {
+            background-color: #3367d6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tool-icon {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+        
+        /* 단위 선택 */
+        .unit-selector {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .unit-btn {
+            background-color: #f1f3f4;
+            color: #333;
+            border: 1px solid #dadce0;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .unit-btn:hover, .unit-btn:focus {
+            background-color: #e8eaed;
+            outline: none;
+        }
+        
+        .unit-btn.active {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            border-color: #1a73e8;
+        }
+        
+        /* 측정 도구 컨테이너 */
+        .tool-container {
+            margin: 1.5rem auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 300px;
+        }
+        
+        /* 눈금자 스타일 */
+        .ruler {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        
+        .ruler-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .ruler-tick {
+            position: absolute;
+            background-color: #333;
+            bottom: 0;
+        }
+        
+        .ruler-tick-small {
+            height: 15%;
+            width: 1px;
+        }
+        
+        .ruler-tick-medium {
+            height: 30%;
+            width: 1px;
+        }
+        
+        .ruler-tick-large {
+            height: 50%;
+            width: 2px;
+        }
+        
+        .ruler-label {
+            position: absolute;
+            font-size: 0.7rem;
+            color: #333;
+            bottom: 55%;
+            transform: translateX(-50%);
+            user-select: none;
+        }
+        
+        /* 각도기 스타일 */
+        .protractor {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            margin: 0 auto;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            display: none;
+        }
+        
+        .protractor-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .protractor-base {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            transform: translate(-50%, -50%);
+        }
+        
+        .protractor-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 2px;
+            background-color: #4285f4;
+            transform-origin: left center;
+            transform: rotate(0deg);
+            z-index: 2;
+        }
+        
+        .protractor-angle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4285f4;
+            transform: translate(-50%, -50%);
+            user-select: none;
+        }
+        
+        .protractor-tick {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: left center;
+        }
+        
+        .protractor-tick-line {
+            position: absolute;
+            height: 2px;
+            background-color: #333;
+            left: 0;
+            top: 0;
+        }
+        
+        .protractor-tick-label {
+            position: absolute;
+            font-size: 0.8rem;
+            color: #555;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 화면 정보 표시 */
+        .screen-info {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #e8f0fe;
+            border-radius: 8px;
+            border-left: 4px solid #4285f4;
+        }
+        
+        .screen-info h3 {
+            margin-bottom: 0.5rem;
+            color: #1a73e8;
+        }
+        
+        .screen-info p {
+            margin: 0.5rem 0;
+        }
+        
+        /* 제어 패널 */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 250px;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-group h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #4285f4;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 도움말 및 가이드 */
+        .guide {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .guide h2 {
+            color: #1a73e8;
+            margin-bottom: 1rem;
+        }
+        
+        .guide-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .guide-section h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .guide-section p {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 소셜 공유 버튼 */
+        .social-share {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            justify-content: center;
+        }
+        
+        .share-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #dadce0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .share-btn:hover {
+            background-color: #e8eaed;
+            transform: translateY(-2px);
+        }
+        
+        .share-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        
+        .facebook { color: #1877F2; }
+        .twitter { color: #1DA1F2; }
+        .linkedin { color: #0A66C2; }
+        .pinterest { color: #E60023; }
+        
+        /* 광고 컨테이너 스타일 */
+        .ad-container {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px dashed #dadce0;
+            font-weight: bold;
+            color: #5f6368;
+        }
+        
+        .ad-sidebar {
+            display: none;
+        }
+        
+        .ad-sticky-mobile {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-top: 1px solid #dadce0;
+            z-index: 99;
+            text-align: center;
+            font-weight: bold;
+            color: #5f6368;
+        }
+        
+        /* 푸터 스타일 */
+        footer {
+            background-color: #f1f3f4;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+            border-top: 1px solid #dadce0;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #3c4043;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-column a {
+            color: #5f6368;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: #1a73e8;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dadce0;
+            color: #5f6368;
+            font-size: 0.9rem;
+        }
+        
+        /* 반응형 디자인 */
+        @media (min-width: 768px) {
+            .ad-sidebar {
+                display: block;
+                position: sticky;
+                top: 100px;
+                width: 200px;
+                float: right;
+                margin-left: 2rem;
+                height: 600px;
+            }
+            
+            .tool-selector {
+                gap: 1rem;
+            }
+            
+            .ruler {
+                height: 120px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .ad-sticky-mobile {
+                display: block;
+            }
+            
+            .tool-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .protractor {
+                height: 300px;
+            }
+            
+            body {
+                padding-bottom: 60px; /* 모바일 하단 광고 공간 확보 */
+            }
+        }
+        
+        /* 다크 모드 지원 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #202124;
+                color: #e8eaed;
+            }
+            
+            header {
+                background-color: #1a73e8;
+            }
+            
+            .tool-container, .control-group {
+                background-color: #2d2e31;
+                border-color: #5f6368;
+            }
+            
+            .ruler, .protractor {
+                background-color: #2d2e31;
+                border-color: #5f6368;
+            }
+            
+            .ruler-label, .protractor-tick-label {
+                color: #e8eaed;
+            }
+            
+            .screen-info {
+                background-color: rgba(26, 115, 232, 0.1);
+            }
+            
+            .unit-btn {
+                background-color: #2d2e31;
+                color: #e8eaed;
+                border-color: #5f6368;
+            }
+            
+            .unit-btn.active {
+                background-color: rgba(26, 115, 232, 0.2);
+                color: #8ab4f8;
+                border-color: #8ab4f8;
+            }
+            
+            .guide {
+                background-color: #2d2e31;
+            }
+            
+            .ad-container, .ad-sticky-mobile {
+                background-color: #2d2e31;
+                color: #9aa0a6;
+                border-color: #5f6368;
+            }
+            
+            footer {
+                background-color: #202124;
+                border-color: #5f6368;
+            }
+            
+            .footer-column a {
+                color: #9aa0a6;
+            }
+            
+            .footer-column a:hover {
+                color: #8ab4f8;
+            }
+            
+            .copyright {
+                color: #9aa0a6;
+                border-color: #5f6368;
+            }
+            
+            .share-btn {
+                background-color: #2d2e31;
+                border-color: #5f6368;
+            }
+            
+            .share-btn:hover {
+                background-color: #3c4043;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 6H3C2.4 6 2 6.4 2 7V17C2 17.6 2.4 18 3 18H21C21.6 18 22 17.6 22 17V7C22 6.4 21.6 6 21 6ZM20 16H4V8H20V16ZM6 14H18V10H6V14Z" fill="white"/>
+                </svg>
+                온라인 측정 도구
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#ruler">눈금자</a></li>
+                    <li><a href="#protractor">각도기</a></li>
+                    <li><a href="#guide">사용 가이드</a></li>
+                    <li><a href="#about">소개</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 광고 삽입 위치 1: 상단 배너 -->
+    <div class="ad-container">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 최상단 고정광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="8566506642"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+    
+    <main>
+        <section class="tool-selector">
+            <button class="tool-btn active" id="ruler-btn">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 6H3C2.4 6 2 6.4 2 7V17C2 17.6 2.4 18 3 18H21C21.6 18 22 17.6 22 17V7C22 6.4 21.6 6 21 6ZM20 16H4V8H20V16Z" fill="currentColor"/>
+                    <path d="M6 14H8V10H6V14Z" fill="currentColor"/>
+                    <path d="M10 14H12V10H10V14Z" fill="currentColor"/>
+                    <path d="M14 14H16V10H14V14Z" fill="currentColor"/>
+                </svg>
+                눈금자
+            </button>
+            
+            <!-- 광고 삽입 위치 2: 도구 선택 메뉴 사이 -->
+            <div class="ad-container" style="padding: 0.5rem; margin: 0;">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+            
+            <button class="tool-btn" id="protractor-btn">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="currentColor"/>
+                    <path d="M12 12L12 7" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                각도기
+            </button>
+        </section>
+        
+        <div class="unit-selector">
+            <button class="unit-btn active" id="cm-btn">센티미터 (cm)</button>
+            <button class="unit-btn" id="inch-btn">인치 (inch)</button>
+            <button class="unit-btn" id="px-btn">픽셀 (px)</button>
+        </div>
+        
+        <!-- 광고 삽입 위치 3: 사이드바 광고 -->
+        <div class="ad-sidebar">
+           <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [오른쪽]사이드바 광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="9830643277"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+        
+        <section class="tool-container" id="ruler-tool">
+            <h2>온라인 눈금자</h2>
+            <p>화면에 실제 크기의 눈금자를 표시합니다. 위의 단위 버튼을 클릭하여 측정 단위를 변경할 수 있습니다.</p>
+            
+            <div class="ruler" id="ruler">
+                <div class="ruler-container" id="ruler-container"></div>
+            </div>
+            
+            <!-- 광고 삽입 위치: 눈금자 아래 배너 -->
+            <div class="ad-container">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+            
+            <div class="screen-info" id="screen-info">
+                <h3>화면 크기 정보</h3>
+                <p>실제 크기 정확도 보정을 위해 귀하의 디바이스 정보를 표시합니다.</p>
+                <p id="screen-width-info">화면 너비: 계산중...</p>
+                <p id="screen-height-info">화면 높이: 계산중...</p>
+                <p id="screen-dpi-info">화면 DPI: 계산중...</p>
+                <p id="device-info">디바이스 유형: 감지중...</p>
+            </div>
+        </section>
+        
+        <section class="tool-container" id="protractor-tool" style="display: none;">
+            <h2>온라인 각도기</h2>
+            <p>각도를 측정하려면 가운데 선을 드래그하여 돌리세요.</p>
+            
+            <div class="protractor" id="protractor">
+                <div class="protractor-container">
+                    <div class="protractor-base"></div>
+                    <div class="protractor-line" id="protractor-line"></div>
+                    <div class="protractor-angle" id="protractor-angle">0°</div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="controls">
+            <div class="control-group">
+                <h3>보정 설정</h3>
+                <label for="dpi-calibration">DPI 보정 (현재: <span id="current-dpi">96</span>):</label>
+                <input type="range" id="dpi-calibration" min="72" max="300" step="1" value="96">
+                <p>화면에 표시되는 눈금자의 크기가 실제와 다르다면 슬라이더를 조정하세요.</p>
+            </div>
+            
+            <div class="control-group">
+                <h3>미세 조정</h3>
+                <label for="ruler-size">눈금자 높이:</label>
+                <input type="range" id="ruler-size" min="50" max="200" step="10" value="100">
+                <p>눈금자의 높이를 조정하려면 슬라이더를 움직이세요.</p>
+            </div>
+        </section>
+        
+        <!-- 광고 삽입 위치: 단위 변환 섹션 근처 -->
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+        
+        <section class="guide" id="guide">
+            <h2>사용 가이드</h2>
+            
+            <div class="guide-section">
+                <h3>눈금자 사용법</h3>
+                <p>1. 단위 버튼을 클릭하여 원하는 측정 단위(cm, 인치, 픽셀)를 선택하세요.</p>
+                <p>2. 화면에 표시된 눈금자에 물체를 대고 측정하세요.</p>
+                <p>3. 정확한 측정을 위해 DPI 보정 슬라이더를 조정하세요.</p>
+            </div>
+            
+            <div class="guide-section">
+                <h3>각도기 사용법</h3>
+                <p>1. 상단 메뉴에서 '각도기' 버튼을 클릭하세요.</p>
+                <p>2. 파란색 선을 클릭하고 드래그하여 원하는 각도로 회전하세요.</p>
+                <p>3. 각도 값은 중앙에 표시됩니다.</p>
+            </div>
+            
+            <div class="guide-section">
+                <h3>모바일 기기에서 사용하기</h3>
+                <p>모바일 기기에서는 화면을 가로 모드로 회전하면 더 긴 눈금자를 사용할 수 있습니다.</p>
+                <p>정확한 측정을 위해 화면 밝기를 최대로 설정하는 것이 좋습니다.</p>
+            </div>
+        </section>
+        
+        <section class="social-share">
+            <h3 class="sr-only">공유하기</h3>
+            <button class="share-btn facebook" aria-label="페이스북에 공유하기">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2ZM14.5 8.5H13.5C12.95 8.5 12.5 8.95 12.5 9.5V10.5H14.5L14.25 12.5H12.5V16.5H10.5V12.5H9V10.5H10.5V9.5C10.5 7.85 11.85 6.5 13.5 6.5H14.5V8.5Z"/>
+                </svg>
+            </button>
+            <button class="share-btn twitter" aria-label="트위터에 공유하기">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2ZM17 9.5C16.4 9.8 15.8 10 15.1 10.1C15.8 9.7 16.3 9 16.5 8.2C15.9 8.6 15.2 8.8 14.5 9C13.9 8.3 13 7.8 12 7.8C10.1 7.8 8.6 9.3 8.6 11.2C8.6 11.5 8.6 11.7 8.7 12C5.9 11.8 3.5 10.5 1.9 8.5C1.6 9 1.4 9.5 1.4 10.1C1.4 11.1 1.9 12 2.7 12.5C2.2 12.5 1.7 12.3 1.3 12.1C1.3 13.7 2.4 15 3.9 15.3C3.6 15.4 3.3 15.4 3 15.4C2.8 15.4 2.6 15.4 2.4 15.3C2.8 16.6 4 17.6 5.5 17.6C4.4 18.5 3 19 1.5 19C1.3 19 1.1 19 0.9 19C2.4 19.9 4.2 20.5 6.1 20.5C12 20.5 15.3 15.5 15.3 11.2C15.3 11 15.3 10.9 15.3 10.7C16 10.3 16.6 9.7 17 9.5Z"/>
+                </svg>
+            </button>
+            <button class="share-btn linkedin" aria-label="링크드인에 공유하기">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2ZM8 8C8.552 8 9 7.552 9 7C9 6.448 8.552 6 8 6C7.448 6 7 6.448 7 7C7 7.552 7.448 8 8 8ZM7 9H9V16H7V9ZM13 9H11V16H13V12.5C13 11.7 13.7 11 14.5 11C15.3 11 16 11.7 16 12.5V16H18V12.5C18 10.567 16.433 9 14.5 9C13.949 9 13.425 9.1 12.962 9.281C12.839 9.333 13 9 13 9Z"/>
+                </svg>
+            </button>
+            <button class="share-btn pinterest" aria-label="핀터레스트에 공유하기">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2ZM12.5 15C11.867 15 11.275 14.784 10.798 14.406C10.798 14.406 10.215 16.709 10.142 17C9.785 18.139 9.010 19.139 8.939 19.209C8.885 19.262 8.765 19.2 8.774 19.108C8.792 18.931 8.94 18.1 9.315 17.019C9.464 16.545 10.03 14.508 10.03 14.508C10.03 14.508 9.842 14.128 9.842 13.596C9.842 12.754 10.271 12.114 10.812 12.114C11.271 12.114 11.493 12.464 11.493 12.879C11.493 13.343 11.203 14.047 11.053 14.7C10.927 15.248 11.318 15.695 11.857 15.695C12.84 15.695 13.598 14.688 13.598 13.209C13.598 12.114 12.847 11.304 11.724 11.304C10.437 11.304 9.631 12.293 9.631 13.411C9.631 13.778 9.75 14.075 9.932 14.294C10.047 14.433 10.062 14.485 10.018 14.645C9.985 14.764 9.919 14.997 9.889 15.111C9.843 15.269 9.713 15.32 9.569 15.259C8.83 14.957 8.486 14.132 8.486 13.188C8.486 11.785 9.572 10.213 11.886 10.213C13.743 10.213 15.046 11.559 15.046 13.235C15.046 15.109 13.968 16.597 11.982 16.597C11.425 16.597 10.901 16.324 10.7 15.997L10.395 17.095C10.25 17.606 9.899 18.244 9.676 18.605C10.077 18.763 10.508 18.85 10.955 18.85C14.093 18.85 16.644 16.3 16.644 13.162C16.644 10.025 14.093 7.475 10.955 7.475C7.817 7.475 5.267 10.025 5.267 13.162C5.267 14.404 5.637 15.559 6.28 16.518C6.32 16.473 6.348 16.424 6.389 16.366C6.534 16.154 6.68 15.863 6.801 15.576C6.365 14.861 6.124 14.041 6.124 13.162C6.124 10.497 8.29 8.331 10.955 8.331C13.621 8.331 15.787 10.497 15.787 13.162C15.787 15.828 13.621 17.994 10.955 17.994C10.592 17.994 10.242 17.953 9.905 17.88C10.42 17.158 10.785 16.209 10.994 15.418C11.281 15.748 11.877 16 12.5 16C15 16 17 13.5 17 11.5C17 9.5 15 7 12.5 7C10 7 8 9.5 8 11.5C8 12.5 8.5 13.5 9.5 14C9.7 13.4 9.9 12.8 9.9 12.5C9.9 11.1 11.1 10 12.5 10C13.9 10 15 11.1 15 12.5C15 13.9 13.9 15 12.5 15Z"/>
+                </svg>
+            </button>
+        </section>
+        
+        <section id="about">
+            <h2>온라인 측정 도구 소개</h2>
+            <p>온라인 측정 도구는 간편하게 길이와 각도를 측정할 수 있는 무료 웹 애플리케이션입니다. 별도의 설치 없이 브라우저에서 바로 사용할 수 있으며, 다양한 단위(cm, 인치, 픽셀)를 지원합니다.</p>
+            <p>본 서비스는 디자이너, 학생, 목공예 애호가 등 정확한 측정이 필요한 모든 사용자를 위해 개발되었습니다.</p>
+        </section>
+        
+        <!-- 광고 삽입 위치 4: 하단 배너 -->
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>측정 도구</h3>
+                <ul>
+                    <li><a href="#ruler">온라인 눈금자</a></li>
+                    <li><a href="#protractor">온라인 각도기</a></li>
+                    <li><a href="#">픽셀 측정기</a></li>
+                    <li><a href="#">화면 크기 계산기</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>리소스</h3>
+                <ul>
+                    <li><a href="#guide">사용 가이드</a></li>
+                    <li><a href="#">자주 묻는 질문</a></li>
+                    <li><a href="#">측정 단위 변환표</a></li>
+                    <li><a href="#">블로그</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>회사 정보</h3>
+                <ul>
+                    <li><a href="#about">소개</a></li>
+                    <li><a href="#">개인정보처리방침</a></li>
+                    <li><a href="#">이용약관</a></li>
+                    <li><a href="#">문의하기</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 온라인 측정 도구. 모든 권리 보유.
+        </div>
+    </footer>
+    
+    <!-- 광고 삽입 위치 5: 모바일 스티키 광고 -->
+    <div class="ad-sticky-mobile">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- 모바일스티키광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="2276095347"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+    
+    <script>
+        // 현재 활성화된 도구와 단위 상태
+        let currentTool = 'ruler';
+        let currentUnit = 'cm';
+        let dpi = 96; // 기본 DPI 값
+        
+        // DOM 요소 참조
+        const rulerBtn = document.getElementById('ruler-btn');
+        const protractorBtn = document.getElementById('protractor-btn');
+        const rulerTool = document.getElementById('ruler-tool');
+        const protractorTool = document.getElementById('protractor-tool');
+        const cmBtn = document.getElementById('cm-btn');
+        const inchBtn = document.getElementById('inch-btn');
+        const pxBtn = document.getElementById('px-btn');
+        const rulerContainer = document.getElementById('ruler-container');
+        const dpiCalibration = document.getElementById('dpi-calibration');
+        const currentDpiDisplay = document.getElementById('current-dpi');
+        const rulerSizeSlider = document.getElementById('ruler-size');
+        const ruler = document.getElementById('ruler');
+        const protractor = document.getElementById('protractor');
+        const protractorLine = document.getElementById('protractor-line');
+        const protractorAngle = document.getElementById('protractor-angle');
+        
+        // 화면 정보 요소 참조
+        const screenWidthInfo = document.getElementById('screen-width-info');
+        const screenHeightInfo = document.getElementById('screen-height-info');
+        const screenDpiInfo = document.getElementById('screen-dpi-info');
+        const deviceInfo = document.getElementById('device-info');
+        
+        // DPI 보정 이벤트 리스너
+        dpiCalibration.addEventListener('input', function() {
+            dpi = parseInt(this.value);
+            currentDpiDisplay.textContent = dpi;
+            updateRuler();
+            updateScreenInfo();
+        });
+        
+        // 눈금자 높이 조정 이벤트 리스너
+        rulerSizeSlider.addEventListener('input', function() {
+            const height = parseInt(this.value);
+            ruler.style.height = `${height}px`;
+        });
+        
+        // 도구 선택 이벤트 리스너
+        rulerBtn.addEventListener('click', function() {
+            setActiveTool('ruler');
+        });
+        
+        protractorBtn.addEventListener('click', function() {
+            setActiveTool('protractor');
+        });
+        
+        // 단위 선택 이벤트 리스너
+        cmBtn.addEventListener('click', function() {
+            setActiveUnit('cm');
+        });
+        
+        inchBtn.addEventListener('click', function() {
+            setActiveUnit('inch');
+        });
+        
+        pxBtn.addEventListener('click', function() {
+            setActiveUnit('px');
+        });
+        
+        // 활성 도구 설정 함수
+        function setActiveTool(tool) {
+            currentTool = tool;
+            
+            // 버튼 스타일 업데이트
+            rulerBtn.classList.toggle('active', tool === 'ruler');
+            protractorBtn.classList.toggle('active', tool === 'protractor');
+            
+            // 도구 표시 설정
+            rulerTool.style.display = tool === 'ruler' ? 'block' : 'none';
+            protractorTool.style.display = tool === 'protractor' ? 'block' : 'none';
+            
+            // 도구가 변경될 때 적절한 초기화 수행
+            if (tool === 'ruler') {
+                updateRuler();
+            } else if (tool === 'protractor') {
+                initProtractor();
+            }
+        }
+        
+        // 활성 단위 설정 함수
+        function setActiveUnit(unit) {
+            currentUnit = unit;
+            
+            // 버튼 스타일 업데이트
+            cmBtn.classList.toggle('active', unit === 'cm');
+            inchBtn.classList.toggle('active', unit === 'inch');
+            pxBtn.classList.toggle('active', unit === 'px');
+            
+            // 눈금자 업데이트
+            updateRuler();
+        }
+        
+        // 눈금자 업데이트 함수
+        function updateRuler() {
+            // 눈금자 콘텐츠 초기화
+            rulerContainer.innerHTML = '';
+            
+            // 단위에 따른 설정
+            let unitConfig = {
+                ticks: 0,    // 전체 눈금 수
+                smallStep: 0, // 작은 눈금 간격
+                mediumStep: 0, // 중간 눈금 간격
+                largeStep: 0, // 큰 눈금 간격
+                labelStep: 0, // 레이블 표시 간격
+                unitLabel: '', // 단위 레이블
+                unitFactor: 0  // 픽셀 변환 계수
+            };
+            
+            const rulerWidth = rulerContainer.offsetWidth;
+            
+            switch(currentUnit) {
+                case 'cm':
+                    unitConfig.unitLabel = 'cm';
+                    unitConfig.unitFactor = dpi / 2.54; // 인치당 2.54cm
+                    unitConfig.smallStep = 0.1; // 1mm
+                    unitConfig.mediumStep = 0.5; // 5mm
+                    unitConfig.largeStep = 1.0; // 1cm
+                    unitConfig.labelStep = 1.0; // 1cm마다 레이블
+                    break;
+                case 'inch':
+                    unitConfig.unitLabel = 'in';
+                    unitConfig.unitFactor = dpi; // 인치당 픽셀
+                    unitConfig.smallStep = 1/16; // 1/16 인치
+                    unitConfig.mediumStep = 1/4; // 1/4 인치
+                    unitConfig.largeStep = 1.0; // 1 인치
+                    unitConfig.labelStep = 1.0; // 1 인치마다 레이블
+                    break;
+                case 'px':
+                    unitConfig.unitLabel = 'px';
+                    unitConfig.unitFactor = 1; // 픽셀은 그대로
+                    unitConfig.smallStep = 10; // 10px
+                    unitConfig.mediumStep = 50; // 50px
+                    unitConfig.largeStep = 100; // 100px
+                    unitConfig.labelStep = 100; // 100px마다 레이블
+                    break;
+            }
+            
+            // 눈금자에 표시할 최대 단위 수 계산
+            const maxUnits = rulerWidth / unitConfig.unitFactor;
+            
+            // 눈금 생성
+            for (let i = 0; i <= maxUnits; i += unitConfig.smallStep) {
+                let tickType;
+                let showLabel = false;
+                
+                if (Math.abs(i % unitConfig.largeStep) < 0.001) {
+                    tickType = 'large';
+                    showLabel = Math.abs(i % unitConfig.labelStep) < 0.001;
+                } else if (Math.abs(i % unitConfig.mediumStep) < 0.001) {
+                    tickType = 'medium';
+                } else {
+                    tickType = 'small';
+                }
+                
+                // 눈금 위치 계산 (픽셀)
+                const position = i * unitConfig.unitFactor;
+                
+                // 눈금 요소 생성
+                const tick = document.createElement('div');
+                tick.classList.add('ruler-tick', `ruler-tick-${tickType}`);
+                tick.style.left = `${position}px`;
+                rulerContainer.appendChild(tick);
+                
+                // 레이블 표시
+                if (showLabel) {
+                    const label = document.createElement('div');
+                    label.classList.add('ruler-label');
+                    label.style.left = `${position}px`;
+                    
+                    // 단위에 따른 레이블 형식 지정
+                    let labelText;
+                    switch(currentUnit) {
+                        case 'cm':
+                            labelText = i.toFixed(0);
+                            break;
+                        case 'inch':
+                            labelText = i.toFixed(0);
+                            break;
+                        case 'px':
+                            labelText = i.toFixed(0);
+                            break;
+                    }
+                    
+                    label.textContent = `${labelText}${unitConfig.unitLabel}`;
+                    rulerContainer.appendChild(label);
+                }
+            }
+        }
+        
+        // 각도기 초기화 함수
+        function initProtractor() {
+            // 각도기가 표시되면 보이도록 설정
+            protractor.style.display = 'block';
+            
+            // 각도기 눈금 생성
+            createProtractorTicks();
+            
+            // 드래그 가능한 선 설정
+            let isDragging = false;
+            let currentAngle = 0;
+            
+            protractorLine.addEventListener('mousedown', startDrag);
+            protractorLine.addEventListener('touchstart', startDrag, { passive: false });
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchend', endDrag);
+            
+            function startDrag(e) {
+                e.preventDefault();
+                isDragging = true;
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                
+                const protractorRect = protractor.getBoundingClientRect();
+                const centerX = protractorRect.left + protractorRect.width / 2;
+                const centerY = protractorRect.top + protractorRect.height / 2;
+                
+                let clientX, clientY;
+                
+                if (e.type.startsWith('touch')) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                
+                // 중심점과 마우스 위치 사이의 각도 계산
+                let angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
+                
+                // 각도 범위 조정 (0-360)
+                if (angle < 0) {
+                    angle += 360;
+                }
+                
+                currentAngle = angle;
+                protractorLine.style.transform = `rotate(${angle}deg)`;
+                protractorAngle.textContent = `${Math.round(angle)}°`;
+            }
+            
+            function endDrag() {
+                isDragging = false;
+            }
+        }
+        
+        // 각도기 눈금 생성 함수
+        function createProtractorTicks() {
+            const protractorContainer = document.querySelector('.protractor-container');
+            
+            // 기존 눈금 삭제
+            const existingTicks = document.querySelectorAll('.protractor-tick');
+            existingTicks.forEach(tick => tick.remove());
+            
+            // 10도 간격으로 눈금 생성
+            for (let angle = 0; angle < 360; angle += 10) {
+                const tick = document.createElement('div');
+                tick.classList.add('protractor-tick');
+                tick.style.transform = `rotate(${angle}deg)`;
+                
+                const line = document.createElement('div');
+                line.classList.add('protractor-tick-line');
+                
+                // 주요 눈금(30도 간격)과 보조 눈금 구분
+                if (angle % 30 === 0) {
+                    line.style.width = '150px';
+                    line.style.height = '2px';
+                    
+                    const label = document.createElement('div');
+                    label.classList.add('protractor-tick-label');
+                    label.textContent = angle + '°';
+                    label.style.left = '160px';
+                    tick.appendChild(label);
+                } else {
+                    line.style.width = '10px';
+                    line.style.height = '1px';
+                }
+                
+                tick.appendChild(line);
+                protractorContainer.appendChild(tick);
+            }
+        }
+        
+        // 화면 정보 업데이트 함수
+        function updateScreenInfo() {
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const aspectRatio = (screenWidth / screenHeight).toFixed(2);
+            
+            screenWidthInfo.textContent = `화면 너비: ${screenWidth}px`;
+            screenHeightInfo.textContent = `화면 높이: ${screenHeight}px`;
+            screenDpiInfo.textContent = `화면 DPI(추정): ${dpi}`;
+            
+            // 디바이스 유형 감지
+            let deviceType = 'Desktop';
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                deviceType = 'Mobile';
+                if (/iPad|tablet|Nexus 9/i.test(navigator.userAgent)) {
+                    deviceType = 'Tablet';
+                }
+            }
+            
+            deviceInfo.textContent = `디바이스 유형: ${deviceType} (화면 비율: ${aspectRatio})`;
+        }
+        
+        // 화면 회전 및 크기 변경 감지
+        window.addEventListener('resize', function() {
+            updateRuler();
+            updateScreenInfo();
+        });
+        
+        // 소셜 공유 기능
+        const shareBtns = document.querySelectorAll('.share-btn');
+        shareBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                
+                if (btn.classList.contains('facebook')) {
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, 'facebook-share');
+                } else if (btn.classList.contains('twitter')) {
+                    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, 'twitter-share');
+                } else if (btn.classList.contains('linkedin')) {
+                    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, 'linkedin-share');
+                } else if (btn.classList.contains('pinterest')) {
+                    window.open(`https://pinterest.com/pin/create/button/?url=${url}&description=${title}`, 'pinterest-share');
+                }
+            });
+        });
+        
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', function() {
+            // 초기 DPI 감지 시도
+            detectDPI();
+            
+            // 눈금자 초기화
+            updateRuler();
+            
+            // 화면 정보 업데이트
+            updateScreenInfo();
+        });
+        
+        // DPI 감지 함수
+        function detectDPI() {
+            // DPI 감지를 위한 요소 생성
+            const dpiTestDiv = document.createElement('div');
+            dpiTestDiv.style.width = '1in';
+            dpiTestDiv.style.height = '1in';
+            dpiTestDiv.style.position = 'absolute';
+            dpiTestDiv.style.left = '-100%';
+            dpiTestDiv.style.top = '-100%';
+            document.body.appendChild(dpiTestDiv);
+            
+            // 1인치 너비의 실제 픽셀 수 측정
+            const detectedDpi = dpiTestDiv.offsetWidth;
+            document.body.removeChild(dpiTestDiv);
+            
+            // 감지된 DPI가 유효하면 업데이트
+            if (detectedDpi > 0) {
+                dpi = detectedDpi;
+                dpiCalibration.value = dpi;
+                currentDpiDisplay.textContent = dpi;
+            }
+        }
+    </script>
+</body>
+</html>
