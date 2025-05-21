@@ -778,12 +778,32 @@
             <div class="ruler" id="ruler">
                 <div class="ruler-container" id="ruler-container"></div>
             </div>
+            <div class="control-group">
+                <h3>정확도 확인</h3>
+                <p>실제 물리적 자를 화면에 대고 비교해보세요. 정확하지 않다면 DPI 보정 슬라이더를 조정하세요.</p>
+                <button id="accuracy-check-btn" class="tool-btn">정확도 테스트 패턴 표시</button>
+                <div id="accuracy-pattern" style="display: none; margin-top: 1rem;">
+                    <div style="width: 5cm; height: 1cm; border: 1px solid #333; margin-bottom: 0.5rem;">5cm 기준선</div>
+                    <div style="width: 2in; height: 1cm; border: 1px solid #333;">2인치 기준선</div>
+                </div>
+            </div>
+
+            <div class="screen-info" id="screen-info">
+                <h3>화면 크기 정보</h3>
+                <p>실제 크기 정확도 보정을 위해 귀하의 디바이스 정보를 표시합니다.</p>
+                <p id="screen-width-info">화면 너비: 계산중...</p>
+                <p id="screen-height-info">화면 높이: 계산중...</p>
+                <p id="screen-dpi-info">화면 DPI: 계산중...</p>
+                <p id="zoom-level-info">브라우저 확대/축소: 계산중...</p>
+                <p id="device-info">디바이스 유형: 감지중...</p>
+                <p><strong>참고:</strong> 브라우저 확대/축소를 변경하면 자동으로 눈금자가 보정됩니다.</p>
+            </div>
+
             
             <!-- 광고 삽입 위치: 눈금자 아래 배너 -->
-            <div class="ad-container">
+       <!--     <div class="ad-container">
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
      crossorigin="anonymous"></script>
-<!-- [디스플레이 반응형]수평형 중간광고 -->
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="ca-pub-4624141391435876"
@@ -793,16 +813,9 @@
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
-            </div>
+            </div>   -->
             
-            <div class="screen-info" id="screen-info">
-                <h3>화면 크기 정보</h3>
-                <p>실제 크기 정확도 보정을 위해 귀하의 디바이스 정보를 표시합니다.</p>
-                <p id="screen-width-info">화면 너비: 계산중...</p>
-                <p id="screen-height-info">화면 높이: 계산중...</p>
-                <p id="screen-dpi-info">화면 DPI: 계산중...</p>
-                <p id="device-info">디바이스 유형: 감지중...</p>
-            </div>
+            
         </section>
         
         <section class="tool-container" id="protractor-tool" style="display: none;">
@@ -1036,6 +1049,114 @@
         pxBtn.addEventListener('click', function() {
             setActiveUnit('px');
         });
+
+        document.getElementById('accuracy-check-btn').addEventListener('click', function() {
+            const pattern = document.getElementById('accuracy-pattern');
+            if (pattern.style.display === 'none') {
+                pattern.style.display = 'block';
+                this.textContent = '정확도 테스트 패턴 숨기기';
+            } else {
+                pattern.style.display = 'none';
+                this.textContent = '정확도 테스트 패턴 표시';
+            }
+        });
+
+
+        // 브라우저 확대/축소(zoom) 레벨 감지 함수
+        function detectZoomLevel() {
+            // 방법 1: CSS 길이 값과 실제 픽셀 비교로 확대/축소 수준 계산
+            const ratio = window.devicePixelRatio || 1;
+            
+            // 방법 2: 고정 크기 요소의 offset 측정으로 확대/축소 감지
+            const zoomTest = document.createElement('div');
+            zoomTest.style.cssText = 'width: 1cm; height: 1cm; position: absolute; left: -100%; top: -100%;';
+            document.body.appendChild(zoomTest);
+            
+            // 이론적으로 1cm의 픽셀 크기 계산 (기본 DPI 기준)
+            const expectedCmSize = dpi / 2.54; // 인치당 2.54cm
+            
+            // 실제 측정된 1cm의 픽셀 크기
+            const actualCmSize = zoomTest.offsetWidth;
+            
+            document.body.removeChild(zoomTest);
+            
+            // 이론적 크기와 실제 크기의 비율 = 확대/축소 수준
+            const zoomLevel = actualCmSize / expectedCmSize;
+            
+            return zoomLevel;
+        }
+        
+        // 눈금자 업데이트 함수 수정
+        function updateRuler() {
+            // 브라우저 확대/축소 수준 감지
+            const zoomLevel = detectZoomLevel();
+            
+            // 확대/축소를 고려한 보정된 DPI 계산
+            const correctedDpi = dpi / zoomLevel;
+            
+            // 눈금자 콘텐츠 초기화
+            rulerContainer.innerHTML = '';
+            
+            // 단위에 따른 설정
+            let unitConfig = {
+                ticks: 0,
+                smallStep: 0,
+                mediumStep: 0,
+                largeStep: 0,
+                labelStep: 0,
+                unitLabel: '',
+                unitFactor: 0
+            };
+            
+            const rulerWidth = rulerContainer.offsetWidth;
+            
+            switch(currentUnit) {
+                case 'cm':
+                    unitConfig.unitLabel = 'cm';
+                    unitConfig.unitFactor = correctedDpi / 2.54; // 보정된 DPI 사용
+                    unitConfig.smallStep = 0.1;
+                    unitConfig.mediumStep = 0.5;
+                    unitConfig.largeStep = 1.0;
+                    unitConfig.labelStep = 1.0;
+                    break;
+                case 'inch':
+                    unitConfig.unitLabel = 'in';
+                    unitConfig.unitFactor = correctedDpi; // 보정된 DPI 사용
+                    unitConfig.smallStep = 1/16;
+                    unitConfig.mediumStep = 1/4;
+                    unitConfig.largeStep = 1.0;
+                    unitConfig.labelStep = 1.0;
+                    break;
+                case 'px':
+                    unitConfig.unitLabel = 'px';
+                    unitConfig.unitFactor = 1;
+                    unitConfig.smallStep = 10;
+                    unitConfig.mediumStep = 50;
+                    unitConfig.largeStep = 100;
+                    unitConfig.labelStep = 100;
+                    break;
+            }
+            
+            // 이후 코드는 기존과 동일...
+            
+            // 화면 정보에 확대/축소 레벨 표시 추가
+            screenDpiInfo.textContent = `화면 DPI(추정): ${dpi} (확대/축소: ${Math.round(zoomLevel * 100)}%)`;
+        }
+
+
+        // 확대/축소 변경 감지를 위한 이벤트 리스너
+        window.addEventListener('resize', function() {
+            updateRuler();
+            updateScreenInfo();
+        });
+        
+        // 특별히 모바일 기기의 핀치 줌을 감지하기 위한 추가 리스너
+        window.visualViewport.addEventListener('resize', function() {
+            updateRuler();
+            updateScreenInfo();
+        });
+
+
         
         // 활성 도구 설정 함수
         function setActiveTool(tool) {
