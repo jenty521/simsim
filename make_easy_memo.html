@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags - 다국어 -->
+    <title>Quick Memo Pad | 빠른 메모장 | 快速备忘录</title>
+    <meta name="description" content="Online quick memo pad for easy note-taking, with auto-save and sharing features. | 자동 저장 및 공유 기능이 있는 쉬운 메모 작성을 위한 온라인 빠른 메모장. | 用于轻松记笔记的在线快速备忘录，具有自动保存和共享功能。">
+    <meta name="keywords" content="memo pad, notes, quick notes, online memo, markdown, 메모장, 빠른메모, 온라인메모, 마크다운, 备忘录, 快速笔记, 在线备忘录, markdown">
+    <meta name="author" content="Quick Memo App">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://quickmemoapp.com">
+    <meta property="og:title" content="Quick Memo Pad | 빠른 메모장 | 快速备忘录">
+    <meta property="og:description" content="Online quick memo pad with auto-save and sharing features. | 자동 저장 및 공유 기능이 있는 온라인 빠른 메모장. | 具有自动保存和共享功能的在线快速备忘录。">
+    <meta property="og:image" content="https://quickmemoapp.com/images/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://quickmemoapp.com">
+    <meta property="twitter:title" content="Quick Memo Pad | 빠른 메모장 | 快速备忘录">
+    <meta property="twitter:description" content="Online quick memo pad with auto-save and sharing features. | 자동 저장 및 공유 기능이 있는 온라인 빠른 메모장. | 具有自动保存和共享功能的在线快速备忘录。">
+    <meta property="twitter:image" content="https://quickmemoapp.com/images/twitter-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    
+    <!-- Schema.org markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Quick Memo Pad",
+      "alternateName": "빠른 메모장",
+      "url": "https://quickmemoapp.com",
+      "description": "Online quick memo pad for easy note-taking, with auto-save and sharing features.",
+      "applicationCategory": "Productivity",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary-color: #f8c3cd; /* Sakura pink - pastel color */
+            --secondary-color: #b3e5fc; /* Light blue */
+            --tertiary-color: #dcedc8; /* Light green */
+            --light-color: #ffffff;
+            --dark-color: #333333;
+            --gray-color: #f5f5f5;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+            --border-radius: 10px;
+            --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen,
+                Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            color: var(--dark-color);
+            background-color: var(--gray-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Accessibility - focus styles */
+        :focus {
+            outline: 3px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: #0078d7;
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+
+        a:hover {
+            color: #005a9e;
+            text-decoration: underline;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo img, .logo svg {
+            margin-right: 10px;
+            height: 2rem;
+        }
+
+        /* Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        nav ul li a:hover {
+            color: var(--light-color);
+            text-decoration: none;
+        }
+
+        /* Menu Toggle for Mobile */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark-color);
+            margin-bottom: 5px;
+            border-radius: 3px;
+            transition: all var(--transition-speed);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 150px);
+        }
+
+        /* Memo App Layout */
+        .memo-app {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            overflow: hidden;
+        }
+
+        /* Sidebar - Memo List */
+        .memo-sidebar {
+            background-color: var(--gray-color);
+            padding: 1.5rem;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .memo-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .memo-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+
+        .memo-item {
+            background-color: var(--tertiary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            min-height: 150px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            cursor: pointer;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memo-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .memo-item.active {
+            background-color: var(--primary-color);
+        }
+
+        .memo-item .memo-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .memo-item .memo-preview {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .memo-item .memo-date {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        .memo-item .locked-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+        }
+
+        /* Memo Editor */
+        .memo-editor {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .editor-title-input {
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            padding: 5px 0;
+            width: 100%;
+            background-color: transparent;
+            margin-right: 20px;
+            transition: border-color var(--transition-speed);
+        }
+
+        .editor-title-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .editor-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .editor-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-textarea {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            resize: none;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: border-color var(--transition-speed);
+        }
+
+        .editor-textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .preview-panel {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow-y: auto;
+            background-color: var(--gray-color);
+            display: none;
+        }
+
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .editor-status {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon {
+            padding: 8px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+        }
+
+        .btn svg, .btn img {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #f5a3b1;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #8ecbee;
+        }
+
+        .btn-tertiary {
+            background-color: var(--tertiary-color);
+            color: var(--dark-color);
+        }
+
+        .btn-tertiary:hover {
+            background-color: #c7e2a7;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--dark-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--gray-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed);
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-20px);
+            transition: transform var(--transition-speed);
+            overflow: hidden;
+        }
+
+        .modal-backdrop.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color var(--transition-speed);
+        }
+
+        .modal-close:hover {
+            color: var(--dark-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Settings */
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-group h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: var(--transition-speed);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--transition-speed);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Ad Placeholders */
+        .ad-placeholder {
+            background-color: #f0f0f0;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+        }
+
+        .ad-banner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90px;
+            margin: 20px 0;
+        }
+
+        .ad-sidebar {
+            min-height: 250px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ad-interstitial {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .ad-interstitial.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ad-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 90%;
+            width: 500px;
+        }
+
+        .ad-close {
+            margin-top: 15px;
+        }
+
+        /* Mobile Sticky Ad */
+        .mobile-sticky-ad {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+            z-index: 90;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            padding: 12px 20px;
+            margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 1.5rem 0;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-right: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            transition: color var(--transition-speed);
+        }
+
+        .social-links a:hover {
+            color: var(--light-color);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--dark-color) transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Share Link Input */
+        .share-link-input {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .share-link-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            font-family: var(--font-family);
+        }
+
+        .share-link-input button {
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        /* Markdown Styles for Preview */
+        .markdown-body h1 {
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .markdown-body h2 {
+            font-size: 1.5rem;
+            margin: 1.2rem 0 0.8rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .markdown-body h3 {
+            font-size: 1.3rem;
+            margin: 1rem 0 0.7rem;
+        }
+
+        .markdown-body h4 {
+            font-size: 1.1rem;
+            margin: 0.8rem 0 0.6rem;
+        }
+
+        .markdown-body blockquote {
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+            margin: 1rem 0;
+        }
+
+        .markdown-body pre {
+            background-color: #f6f8fa;
+            padding: 16px;
+            border-radius: 6px;
+            overflow: auto;
+            margin: 1rem 0;
+        }
+
+        .markdown-body code {
+            font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+            background-color: rgba(27, 31, 35, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 85%;
+        }
+
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .markdown-body ul, .markdown-body ol {
+            padding-left: 2em;
+            margin: 1rem 0;
+        }
+
+        .markdown-body img {
+            max-width: 100%;
+            margin: 1rem 0;
+        }
+
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .markdown-body table th, .markdown-body table td {
+            padding: 6px 13px;
+            border: 1px solid #dfe2e5;
+        }
+
+        .markdown-body table tr {
+            background-color: #fff;
+            border-top: 1px solid #c6cbd1;
+        }
+
+        .markdown-body table tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+
+        /* Accessibility - screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .memo-app {
+                grid-template-columns: 1fr;
+            }
+
+            .memo-sidebar {
+                max-height: 300px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .editor-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .editor-title-input {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .editor-options {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .memo-editor {
+                padding: 1.5rem;
+                height: auto;
+            }
+
+            header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+
+            footer .container {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .footer-links ul {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .menu-toggle {
+                display: flex;
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+
+            nav {
+                position: fixed;
+                top: 0;
+                right: -70%;
+                width: 70%;
+                height: 100vh;
+                background-color: var(--light-color);
+                box-shadow: -2px 0 10px var(--shadow-color);
+                transition: right var(--transition-speed);
+                z-index: 99;
+                padding: 5rem 2rem 2rem;
+            }
+
+            nav.active {
+                right: 0;
+            }
+
+            nav ul {
+                flex-direction: column;
+                margin: 0;
+            }
+
+            nav ul li {
+                margin: 1rem 0;
+            }
+
+            .mobile-sticky-ad {
+                display: block;
+            }
+
+            /* Adjust spacing for mobile sticky ad */
+            main {
+                padding-bottom: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .memo-list {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .modal {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2V16C6 17.1 6.9 18 8 18H16" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 6H16M8 10H16M8 14H13" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 22C18.2091 22 20 20.2091 20 18C20 15.7909 18.2091 14 16 14C13.7909 14 12 15.7909 12 18C12 20.2091 13.7909 22 16 22Z" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Quick Memo Pad</span>
+            </div>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#" id="newMemoBtn">New Memo</a></li>
+                    <li><a href="#" id="settingsBtn">Settings</a></li>
+                    <li><a href="#" id="aboutBtn">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 광고 삽입 위치 1: 상단 배너 -->
+    <div class="ad-banner">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 최상단 고정광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="8566506642"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="memo-app">
+                <div class="memo-sidebar">
+                    <div class="memo-controls">
+                        <h2>My Memos</h2>
+                        <button class="btn btn-primary" id="createMemoBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            New
+                        </button>
+                    </div>
+                    <div class="memo-list" id="memoList">
+                        <!-- Memo items will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- 광고 삽입 위치 3: 사이드바 광고 -->
+                    <div class="ad-sidebar">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [오른쪽]사이드바 광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="9830643277"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                    </div>
+                </div>
+
+                <!-- 광고 삽입 위치: 메모 목록과 편집 영역 사이 -->
+                <div class="ad-banner" id="middleAdBanner">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                </div>
+
+                <div class="memo-editor">
+                    <div class="editor-header">
+                        <input type="text" class="editor-title-input" id="memoTitle" placeholder="Memo Title" aria-label="Memo Title">
+                        <div class="editor-options">
+                            <button class="btn btn-outline tooltip" id="previewBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="tooltip-text">Preview</span>
+                            </button>
+                            <button class="btn btn-outline tooltip" id="lockBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="tooltip-text">Lock/Unlock</span>
+                            </button>
+                            <button class="btn btn-outline tooltip" id="shareBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8.59 13.51L15.42 17.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M15.41 6.51L8.59 10.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="tooltip-text">Share</span>
+                            </button>
+                            <button class="btn btn-outline tooltip" id="deleteBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="tooltip-text">Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-content">
+                        <textarea class="editor-textarea" id="memoContent" placeholder="Write your memo here... (Markdown supported)" aria-label="Memo Content"></textarea>
+                        <div class="preview-panel markdown-body" id="previewPanel"></div>
+                    </div>
+                    <div class="editor-footer">
+                        <div class="editor-status" id="editorStatus">Last saved: Never</div>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary" id="copyBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M5 15H4C2.89543 15 2 14.1046 2 13V4C2 2.89543 2.89543 2 4 2H13C14.1046 2 15 2.89543 15 4V5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Copy
+                            </button>
+                            <button class="btn btn-primary" id="saveBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M7 3V8H15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M7 16H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M7 12H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 광고 삽입 위치 4: 하단 배너 -->
+            <div class="ad-banner">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+        </div>
+    </main>
+
+    <!-- 광고 삽입 위치 5: 모바일 스티키 광고 -->
+    <div class="mobile-sticky-ad">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- 모바일스티키광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="2276095347"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-backdrop" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Settings</h3>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <h3>Appearance</h3>
+                    <div class="setting-item">
+                        <span>Dark Mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Font Size</span>
+                        <select id="fontSizeSelect" class="form-select">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3>Editor</h3>
+                    <div class="setting-item">
+                        <span>Auto Save</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSaveToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Auto Save Interval</span>
+                        <select id="autoSaveIntervalSelect" class="form-select">
+                            <option value="5000">5 seconds</option>
+                            <option value="10000" selected>10 seconds</option>
+                            <option value="30000">30 seconds</option>
+                            <option value="60000">1 minute</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <span>Spell Check</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="spellCheckToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3>Privacy</h3>
+                    <div class="setting-item">
+                        <span>Enable Encryption</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="encryptionToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Auto-lock Edited Memos</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoLockToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+            
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline modal-close-btn">Cancel</button>
+                <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="shareModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Memo</h3>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Share your memo with others via a link or on social media.</p>
+                <div class="share-link-input">
+                    <input type="text" id="shareLink" readonly>
+                    <button class="btn btn-primary" id="copyLinkBtn">Copy</button>
+                </div>
+                <div class="social-share" style="margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
+                    <button class="btn btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H6V14H10V22H14V14H18V10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Facebook
+                    </button>
+                    <button class="btn btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23 3.01006C22.0424 3.68553 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 22.6608 4.40277 23 3.01006Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Twitter
+                    </button>
+                    <button class="btn btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 20C4 17 8 17 10 15C11 14 8 14 8 9C8 5.667 9.333 4 12 4C14.667 4 16 5.667 16 9C16 14 13 14 14 15C16 17 20 17 20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Share via Email
+                    </button>
+                </div>
+                
+              
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="aboutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">About Quick Memo Pad</h3>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Quick Memo Pad is a fast, lightweight note-taking app that works right in your browser. No account needed, your notes are saved locally on your device.</p>
+                <h4>Features:</h4>
+                <ul>
+                    <li>Create unlimited sticky notes</li>
+                    <li>Markdown support for rich formatting</li>
+                    <li>Auto-save functionality</li>
+                    <li>Lock notes for read-only mode</li>
+                    <li>Easy sharing options</li>
+                    <li>Works offline</li>
+                </ul>
+                <p>Version: 1.0.0</p>
+                <p>&copy; 2025 Quick Memo Pad</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary modal-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ad-interstitial" id="interstitialAd">
+        <div class="ad-content">
+            <h3>Advertisement</h3>
+            <div class="ad-placeholder" style="height: 300px; margin: 20px 0;">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- 전면광고1 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="8572412553"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+            <button class="btn btn-primary ad-close" id="closeInterstitialBtn">
+                Close (5)
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                &copy; 2025 Quick Memo Pad. All rights reserved.
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H6V14H10V22H14V14H18V10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="Twitter">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M23 3.01006C22.0424 3.68553 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 22.6608 4.40277 23 3.01006Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 11.37C16.1234 12.2022 15.9813 13.0522 15.5938 13.799C15.2063 14.5458 14.5932 15.1514 13.8416 15.5297C13.0901 15.9079 12.2385 16.0396 11.4078 15.9059C10.5771 15.7723 9.80977 15.3801 9.21485 14.7852C8.61993 14.1902 8.22774 13.4229 8.09408 12.5922C7.96042 11.7615 8.09208 10.9099 8.47034 10.1584C8.8486 9.40685 9.4542 8.79374 10.201 8.40624C10.9478 8.01874 11.7978 7.87659 12.63 8C13.4789 8.12588 14.2649 8.52146 14.8717 9.12831C15.4785 9.73515 15.8741 10.5211 16 11.37Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17.5 6.5H17.51" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Utility functions
+        const $ = selector => document.querySelector(selector);
+        const $$ = selector => document.querySelectorAll(selector);
+
+        // App state
+        const state = {
+            memos: [],
+            currentMemoId: null,
+            isEditorDirty: false,
+            isPreviewMode: false,
+            settings: {
+                darkMode: false,
+                fontSize: 'medium',
+                autoSave: true,
+                autoSaveInterval: 10000,
+                spellCheck: false,
+                encryption: false,
+                autoLock: false
+            },
+            autoSaveTimer: null
+        };
+
+        // DOM Elements
+        const elements = {
+            memoList: $('#memoList'),
+            memoTitle: $('#memoTitle'),
+            memoContent: $('#memoContent'),
+            previewPanel: $('#previewPanel'),
+            editorStatus: $('#editorStatus'),
+            previewBtn: $('#previewBtn'),
+            lockBtn: $('#lockBtn'),
+            shareBtn: $('#shareBtn'),
+            deleteBtn: $('#deleteBtn'),
+            saveBtn: $('#saveBtn'),
+            copyBtn: $('#copyBtn'),
+            createMemoBtn: $('#createMemoBtn'),
+            newMemoBtn: $('#newMemoBtn'),
+            settingsBtn: $('#settingsBtn'),
+            aboutBtn: $('#aboutBtn'),
+            menuToggle: $('#menuToggle'),
+            mainNav: $('#mainNav'),
+            shareModal: $('#shareModal'),
+            shareLink: $('#shareLink'),
+            copyLinkBtn: $('#copyLinkBtn'),
+            settingsModal: $('#settingsModal'),
+            aboutModal: $('#aboutModal'),
+            interstitialAd: $('#interstitialAd'),
+            closeInterstitialBtn: $('#closeInterstitialBtn'),
+            toastContainer: $('#toastContainer'),
+            darkModeToggle: $('#darkModeToggle'),
+            fontSizeSelect: $('#fontSizeSelect'),
+            autoSaveToggle: $('#autoSaveToggle'),
+            autoSaveIntervalSelect: $('#autoSaveIntervalSelect'),
+            spellCheckToggle: $('#spellCheckToggle'),
+            encryptionToggle: $('#encryptionToggle'),
+            autoLockToggle: $('#autoLockToggle'),
+            saveSettingsBtn: $('#saveSettingsBtn'),
+            modalCloseBtns: $$('.modal-close, .modal-close-btn')
+        };
+
+        // Simple markdown parser
+        function parseMarkdown(text) {
+            if (!text) return '';
+            
+            // Handle headers (# Header)
+            text = text.replace(/^(#{1,6})\s+(.+)$/gm, (match, hashes, content) => {
+                const level = hashes.length;
+                return `<h${level}>${content}</h${level}>`;
+            });
+            
+            // Bold (text)
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic (*text*)
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Links [text](url)
+            text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            
+            // Images ![alt](url)
+            text = text.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
+            
+            // Lists
+            // Unordered lists
+            text = text.replace(/^\s*[-*+]\s+(.+)$/gm, '<li>$1</li>');
+            text = text.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Ordered lists
+            text = text.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<li>$2</li>');
+            text = text.replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>');
+            
+            // Blockquotes
+            text = text.replace(/^\s*>\s+(.+)$/gm, '<blockquote>$1</blockquote>');
+            
+            // Code blocks
+            text = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            
+            // Inline code
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Horizontal rule
+            text = text.replace(/^---+$/gm, '<hr>');
+            
+            // Paragraphs
+            text = text.replace(/^(?!<[a-z][a-z0-9]*>)(.+)$/gm, '<p>$1</p>');
+            
+            // Line breaks
+            text = text.replace(/\n\n/g, '<br>');
+            
+            return text;
+        }
+
+        // Initialize the app
+        function initApp() {
+            loadSettings();
+            loadMemos();
+            setupEventListeners();
+            initEditor();
+            applySettings();
+            
+            // Create a welcome memo if no memos exist
+            if (state.memos.length === 0) {
+                createWelcomeMemo();
+            }
+        }
+
+        // Create a welcome memo
+        function createWelcomeMemo() {
+            const welcomeMemo = {
+                id: generateId(),
+                title: 'Welcome to Quick Memo Pad',
+                content: `# Welcome to Quick Memo Pad! 👋
+
+## Getting Started
+
+This is your first memo. Here are some tips to get you started:
+
+* Create new memos with the + button
+* Format your text with Markdown
+* Lock memos to prevent editing
+* Share your memos with others
+
+## Markdown Examples
+
+Bold text and *italic text*
+
+- Bullet points
+- Like this
+
+1. Numbered lists
+2. Work too
+
+> This is a blockquote
+
+\`\`\`
+// Code blocks are supported
+function helloWorld() {
+  console.log("Hello World!");
+}
+\`\`\`
+
+[Visit our website](https://example.com)
+
+Enjoy using Quick Memo Pad!`,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                isLocked: false
+            };
+            
+            state.memos.push(welcomeMemo);
+            saveMemos();
+            renderMemoList();
+            selectMemo(welcomeMemo.id);
+        }
+
+        // Generate a unique ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        // Load memos from localStorage
+        function loadMemos() {
+            const savedMemos = localStorage.getItem('quickMemoData');
+            if (savedMemos) {
+                state.memos = JSON.parse(savedMemos);
+                renderMemoList();
+                
+                // Select the most recently updated memo
+                if (state.memos.length > 0) {
+                    const sortedMemos = [...state.memos].sort((a, b) => 
+                        new Date(b.updatedAt) - new Date(a.updatedAt)
+                    );
+                    selectMemo(sortedMemos[0].id);
+                }
+            }
+        }
+
+        // Save memos to localStorage
+        function saveMemos() {
+            localStorage.setItem('quickMemoData', JSON.stringify(state.memos));
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('quickMemoSettings');
+            if (savedSettings) {
+                state.settings = {...state.settings, ...JSON.parse(savedSettings)};
+            }
+            
+            // Update settings UI
+            elements.darkModeToggle.checked = state.settings.darkMode;
+            elements.fontSizeSelect.value = state.settings.fontSize;
+            elements.autoSaveToggle.checked = state.settings.autoSave;
+            elements.autoSaveIntervalSelect.value = state.settings.autoSaveInterval;
+            elements.spellCheckToggle.checked = state.settings.spellCheck;
+            elements.encryptionToggle.checked = state.settings.encryption;
+            elements.autoLockToggle.checked = state.settings.autoLock;
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            localStorage.setItem('quickMemoSettings', JSON.stringify(state.settings));
+        }
+
+        // Apply settings to the UI
+        function applySettings() {
+            // Dark mode
+            if (state.settings.darkMode) {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+            
+            // Font size
+            document.documentElement.style.setProperty('--font-size', state.settings.fontSize);
+            
+            // Spell check
+            elements.memoContent.spellcheck = state.settings.spellCheck;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString(undefined, { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Render the memo list
+        function renderMemoList() {
+            elements.memoList.innerHTML = '';
+            
+            // Sort memos by update date (newest first)
+            const sortedMemos = [...state.memos].sort((a, b) => 
+                new Date(b.updatedAt) - new Date(a.updatedAt)
+            );
+            
+            sortedMemos.forEach(memo => {
+                const memoElement = document.createElement('div');
+                memoElement.className = `memo-item ${memo.id === state.currentMemoId ? 'active' : ''}`;
+                memoElement.dataset.id = memo.id;
+                
+                let previewText = memo.content.substring(0, 100).replace(/[#*_`[\]()]/g, '');
+                
+                memoElement.innerHTML = `
+                    <div class="memo-title">${memo.title || 'Untitled'}</div>
+                    <div class="memo-preview">${previewText}</div>
+                    <div class="memo-date">${formatDate(memo.updatedAt)}</div>
+                    ${memo.isLocked ? '<div class="locked-indicator">🔒</div>' : ''}
+                `;
+                
+                memoElement.addEventListener('click', () => selectMemo(memo.id));
+                elements.memoList.appendChild(memoElement);
+            });
+        }
+
+        // Select a memo
+        function selectMemo(id) {
+            // Save current memo if it's dirty
+            if (state.isEditorDirty && state.currentMemoId) {
+                saveMemo();
+            }
+            
+            state.currentMemoId = id;
+            state.isEditorDirty = false;
+            
+            // Update UI to show active memo
+            $$('.memo-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.id === id);
+            });
+            
+            const memo = state.memos.find(m => m.id === id);
+            if (memo) {
+                // Populate editor
+                elements.memoTitle.value = memo.title || '';
+                elements.memoContent.value = memo.content || '';
+                
+                // Update editor status
+                elements.editorStatus.textContent = `Last saved: ${formatDate(memo.updatedAt)}`;
+                
+                // Handle locked state
+                if (memo.isLocked) {
+                    elements.memoTitle.readOnly = true;
+                    elements.memoContent.readOnly = true;
+                    elements.lockBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="tooltip-text">Unlock</span>
+                    `;
+                } else {
+                    elements.memoTitle.readOnly = false;
+                    elements.memoContent.readOnly = false;
+                    elements.lockBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 11V7C16 4.79086 14.2091 3 12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 11V7C8 4.79086 9.79086 3 12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="tooltip-text">Lock</span>
+                    `;
+                }
+                
+                // Update preview if in preview mode
+                if (state.isPreviewMode) {
+                    updatePreview();
+                }
+            }
+        }
+
+        // Create a new memo
+        function createNewMemo() {
+            const newMemo = {
+                id: generateId(),
+                title: '',
+                content: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                isLocked: false
+            };
+            
+            state.memos.unshift(newMemo);
+            saveMemos();
+            renderMemoList();
+            selectMemo(newMemo.id);
+            elements.memoTitle.focus();
+            
+            showToast('New memo created');
+        }
+
+        // Save the current memo
+        function saveMemo() {
+            if (!state.currentMemoId) return;
+            
+            const currentMemo = state.memos.find(m => m.id === state.currentMemoId);
+            if (currentMemo && !currentMemo.isLocked) {
+                currentMemo.title = elements.memoTitle.value;
+                currentMemo.content = elements.memoContent.value;
+                currentMemo.updatedAt = new Date().toISOString();
+                
+                saveMemos();
+                renderMemoList();
+                
+                elements.editorStatus.textContent = `Last saved: ${formatDate(currentMemo.updatedAt)}`;
+                state.isEditorDirty = false;
+                
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Delete the current memo
+        function deleteMemo() {
+            if (!state.currentMemoId) return;
+            
+            if (confirm('Are you sure you want to delete this memo?')) {
+                const index = state.memos.findIndex(m => m.id === state.currentMemoId);
+                if (index !== -1) {
+                    state.memos.splice(index, 1);
+                    saveMemos();
+                    renderMemoList();
+                    
+                    // Select another memo or clear the editor
+                    if (state.memos.length > 0) {
+                        selectMemo(state.memos[0].id);
+                    } else {
+                        clearEditor();
+                    }
+                    
+                    showToast('Memo deleted');
+                }
+            }
+        }
+
+        // Toggle the lock state of the current memo
+        function toggleLock() {
+            if (!state.currentMemoId) return;
+            
+            const currentMemo = state.memos.find(m => m.id === state.currentMemoId);
+            if (currentMemo) {
+                // Save changes before locking
+                if (!currentMemo.isLocked) {
+                    saveMemo();
+                }
+                
+                currentMemo.isLocked = !currentMemo.isLocked;
+                saveMemos();
+                
+                // Update UI
+                selectMemo(state.currentMemoId);
+                renderMemoList();
+                
+                showToast(currentMemo.isLocked ? 'Memo locked' : 'Memo unlocked');
+            }
+        }
+
+        // Clear the editor
+        function clearEditor() {
+            state.currentMemoId = null;
+            elements.memoTitle.value = '';
+            elements.memoContent.value = '';
+            elements.editorStatus.textContent = 'No memo selected';
+            elements.memoTitle.readOnly = false;
+            elements.memoContent.readOnly = false;
+        }
+
+        // Toggle preview mode
+        function togglePreview() {
+            state.isPreviewMode = !state.isPreviewMode;
+            
+            if (state.isPreviewMode) {
+                updatePreview();
+                elements.previewPanel.style.display = 'block';
+                elements.memoContent.style.display = 'none';
+                elements.previewBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 19L19 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="tooltip-text">Edit</span>
+                `;
+            } else {
+                elements.previewPanel.style.display = 'none';
+                elements.memoContent.style.display = 'block';
+                elements.previewBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="tooltip-text">Preview</span>
+                `;
+            }
+        }
+
+        // Update the preview panel
+        function updatePreview() {
+            if (!state.isPreviewMode) return;
+            
+            const content = elements.memoContent.value;
+            elements.previewPanel.innerHTML = parseMarkdown(content);
+            elements.previewPanel.classList.add('markdown-body');
+        }
+
+        // Share the current memo
+        function shareMemo() {
+            if (!state.currentMemoId) return;
+            
+            // Save memo first
+            saveMemo();
+            
+            // Show interstitial ad
+            showInterstitialAd(() => {
+                // Generate a shareable link
+                const currentMemo = state.memos.find(m => m.id === state.currentMemoId);
+                if (currentMemo) {
+                    const memoData = {
+                        title: currentMemo.title,
+                        content: currentMemo.content
+                    };
+                    
+                    const encodedData = btoa(JSON.stringify(memoData));
+                    const shareUrl = `${window.location.origin}${window.location.pathname}?share=${encodedData}`;
+                    
+                    elements.shareLink.value = shareUrl;
+                    showModal(elements.shareModal);
+                }
+            });
+        }
+
+        // Copy the current memo to clipboard
+        function copyMemoToClipboard() {
+            if (!state.currentMemoId) return;
+            
+            const currentMemo = state.memos.find(m => m.id === state.currentMemoId);
+            if (currentMemo) {
+                const textToCopy = `${currentMemo.title}\n\n${currentMemo.content}`;
+                
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        showToast('Memo copied to clipboard');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        showToast('Failed to copy to clipboard', 'error');
+                    });
+            }
+        }
+
+        // Copy share link to clipboard
+        function copyShareLink() {
+            const shareLink = elements.shareLink.value;
+            
+            navigator.clipboard.writeText(shareLink)
+                .then(() => {
+                    showToast('Share link copied to clipboard');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy share link', 'error');
+                });
+        }
+
+        // Show a modal
+        function showModal(modalElement) {
+            modalElement.classList.add('active');
+        }
+
+        // Hide a modal
+        function hideModal(modalElement) {
+            modalElement.classList.remove('active');
+        }
+
+        // Show an interstitial ad
+        function showInterstitialAd(callback) {
+            elements.interstitialAd.classList.add('active');
+            
+            let countdown = 5;
+            elements.closeInterstitialBtn.textContent = `Close (${countdown})`;
+            
+            const timer = setInterval(() => {
+                countdown--;
+                elements.closeInterstitialBtn.textContent = `Close (${countdown})`;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    elements.closeInterstitialBtn.textContent = 'Close';
+                    elements.closeInterstitialBtn.disabled = false;
+                }
+            }, 1000);
+            
+            elements.closeInterstitialBtn.disabled = true;
+            
+            // Close interstitial
+            elements.closeInterstitialBtn.onclick = () => {
+                elements.interstitialAd.classList.remove('active');
+                if (callback) callback();
+            };
+        }
+
+        // Show a toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '';
+            if (type === 'success') {
+                icon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 4L12 14.01L9 11.01" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>`;
+            } else if (type === 'error') {
+                icon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 9L9 15" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 9L15 15" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>`;
+            }
+            
+            toast.innerHTML = `${icon}<span>${message}</span>`;
+            elements.toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize the editor
+        function initEditor() {
+            // Setup autosave
+            setupAutoSave();
+            
+            // Check for shared memo in URL
+            checkForSharedMemo();
+        }
+
+        // Setup auto-save functionality
+        function setupAutoSave() {
+            if (state.settings.autoSave) {
+                startAutoSave();
+            }
+        }
+
+        // Start auto-save timer
+        function startAutoSave() {
+            // Clear existing timer if any
+            if (state.autoSaveTimer) {
+                clearInterval(state.autoSaveTimer);
+            }
+            
+            // Set new timer
+            state.autoSaveTimer = setInterval(() => {
+                if (state.isEditorDirty && !state.isPreviewMode) {
+                    const saved = saveMemo();
+                    if (saved) {
+                        showToast('Auto-saved');
+                    }
+                }
+            }, state.settings.autoSaveInterval);
+        }
+
+        // Stop auto-save timer
+        function stopAutoSave() {
+            if (state.autoSaveTimer) {
+                clearInterval(state.autoSaveTimer);
+                state.autoSaveTimer = null;
+            }
+        }
+
+        // Check for shared memo in URL
+        function checkForSharedMemo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedData = urlParams.get('share');
+            
+            if (sharedData) {
+                try {
+                    const decodedData = JSON.parse(atob(sharedData));
+                    const newMemo = {
+                        id: generateId(),
+                        title: decodedData.title || 'Shared Memo',
+                        content: decodedData.content || '',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                        isLocked: false
+                    };
+                    
+                    state.memos.unshift(newMemo);
+                    saveMemos();
+                    renderMemoList();
+                    selectMemo(newMemo.id);
+                    
+                    showToast('Shared memo imported');
+                    
+                    // Clean up URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } catch (error) {
+                    console.error('Failed to import shared memo:', error);
+                    showToast('Failed to import shared memo', 'error');
+                }
+            }
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Menu toggle
+            elements.menuToggle.addEventListener('click', () => {
+                elements.mainNav.classList.toggle('active');
+            });
+            
+            // Create new memo buttons
+            elements.createMemoBtn.addEventListener('click', createNewMemo);
+            elements.newMemoBtn.addEventListener('click', () => {
+                elements.mainNav.classList.remove('active');
+                createNewMemo();
+            });
+            
+            // Editor change events
+            elements.memoTitle.addEventListener('input', () => {
+                state.isEditorDirty = true;
+            });
+            
+            elements.memoContent.addEventListener('input', () => {
+                state.isEditorDirty = true;
+                
+                // Update preview if in preview mode
+                if (state.isPreviewMode) {
+                    updatePreview();
+                }
+            });
+            
+            // Button actions
+            elements.previewBtn.addEventListener('click', togglePreview);
+            elements.lockBtn.addEventListener('click', toggleLock);
+            elements.deleteBtn.addEventListener('click', deleteMemo);
+            elements.shareBtn.addEventListener('click', shareMemo);
+            elements.saveBtn.addEventListener('click', () => {
+                showInterstitialAd(() => {
+                    if (saveMemo()) {
+                        showToast('Memo saved');
+                    }
+                });
+            });
+            elements.copyBtn.addEventListener('click', copyMemoToClipboard);
+            elements.copyLinkBtn.addEventListener('click', copyShareLink);
+            
+            // Modal buttons
+            elements.settingsBtn.addEventListener('click', () => {
+                elements.mainNav.classList.remove('active');
+                showModal(elements.settingsModal);
+            });
+            
+            elements.aboutBtn.addEventListener('click', () => {
+                elements.mainNav.classList.remove('active');
+                showModal(elements.aboutModal);
+            });
+            
+            // Close modal buttons
+            elements.modalCloseBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modal = btn.closest('.modal-backdrop');
+                    hideModal(modal);
+                });
+            });
+            
+            // Save settings
+            elements.saveSettingsBtn.addEventListener('click', () => {
+                // Update settings from form
+                state.settings.darkMode = elements.darkModeToggle.checked;
+                state.settings.fontSize = elements.fontSizeSelect.value;
+                state.settings.autoSave = elements.autoSaveToggle.checked;
+                state.settings.autoSaveInterval = parseInt(elements.autoSaveIntervalSelect.value);
+                state.settings.spellCheck = elements.spellCheckToggle.checked;
+                state.settings.encryption = elements.encryptionToggle.checked;
+                state.settings.autoLock = elements.autoLockToggle.checked;
+                
+                // Save and apply settings
+                saveSettings();
+                applySettings();
+                
+                // Update auto-save
+                if (state.settings.autoSave) {
+                    startAutoSave();
+                } else {
+                    stopAutoSave();
+                }
+                
+                hideModal(elements.settingsModal);
+                showToast('Settings saved');
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + S to save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    if (saveMemo()) {
+                        showToast('Memo saved');
+                    }
+                }
+                
+                // Ctrl/Cmd + N for new memo
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    createNewMemo();
+                }
+            });
+            
+            // Prevent accidental navigation when editing
+            window.addEventListener('beforeunload', (e) => {
+                if (state.isEditorDirty) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            });
+        }
+
+        // Initialize the app when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
