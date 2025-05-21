@@ -10,4 +10,5 @@ Allow: /qr_maker_en.html
 Allow: /qr_maker.html
 Allow: /image_size_converter_en.html
 Allow: /image_size_converter.html
+Allow: /internet_speed_check.html
 Disallow:
