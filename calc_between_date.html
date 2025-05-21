@@ -756,24 +756,7 @@
                     </div>
                 </div>
                 
-                <!-- 모바일 네이티브 광고 -->
-                <div class="ad-mobile">
-                    <span class="ad-label">광고</span>
-                    <div class="ad-banner">
-                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- [디스플레이 반응형]수평형 중간광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="1318093088"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-                    </div>
-                </div>
+           
                 
                 <!-- 시간 계산 -->
                 <div id="time-calculator" class="calculator-content">
@@ -2064,30 +2047,7 @@
                 const query = `${formatDate(startDateObj, 'YYYY년 MM월 DD일')}부터 ${formatDate(endDateObj, 'YYYY년 MM월 DD일')}까지`;
                 historyManager.addItem('날짜 간격', query, resultText);
                 
-                // 모바일에서는 결과 사이에 네이티브 광고 표시
-                if (window.innerWidth <= 768) {
-                    const resultContainer = document.getElementById('date-difference-result');
-                    const adMobile = document.createElement('div');
-                    adMobile.className = 'ad-mobile';
-                    adMobile.innerHTML = `
-                        <span class="ad-label">광고</span>
-                        <div class="ad-banner">
-                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- 모바일스티키광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="2276095347"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-                        </div>
-                    `;
-                    resultContainer.parentNode.insertBefore(adMobile, resultContainer.nextSibling);
-                }
+               
             },
             
             // 날짜 더하기/빼기 핸들러
