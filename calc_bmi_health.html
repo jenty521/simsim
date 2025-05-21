@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="무료 BMI 체중 계산기로 건강 상태를 확인하고 권장 체중과 기초 대사량을 계산해보세요.">
+    <meta name="keywords" content="BMI 계산기, 체중 계산기, 건강 계산기, 기초대사량, BMR, 권장 체중, 다이어트, 건강관리">
+    <title>건강 계산기 | BMI, 체중, 기초대사량(BMR) 계산</title>
+    <!-- 파비콘 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
+    
+    <!-- 스타일 시트 -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --text-color: #333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        nav {
+            background-color: var(--dark-color);
+            padding: 0.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 0 0.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover, nav ul li a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .calculator-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .info-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .sidebar {
+            width: 250px;
+            margin-left: 2rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--light-color);
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .bmi-category {
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .underweight {
+            color: var(--warning-color);
+        }
+
+        .normal {
+            color: var(--secondary-color);
+        }
+
+        .overweight {
+            color: var(--warning-color);
+        }
+
+        .obese {
+            color: var(--danger-color);
+        }
+
+        .bmi-meter {
+            height: 30px;
+            background: linear-gradient(to right, #3498db, #2ecc71, #f39c12, #e74c3c);
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .bmi-pointer {
+            position: absolute;
+            top: -15px;
+            width: 3px;
+            height: 40px;
+            background-color: black;
+            transform: translateX(-50%);
+        }
+
+        .bmi-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .bmi-ranges {
+            display: flex;
+            margin-top: 0.5rem;
+        }
+
+        .bmi-range {
+            flex: 1;
+            text-align: center;
+            padding: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .bmi-range-1 {
+            background-color: #3498db;
+            color: white;
+            border-top-left-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+        }
+
+        .bmi-range-2 {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .bmi-range-3 {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .bmi-range-4 {
+            background-color: #e74c3c;
+            color: white;
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-right: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .footer-links a {
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            font-size: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .ad-container {
+            padding: 1rem;
+            background-color: #f5f5f5;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            text-align: center;
+            border: 1px dashed #ddd;
+        }
+
+        .ad-text {
+            color: #777;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .ad-sidebar {
+            height: 300px;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .feature h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .cta-box h2 {
+            color: white;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: var(--transition);
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 모바일 스티키 광고 */
+        .mobile-sticky-ad {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 0.5rem;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .close-ad {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1rem;
+            }
+
+            .mobile-sticky-ad {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 0.25rem 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+
+        /* 접근성 강화 */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* 포커스 표시 강화 */
+        a:focus, button:focus, input:focus, select:focus {
+            outline: 3px solid rgba(52, 152, 219, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Skip Navigation */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+
+    <!-- Schema.org 마크업 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "BMI 및 체중 계산기",
+        "description": "키와 체중을 입력하여 BMI와 권장 체중을 계산하고 건강 상태를 확인할 수 있는 웹 도구입니다.",
+        "url": "https://www.example.com/bmi-calculator",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- 접근성 건너뛰기 링크 -->
+    <a href="#main-content" class="skip-link">메인 컨텐츠로 건너뛰기</a>
+
+    <header>
+        <h1>건강 계산기</h1>
+        <p>BMI, 권장 체중, 기초 대사량을 간편하게 계산하세요</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#bmi-calc">BMI 계산기</a></li>
+            <li><a href="#bmr-calc">기초대사량 계산기</a></li>
+            <li><a href="#health-info">건강 정보</a></li>
+            <li><a href="#faq">자주 묻는 질문</a></li>
+            <li><a href="#contact">문의하기</a></li>
+        </ul>
+    </nav>
+
+    <!-- 광고 삽입 위치 1: 상단 배너 -->
+    <div class="ad-container">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 최상단 고정광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="8566506642"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+
+    <main id="main-content">
+        <section class="calculator-section">
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab active" data-tab="bmi">BMI 계산</div>
+                    <div class="tab" data-tab="bmr">기초대사량 계산</div>
+                </div>
+
+                <!-- BMI 계산기 폼 -->
+                <div id="bmi-calc" class="tab-content active">
+                    <h2>BMI 계산기</h2>
+                    <p>키와 체중을 입력하여 BMI(체질량지수)를 계산하고 건강 상태를 확인하세요.</p>
+                    
+                    <form id="bmi-form">
+                        <div class="form-group">
+                            <label for="height">키 (cm)</label>
+                            <input type="number" id="height" name="height" min="100" max="250" step="0.1" placeholder="예: 170" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="weight">체중 (kg)</label>
+                            <input type="number" id="weight" name="weight" min="30" max="200" step="0.1" placeholder="예: 65" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">성별</label>
+                            <select id="gender" name="gender">
+                                <option value="male">남성</option>
+                                <option value="female">여성</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="age">나이</label>
+                            <input type="number" id="age" name="age" min="15" max="100" placeholder="예: 30" required>
+                        </div>
+                        
+                        <button type="submit">BMI 계산하기</button>
+                    </form>
+                    
+                    <div id="bmi-result" class="result">
+                        <h3>BMI 계산 결과</h3>
+                        <p>귀하의 BMI: <span id="bmi-value"></span></p>
+                        <p class="bmi-category" id="bmi-category"></p>
+                        
+                        <div class="bmi-legend">
+                            <span>저체중</span>
+                            <span>정상</span>
+                            <span>과체중</span>
+                            <span>비만</span>
+                        </div>
+                        
+                        <div class="bmi-meter">
+                            <div class="bmi-pointer" id="bmi-pointer"></div>
+                        </div>
+                        
+                        <div class="bmi-ranges">
+                            <div class="bmi-range bmi-range-1">18.5 미만</div>
+                            <div class="bmi-range bmi-range-2">18.5-24.9</div>
+                            <div class="bmi-range bmi-range-3">25-29.9</div>
+                            <div class="bmi-range bmi-range-4">30 이상</div>
+                        </div>
+                        
+                        <p id="weight-recommendation"></p>
+                        
+                        <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                        <div class="ad-container">
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                        </div>
+                        
+                        <h3>건강한 체중 관리를 위한 팁</h3>
+                        <ul>
+                            <li>규칙적인 운동 습관 유지하기</li>
+                            <li>균형 잡힌 식단 섭취하기</li>
+                            <li>충분한 수분 섭취하기</li>
+                            <li>적절한 수면 취하기</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 기초대사량 계산기 폼 -->
+                <div id="bmr-calc" class="tab-content">
+                    <h2>기초대사량(BMR) 계산기</h2>
+                    <p>나이, 성별, 키, 체중을 바탕으로 기초대사량을 계산하세요.</p>
+                    
+                    <form id="bmr-form">
+                        <div class="form-group">
+                            <label for="bmr-height">키 (cm)</label>
+                            <input type="number" id="bmr-height" name="bmr-height" min="100" max="250" step="0.1" placeholder="예: 170" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bmr-weight">체중 (kg)</label>
+                            <input type="number" id="bmr-weight" name="bmr-weight" min="30" max="200" step="0.1" placeholder="예: 65" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bmr-gender">성별</label>
+                            <select id="bmr-gender" name="bmr-gender">
+                                <option value="male">남성</option>
+                                <option value="female">여성</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bmr-age">나이</label>
+                            <input type="number" id="bmr-age" name="bmr-age" min="15" max="100" placeholder="예: 30" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="activity-level">활동 수준</label>
+                            <select id="activity-level" name="activity-level">
+                                <option value="1.2">거의 운동하지 않음 (사무직)</option>
+                                <option value="1.375">가벼운 운동 (주 1-3일)</option>
+                                <option value="1.55" selected>보통 수준 운동 (주 3-5일)</option>
+                                <option value="1.725">활발한 운동 (주 6-7일)</option>
+                                <option value="1.9">매우 활발한 운동 (육체노동 또는 하루 2회 이상 운동)</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit">기초대사량 계산하기</button>
+                    </form>
+                    
+                    <div id="bmr-result" class="result">
+                        <h3>기초대사량 계산 결과</h3>
+                        <p>귀하의 기초대사량(BMR): <span id="bmr-value"></span> kcal/일</p>
+                        <p>일일 권장 칼로리 섭취량: <span id="tdee-value"></span> kcal/일</p>
+                        
+                        <h4>목표별 권장 칼로리</h4>
+                        <ul>
+                            <li>체중 감량: <span id="weight-loss"></span> kcal/일</li>
+                            <li>체중 유지: <span id="weight-maintain"></span> kcal/일</li>
+                            <li>체중 증가: <span id="weight-gain"></span> kcal/일</li>
+                        </ul>
+                        
+                        <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                        <div class="ad-container">
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                        </div>
+                        
+                        <h3>칼로리 관리 팁</h3>
+                        <ul>
+                            <li>단백질 위주의 식단 구성하기</li>
+                            <li>식사 일지 작성하기</li>
+                            <li>과도한 칼로리 제한은 피하기</li>
+                            <li>물 많이 마시기</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 건강 정보 섹션 -->
+            <div id="health-info" class="card">
+                <h2>BMI 기준 이해하기</h2>
+                <p>BMI(체질량지수)는 체중과 키를 이용해 지방의 양을 추정하는 방법입니다.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>BMI 범위</th>
+                            <th>분류</th>
+                            <th>건강 위험도</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18.5 미만</td>
+                            <td>저체중</td>
+                            <td>영양 부족, 면역력 약화 등의 위험</td>
+                        </tr>
+                        <tr>
+                            <td>18.5 - 24.9</td>
+                            <td>정상 체중</td>
+                            <td>낮음</td>
+                        </tr>
+                        <tr>
+                            <td>25.0 - 29.9</td>
+                            <td>과체중</td>
+                            <td>증가됨</td>
+                        </tr>
+                        <tr>
+                            <td>30.0 이상</td>
+                            <td>비만</td>
+                            <td>고혈압, 당뇨, 심장질환 등의 위험 높음</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                <div class="ad-container">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                </div>
+                
+                <h3>BMI의 한계점</h3>
+                <p>BMI는 간편하게 사용할 수 있는 지표이지만, 근육량, 체형, 성별, 나이 등을 고려하지 않는 한계가 있습니다. 
+                운동선수나 근육량이 많은 사람들은 실제보다 높은 BMI가 나올 수 있으며, 노인은 근육량 감소로 BMI가 정상이더라도 
+                체지방률이 높을 수 있습니다.</p>
+            </div>
+            
+            <!-- 자주 묻는 질문 섹션 -->
+            <div id="faq" class="card">
+                <h2>자주 묻는 질문 (FAQ)</h2>
+                
+                <div class="faq-item">
+                    <h3>BMI와 체지방률은 같은 것인가요?</h3>
+                    <p>아닙니다. BMI는 키와 체중을 이용한 계산값이고, 체지방률은 실제 체내 지방의 비율입니다. 
+                    BMI는 체지방률을 추정하는 간접적인 방법이며, 정확한 체지방률은 체성분 분석을 통해 측정해야 합니다.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>기초대사량(BMR)과 일일 권장 칼로리 섭취량(TDEE)의 차이는 무엇인가요?</h3>
+                    <p>기초대사량(BMR)은 생명 유지에 필요한 최소한의 에너지량이며, 일일 권장 칼로리 섭취량(TDEE)은 
+                    일상 활동과 운동을 포함한 총 에너지 소비량입니다. TDEE는 BMR에 활동 수준을 곱해 계산합니다.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>BMI가 정상 범위인데도 체형이 마음에 들지 않으면 어떻게 해야 하나요?</h3>
+                    <p>BMI가 정상이더라도 체형이 마음에 들지 않는다면, 근력 운동을 통해 체형을 개선할 수 있습니다. 
+                    체중은 유지하면서 체지방을 줄이고 근육량을 늘리는 "체중 재구성(body recomposition)" 방식이 도움이 될 수 있습니다.</p>
+                </div>
+                
+                <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                <div class="ad-container">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>체중 감량을 위한 적절한 속도는 얼마인가요?</h3>
+                    <p>건강한 체중 감량의 속도는 일반적으로 주당 0.5-1kg 정도가 적절합니다. 너무 빠른 체중 감량은 
+                    근육량 감소, 영양 부족, 대사량 저하 등의 부작용을 일으킬 수 있습니다.</p>
+                </div>
+            </div>
+            
+            <!-- 건강 관리 팁 섹션 -->
+            <div class="card">
+                <h2>효과적인 건강 관리 팁</h2>
+                
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">🍎</div>
+                        <h3>균형 잡힌 식단</h3>
+                        <p>다양한 영양소를 섭취하고 과일, 채소, 단백질, 건강한 지방을 포함한 균형 잡힌 식단을 유지하세요.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">🏃‍♂️</div>
+                        <h3>규칙적인 운동</h3>
+                        <p>주 150분 이상의 중강도 유산소 운동과 주 2회 이상의 근력 운동을 통해 신체 건강을 유지하세요.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">😴</div>
+                        <h3>충분한 수면</h3>
+                        <p>성인은 하루 7-9시간의 양질의 수면이 필요합니다. 일정한 수면 시간을 유지하세요.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">🧘‍♀️</div>
+                        <h3>스트레스 관리</h3>
+                        <p>명상, 심호흡, 취미 활동 등을 통해 스트레스를 효과적으로 관리하세요.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 소셜 공유 및 문의하기 섹션 -->
+            <div id="contact" class="card">
+                <h2>건강 정보 공유하기</h2>
+                <p>BMI 계산기가 도움이 되셨나요? 친구들과 공유하세요!</p>
+                
+                <div class="social-share">
+                    <button onclick="shareOnFacebook()" aria-label="페이스북에 공유하기">페이스북에 공유</button>
+                    <button onclick="shareOnTwitter()" aria-label="트위터에 공유하기">트위터에 공유</button>
+                    <button onclick="shareOnKakao()" aria-label="카카오톡에 공유하기">카카오톡에 공유</button>
+                    <button onclick="copyToClipboard()" aria-label="링크 복사하기">링크 복사</button>
+                </div>
+                
+                <h3>문의하기</h3>
+                <p>질문이나 제안사항이 있으시면 아래 이메일로 연락주세요.</p>
+                <p><a href="mailto:contact@example.com">contact@example.com</a></p>
+            </div>
+            
+            <!-- CTA 섹션 -->
+            <div class="cta-box">
+                <h2>건강한 생활을 시작해보세요!</h2>
+                <p>정기적인 건강 체크와 생활 습관 개선으로 더 나은 삶을 만들어가세요.</p>
+                <a href="#bmi-calc" class="cta-btn">지금 BMI 계산하기</a>
+            </div>
+            
+            <!-- 광고 삽입 위치 4: 하단 배너 -->
+            <div class="ad-container">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+        </section>
+        
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <!-- 광고 삽입 위치 3: 사이드바 광고 -->
+            <div class="ad-container ad-sidebar">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [오른쪽]사이드바 광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="9830643277"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+            
+            <div class="card">
+                <h3>관련 건강 계산기</h3>
+                <ul>
+                    <li><a href="#">체지방률 계산기</a></li>
+                    <li><a href="#">일일 칼로리 계산기</a></li>
+                    <li><a href="#">임신 주수 계산기</a></li>
+                    <li><a href="#">타겟 심박수 계산기</a></li>
+                    <li><a href="#">수분 섭취량 계산기</a></li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>최신 건강 정보</h3>
+                <div class="news-item">
+                    <h4>건강한 체중 감량을 위한 5가지 팁</h4>
+                    <p>효과적이고 지속 가능한 체중 감량 방법에 대해 알아보세요.</p>
+                    <a href="#">자세히 보기</a>
+                </div>
+                <div class="news-item">
+                    <h4>식이요법과 운동의 균형</h4>
+                    <p>체중 관리를 위한 식이요법과 운동의 이상적인 조합에 대해 알아보세요.</p>
+                    <a href="#">자세히 보기</a>
+                </div>
+            </div>
+            
+            <!-- 광고 삽입 위치 3: 사이드바 광고 -->
+            <div class="ad-container ad-sidebar">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [오른쪽]사이드바 광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="9830643277"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- 모바일 스티키 광고 -->
+    <div class="mobile-sticky-ad" id="mobile-sticky-ad">
+        <!-- 광고 삽입 위치 5: 모바일 스티키 광고 -->
+        <button class="close-ad" id="close-ad" aria-label="광고 닫기">×</button>
+        <p class="ad-text">광고 - 모바일 전용 건강 앱 추천</p>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- 모바일스티키광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="2276095347"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#">이용약관</a>
+            <a href="#">개인정보처리방침</a>
+            <a href="#">광고문의</a>
+            <a href="#">제휴문의</a>
+            <a href="#">사이트맵</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" aria-label="페이스북">f</a>
+            <a href="#" aria-label="트위터">t</a>
+            <a href="#" aria-label="인스타그램">i</a>
+            <a href="#" aria-label="유튜브">Y</a>
+        </div>
+        
+        <p>&copy; 2025 건강 계산기. All rights reserved.</p>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 문서 로드 완료 후 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // 탭 전환 기능
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // 탭 활성화
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // 콘텐츠 활성화
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.querySelector(`.tab-content[id^="${tabId}"]`).classList.add('active');
+                });
+            });
+            
+            // BMI 계산 폼 제출 처리
+            const bmiForm = document.getElementById('bmi-form');
+            const bmiResult = document.getElementById('bmi-result');
+            
+            bmiForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const height = parseFloat(document.getElementById('height').value) / 100; // cm to m
+                const weight = parseFloat(document.getElementById('weight').value);
+                const gender = document.getElementById('gender').value;
+                const age = parseInt(document.getElementById('age').value);
+                
+                // BMI 계산
+                const bmi = weight / (height * height);
+                
+                // 결과 표시
+                document.getElementById('bmi-value').textContent = bmi.toFixed(1);
+                
+                // BMI 카테고리 판단
+                let category = '';
+                let categoryClass = '';
+                
+                if (bmi < 18.5) {
+                    category = '저체중';
+                    categoryClass = 'underweight';
+                } else if (bmi < 25) {
+                    category = '정상 체중';
+                    categoryClass = 'normal';
+                } else if (bmi < 30) {
+                    category = '과체중';
+                    categoryClass = 'overweight';
+                } else {
+                    category = '비만';
+                    categoryClass = 'obese';
+                }
+                
+                const categoryElement = document.getElementById('bmi-category');
+                categoryElement.textContent = `BMI 카테고리: ${category}`;
+                categoryElement.className = `bmi-category ${categoryClass}`;
+                
+                // BMI 포인터 위치 설정
+                const pointerElement = document.getElementById('bmi-pointer');
+                let pointerPosition = 0;
+                
+                if (bmi < 18.5) {
+                    pointerPosition = (bmi / 18.5) * 25;
+                } else if (bmi < 25) {
+                    pointerPosition = 25 + ((bmi - 18.5) / 6.5) * 25;
+                } else if (bmi < 30) {
+                    pointerPosition = 50 + ((bmi - 25) / 5) * 25;
+                } else {
+                    pointerPosition = 75 + Math.min(((bmi - 30) / 5) * 25, 25);
+                }
+                
+                pointerElement.style.left = `${pointerPosition}%`;
+                
+                // 권장 체중 계산 및 표시
+                const idealWeightMin = 18.5 * height * height;
+                const idealWeightMax = 24.9 * height * height;
+                
+                const weightRecommendationElement = document.getElementById('weight-recommendation');
+                
+                if (bmi < 18.5) {
+                    const weightToGain = idealWeightMin - weight;
+                    weightRecommendationElement.textContent = `건강한 체중 범위에 도달하기 위해 약 ${weightToGain.toFixed(1)}kg 증가가 권장됩니다.`;
+                } else if (bmi > 24.9) {
+                    const weightToLose = weight - idealWeightMax;
+                    weightRecommendationElement.textContent = `건강한 체중 범위에 도달하기 위해 약 ${weightToLose.toFixed(1)}kg 감량이 권장됩니다.`;
+                } else {
+                    weightRecommendationElement.textContent = `귀하의 체중은 건강한 범위 내에 있습니다. 현재 체중 유지를 권장합니다.`;
+                }
+                
+                weightRecommendationElement.innerHTML += `<br>귀하의 키 ${height*100}cm에 대한 건강한 체중 범위는 ${idealWeightMin.toFixed(1)}kg - ${idealWeightMax.toFixed(1)}kg입니다.`;
+                
+                // 결과 표시
+                bmiResult.classList.add('show');
+                
+                // 결과로 스크롤
+                bmiResult.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // BMR 계산 폼 제출 처리
+            const bmrForm = document.getElementById('bmr-form');
+            const bmrResult = document.getElementById('bmr-result');
+            
+            bmrForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const height = parseFloat(document.getElementById('bmr-height').value);
+                const weight = parseFloat(document.getElementById('bmr-weight').value);
+                const gender = document.getElementById('bmr-gender').value;
+                const age = parseInt(document.getElementById('bmr-age').value);
+                const activityLevel = parseFloat(document.getElementById('activity-level').value);
+                
+                // BMR 계산 (해리스-베네딕트 공식)
+                let bmr = 0;
+                if (gender === 'male') {
+                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+                } else {
+                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+                }
+                
+                // TDEE 계산 (BMR * 활동 수준)
+                const tdee = bmr * activityLevel;
+                
+                // 결과 표시
+                document.getElementById('bmr-value').textContent = Math.round(bmr);
+                document.getElementById('tdee-value').textContent = Math.round(tdee);
+                
+                // 목표별 칼로리 계산
+                document.getElementById('weight-loss').textContent = Math.round(tdee - 500);
+                document.getElementById('weight-maintain').textContent = Math.round(tdee);
+                document.getElementById('weight-gain').textContent = Math.round(tdee + 500);
+                
+                // 결과 표시
+                bmrResult.classList.add('show');
+                
+                // 결과로 스크롤
+                bmrResult.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // 모바일 광고 닫기 버튼
+            const closeAdBtn = document.getElementById('close-ad');
+            const mobileAd = document.getElementById('mobile-sticky-ad');
+            
+            if (closeAdBtn && mobileAd) {
+                closeAdBtn.addEventListener('click', () => {
+                    mobileAd.style.display = 'none';
+                });
+            }
+            
+            // 링크 복사 기능
+            window.copyToClipboard = function() {
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = window.location.href;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                alert('링크가 클립보드에 복사되었습니다!');
+            };
+            
+            // 소셜 미디어 공유 기능
+            window.shareOnFacebook = function() {
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(document.title);
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&t=${title}`, '_blank');
+            };
+            
+            window.shareOnTwitter = function() {
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(`${document.title} - BMI & 체중 계산기`);
+                window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank');
+            };
+            
+          
+        });
+    </script>
+</body>
+</html>
