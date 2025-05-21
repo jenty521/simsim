@@ -14,4 +14,5 @@ Allow: /internet_speed_check.html
 Allow: /make_easy_password.html
 Allow: /make_easy_pallet.html
 Allow: /calc_between_date.html
+Allow: /calc_bmi_health.html
 Disallow:
