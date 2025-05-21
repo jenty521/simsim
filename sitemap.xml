@@ -77,5 +77,12 @@
       <lastmod>2025-05-21</lastmod>
       <changefreq>monthly</changefreq>
       <priority>1.0</priority>
+   </url>   
+   <url> 
+      <loc>http://tool.wisenote2.com/make_easy_pallet.html</loc>
+      <lastmod>2025-05-21</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>1.0</priority>
    </url>    
+   
 </urlset>
