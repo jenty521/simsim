@@ -65,5 +65,11 @@
       <lastmod>2025-04-17</lastmod>
       <changefreq>monthly</changefreq>
       <priority>1.0</priority>
-   </url>  
+   </url> 
+   <url>
+      <loc>http://tool.wisenote2.com/internet_speed_check.html</loc>
+      <lastmod>2025-05-21</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>1.0</priority>
+   </url> 
 </urlset>
