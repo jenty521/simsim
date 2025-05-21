@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="무료 온라인 날짜 시간 계산기 - 날짜 간격 계산, 날짜 더하기/빼기, 시간 계산, 타임존 변환 및 작업일 계산을 위한 완벽한 도구">
+    <meta name="keywords" content="날짜 계산기, 시간 계산기, 날짜 간격, 요일 계산, 작업일 계산, 타임존 변환, 나이 계산, 기념일 계산">
+    <meta name="author" content="날짜시간계산기">
+    <meta name="robots" content="index, follow">
+    
+    <title>날짜/시간 계산기 | 간격, 더하기/빼기, 타임존, 작업일 계산</title>
+    
+    <!-- 소셜 미디어 메타 태그 -->
+    <meta property="og:title" content="날짜/시간 계산기">
+    <meta property="og:description" content="간격, 더하기/빼기, 타임존, 작업일까지! 모든 날짜/시간 계산을 한 곳에서">
+    <meta property="og:image" content="https://example.com/date-time-calculator.jpg">
+    <meta property="og:url" content="https://example.com">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Schema.org 마크업 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "날짜/시간 계산기",
+      "description": "날짜 간격 계산, 날짜 더하기/빼기, 시간 계산, 타임존 변환 등 다양한 날짜 시간 계산 기능을 제공합니다.",
+      "operatingSystem": "웹 기반",
+      "applicationCategory": "UtilityApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      }
+    }
+    </script>
+    
+    <style>
+        /* 기본 CSS 리셋 및 전체 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* 접근성을 위한 키보드 포커스 스타일 */
+        :focus {
+            outline: 3px solid #4a90e2;
+            outline-offset: 2px;
+        }
+        
+        /* 헤더 스타일 */
+        header {
+            padding: 1.5rem 0;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            margin-right: 0.5rem;
+            color: #4a90e2;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #4a90e2;
+        }
+        
+        /* 메인 컨테이너 스타일 */
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            gap: 2rem;
+        }
+        
+        /* 주요 콘텐츠 영역 */
+        .content-area {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        /* 사이드바 영역 */
+        .sidebar {
+            width: 300px;
+        }
+        
+        /* 섹션 공통 스타일 */
+        .section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 계산기 탭 스타일 */
+        .calculator-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f5f5f5;
+        }
+        
+        .calculator-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .calculator-tabs::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+        
+        .calculator-tabs::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 1.2rem;
+            background: none;
+            border: none;
+            margin-right: 0.3rem;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #4a90e2;
+            border-bottom: 3px solid #4a90e2;
+        }
+        
+        .tab-btn:hover {
+            color: #4a90e2;
+        }
+        
+        /* 계산기 폼 스타일 */
+        .calculator-content {
+            display: none;
+        }
+        
+        .calculator-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.5rem;
+        }
+        
+        .form-col {
+            flex: 1;
+            padding: 0 0.5rem;
+            min-width: 200px;
+        }
+        
+        /* 버튼 스타일 */
+        .btn {
+            padding: 0.8rem 1.2rem;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3a7bc8;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        /* 결과 스타일 */
+        .result-container {
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #4a90e2;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .result-value {
+            font-size: 1.5rem;
+            color: #4a90e2;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-details {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        /* 히스토리 스타일 */
+        .history-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-query {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        
+        .history-result {
+            color: #4a90e2;
+        }
+        
+        .history-time {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        /* 광고 스타일 */
+        .ad-container {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .ad-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #888;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        .ad-banner {
+            background-color: #e9ecef;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: #777;
+        }
+        
+        .ad-sidebar {
+            min-height: 250px;
+        }
+        
+        .ad-mobile {
+            display: none;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #eee;
+        }
+        
+        /* 푸터 스타일 */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            margin-bottom: 1.5rem;
+            min-width: 200px;
+        }
+        
+        .footer-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links li a:hover {
+            color: #fff;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: #4a90e2;
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            width: 100%;
+            color: #999;
+            font-size: 0.9rem;
+            padding-top: 1rem;
+            border-top: 1px solid #444;
+        }
+
+        /* 툴팁 스타일 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* 모바일 스티키 광고 */
+        .sticky-ad-mobile {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 0.5rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 99;
+            display: none;
+        }
+        
+        /* 반응형 스타일 */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-col {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            nav ul li {
+                margin-left: 0;
+                margin-right: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .sticky-ad-mobile {
+                display: block;
+            }
+            
+            .ad-mobile {
+                display: block;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+            }
+            
+            .calculator-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+            
+            .tab-btn {
+                flex: 0 0 auto;
+            }
+        }
+        
+        /* 접근성 관련 스타일 */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        
+        /* 모듈 단위 스타일링 */
+        .timezone-pairs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .timezone-pair {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 0.8rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .timezone-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .timezone-time {
+            font-size: 1.1rem;
+            color: #4a90e2;
+        }
+        
+        .date-info-item {
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .date-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .info-value {
+            float: right;
+            color: #4a90e2;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">⏱️</span>
+                <span>날짜/시간 계산기</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#date-difference">날짜 간격</a></li>
+                    <li><a href="#date-add-subtract">날짜 +/-</a></li>
+                    <li><a href="#time-calculator">시간 계산</a></li>
+                    <li><a href="#timezone">타임존</a></li>
+                    <li><a href="#workday">작업일</a></li>
+                    <li><a href="#about">소개</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 광고 삽입 위치 1: 상단 배너 -->
+    <div class="ad-container">
+        <span class="ad-label">광고</span>
+        <div class="ad-banner">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 최상단 고정광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="8566506642"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    </div>
+    
+    <main class="main-container">
+        <section class="content-area">
+            <div class="section">
+                <h1 class="section-title">날짜/시간 계산기</h1>
+                <p>날짜 간격 계산, 날짜 더하기/빼기, 시간 계산, 타임존 변환 등 다양한 날짜와 시간 관련 계산을 손쉽게 할 수 있습니다.</p>
+                
+                <div class="calculator-tabs">
+                    <button class="tab-btn active" data-tab="date-difference">날짜 간격 계산</button>
+                    <button class="tab-btn" data-tab="date-add-subtract">날짜 더하기/빼기</button>
+                    <button class="tab-btn" data-tab="time-calculator">시간 계산</button>
+                    <button class="tab-btn" data-tab="timezone-converter">타임존 변환</button>
+                    <button class="tab-btn" data-tab="weekday-calculator">요일 계산</button>
+                    <button class="tab-btn" data-tab="workday-calculator">작업일 계산</button>
+                    <button class="tab-btn" data-tab="age-calculator">나이 계산</button>
+                    <button class="tab-btn" data-tab="countdown">기념일/카운트다운</button>
+                </div>
+                
+                <!-- 날짜 간격 계산 -->
+                <div id="date-difference" class="calculator-content active">
+                    <h2>두 날짜 사이의 간격 계산</h2>
+                    <p>두 날짜 사이의 일수, 주, 월, 년을 계산합니다.</p>
+                    
+                    <form id="date-difference-form">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="date-from">시작 날짜:</label>
+                                    <input type="date" id="date-from" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="date-to">종료 날짜:</label>
+                                    <input type="date" id="date-to" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>포함할 항목:</label>
+                            <div>
+                                <label>
+                                    <input type="checkbox" id="include-end-date" checked> 
+                                    종료 날짜 포함
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">계산하기</button>
+                    </form>
+                    
+                    <div id="date-difference-result" class="result-container" style="display: none;">
+                        <h3 class="result-title">계산 결과</h3>
+                        <div class="result-value" id="days-result"></div>
+                        <div class="result-details" id="detailed-result"></div>
+                    </div>
+                </div>
+                
+                <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                <div class="ad-container">
+                    <span class="ad-label">광고</span>
+                    <div class="ad-banner">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                    </div>
+                </div>
+                
+                <!-- 날짜 더하기/빼기 -->
+                <div id="date-add-subtract" class="calculator-content">
+                    <h2>날짜 더하기/빼기</h2>
+                    <p>특정 날짜에 일, 주, 월, 년을 더하거나 빼서 새로운 날짜를 계산합니다.</p>
+                    
+                    <form id="date-add-subtract-form">
+                        <div class="form-group">
+                            <label for="base-date">기준 날짜:</label>
+                            <input type="date" id="base-date" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="operation">연산:</label>
+                                    <select id="operation" class="form-control">
+                                        <option value="add">더하기 (+)</option>
+                                        <option value="subtract">빼기 (-)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="time-value">값:</label>
+                                    <input type="number" id="time-value" class="form-control" min="1" value="1" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="time-unit">단위:</label>
+                                    <select id="time-unit" class="form-control">
+                                        <option value="days">일</option>
+                                        <option value="weeks">주</option>
+                                        <option value="months">월</option>
+                                        <option value="years">년</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">계산하기</button>
+                    </form>
+                    
+                    <div id="date-add-subtract-result" class="result-container" style="display: none;">
+                        <h3 class="result-title">계산 결과</h3>
+                        <div class="result-value" id="new-date-result"></div>
+                        <div class="result-details" id="new-date-details"></div>
+                    </div>
+                </div>
+                
+                <!-- 모바일 네이티브 광고 -->
+                <div class="ad-mobile">
+                    <span class="ad-label">광고</span>
+                    <div class="ad-banner">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                    </div>
+                </div>
+                
+                <!-- 시간 계산 -->
+                <div id="time-calculator" class="calculator-content">
+                    <h2>시간 계산</h2>
+                    <p>두 시간 사이의 차이를 계산하거나 시간을 더하고 뺍니다.</p>
+                    
+                    <div class="calculator-tabs">
+                        <button class="tab-btn active" data-subtab="time-difference">시간 차이</button>
+                        <button class="tab-btn" data-subtab="time-add-subtract">시간 더하기/빼기</button>
+                    </div>
+                    
+                    <div id="time-difference" class="calculator-content active">
+                        <form id="time-difference-form">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="start-time">시작 시간:</label>
+                                        <input type="time" id="start-time" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="end-time">종료 시간:</label>
+                                        <input type="time" id="end-time" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn">계산하기</button>
+                        </form>
+                        
+                        <div id="time-difference-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">시간 차이</h3>
+                            <div class="result-value" id="time-diff-result"></div>
+                            <div class="result-details" id="time-diff-details"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="time-add-subtract" class="calculator-content">
+                        <form id="time-add-subtract-form">
+                            <div class="form-group">
+                                <label for="base-time">기준 시간:</label>
+                                <input type="time" id="base-time" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="time-operation">연산:</label>
+                                        <select id="time-operation" class="form-control">
+                                            <option value="add">더하기 (+)</option>
+                                            <option value="subtract">빼기 (-)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="hours-value">시간:</label>
+                                        <input type="number" id="hours-value" class="form-control" min="0" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="minutes-value">분:</label>
+                                        <input type="number" id="minutes-value" class="form-control" min="0" max="59" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn">계산하기</button>
+                        </form>
+                        
+                        <div id="time-add-subtract-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">계산 결과</h3>
+                            <div class="result-value" id="new-time-result"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                <div class="ad-container">
+                    <span class="ad-label">광고</span>
+                    <div class="ad-banner">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                    </div>
+                </div>
+                
+                <!-- 타임존 변환 -->
+                <div id="timezone-converter" class="calculator-content">
+                    <h2>타임존 변환</h2>
+                    <p>서로 다른 시간대 간의 시간을 변환합니다.</p>
+                    
+                    <form id="timezone-converter-form">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="source-timezone">출발 시간대:</label>
+                                    <select id="source-timezone" class="form-control" required>
+                                        <option value="Asia/Seoul">서울 (UTC+9)</option>
+                                        <option value="America/New_York">뉴욕 (UTC-5/UTC-4)</option>
+                                        <option value="America/Los_Angeles">로스앤젤레스 (UTC-8/UTC-7)</option>
+                                        <option value="Europe/London">런던 (UTC+0/UTC+1)</option>
+                                        <option value="Europe/Paris">파리 (UTC+1/UTC+2)</option>
+                                        <option value="Asia/Tokyo">도쿄 (UTC+9)</option>
+                                        <option value="Australia/Sydney">시드니 (UTC+10/UTC+11)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="source-datetime">출발 날짜/시간:</label>
+                                    <input type="datetime-local" id="source-datetime" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="target-timezones">목적지 시간대:</label>
+                            <select id="target-timezones" class="form-control" multiple size="5" required>
+                                <option value="Asia/Seoul">서울 (UTC+9)</option>
+                                <option value="America/New_York">뉴욕 (UTC-5/UTC-4)</option>
+                                <option value="America/Los_Angeles">로스앤젤레스 (UTC-8/UTC-7)</option>
+                                <option value="Europe/London">런던 (UTC+0/UTC+1)</option>
+                                <option value="Europe/Paris">파리 (UTC+1/UTC+2)</option>
+                                <option value="Asia/Tokyo">도쿄 (UTC+9)</option>
+                                <option value="Australia/Sydney">시드니 (UTC+10/UTC+11)</option>
+                            </select>
+                            <small>Ctrl 또는 Command 키를 누른 상태에서 여러 항목을 선택할 수 있습니다.</small>
+                        </div>
+                        
+                        <button type="submit" class="btn">변환하기</button>
+                    </form>
+                    
+                    <div id="timezone-converter-result" class="result-container" style="display: none;">
+                        <h3 class="result-title">시간대 변환 결과</h3>
+                        <div id="timezone-results" class="timezone-pairs">
+                            <!-- 결과가 여기에 동적으로 추가됩니다 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 요일 계산 -->
+                <div id="weekday-calculator" class="calculator-content">
+                    <h2>요일 계산</h2>
+                    <p>특정 날짜의 요일을 확인하거나 특정 요일이 포함된 날짜를 찾습니다.</p>
+                    
+                    <div class="calculator-tabs">
+                        <button class="tab-btn active" data-subtab="find-weekday">날짜의 요일 찾기</button>
+                        <button class="tab-btn" data-subtab="find-date-by-weekday">요일로 날짜 찾기</button>
+                    </div>
+                    
+                    <div id="find-weekday" class="calculator-content active">
+                        <form id="find-weekday-form">
+                            <div class="form-group">
+                                <label for="weekday-date">날짜:</label>
+                                <input type="date" id="weekday-date" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn">요일 확인</button>
+                        </form>
+                        
+                        <div id="find-weekday-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">요일 확인 결과</h3>
+                            <div class="result-value" id="weekday-result"></div>
+                            <div class="result-details" id="weekday-details"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="find-date-by-weekday" class="calculator-content">
+                        <form id="find-date-by-weekday-form">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="target-weekday">찾을 요일:</label>
+                                        <select id="target-weekday" class="form-control" required>
+                                            <option value="0">일요일</option>
+                                            <option value="1">월요일</option>
+                                            <option value="2">화요일</option>
+                                            <option value="3">수요일</option>
+                                            <option value="4">목요일</option>
+                                            <option value="5">금요일</option>
+                                            <option value="6">토요일</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="weekday-month">월:</label>
+                                        <select id="weekday-month" class="form-control" required>
+                                            <option value="0">1월</option>
+                                            <option value="1">2월</option>
+                                            <option value="2">3월</option>
+                                            <option value="3">4월</option>
+                                            <option value="4">5월</option>
+                                            <option value="5">6월</option>
+                                            <option value="6">7월</option>
+                                            <option value="7">8월</option>
+                                            <option value="8">9월</option>
+                                            <option value="9">10월</option>
+                                            <option value="10">11월</option>
+                                            <option value="11">12월</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="weekday-year">년도:</label>
+                                        <input type="number" id="weekday-year" class="form-control" min="1900" max="2100" value="2025" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="weekday-occurrence">몇 번째:</label>
+                                <select id="weekday-occurrence" class="form-control" required>
+                                    <option value="1">첫 번째</option>
+                                    <option value="2">두 번째</option>
+                                    <option value="3">세 번째</option>
+                                    <option value="4">네 번째</option>
+                                    <option value="5">다섯 번째 (해당 시)</option>
+                                    <option value="-1">마지막</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn">날짜 찾기</button>
+                        </form>
+                        
+                        <div id="find-date-by-weekday-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">날짜 찾기 결과</h3>
+                            <div class="result-value" id="date-by-weekday-result"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                <div class="ad-container">
+                    <span class="ad-label">광고</span>
+                    <div class="ad-banner">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                    </div>
+                </div>
+                
+                <!-- 작업일 계산 -->
+                <div id="workday-calculator" class="calculator-content">
+                    <h2>작업일 계산</h2>
+                    <p>주말과 공휴일을 제외한 작업일 수를 계산하거나 특정 작업일 이후의 날짜를 찾습니다.</p>
+                    
+                    <div class="calculator-tabs">
+                        <button class="tab-btn active" data-subtab="count-workdays">작업일 수 계산</button>
+                        <button class="tab-btn" data-subtab="find-date-by-workdays">작업일로 날짜 찾기</button>
+                    </div>
+                    
+                    <div id="count-workdays" class="calculator-content active">
+                        <form id="count-workdays-form">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="workday-start-date">시작 날짜:</label>
+                                        <input type="date" id="workday-start-date" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="workday-end-date">종료 날짜:</label>
+                                        <input type="date" id="workday-end-date" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>작업일 설정:</label>
+                                <div>
+                                    <label><input type="checkbox" id="monday-workday" checked> 월요일</label>
+                                    <label><input type="checkbox" id="tuesday-workday" checked> 화요일</label>
+                                    <label><input type="checkbox" id="wednesday-workday" checked> 수요일</label>
+                                    <label><input type="checkbox" id="thursday-workday" checked> 목요일</label>
+                                    <label><input type="checkbox" id="friday-workday" checked> 금요일</label>
+                                    <label><input type="checkbox" id="saturday-workday"> 토요일</label>
+                                    <label><input type="checkbox" id="sunday-workday"> 일요일</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="holidays">공휴일 (선택 사항):</label>
+                                <textarea id="holidays" class="form-control" placeholder="YYYY-MM-DD 형식으로 각 줄에 하나씩 입력하세요. 예: 2025-01-01"></textarea>
+                                <small>각 공휴일을 한 줄에 하나씩 YYYY-MM-DD 형식으로 입력하세요.</small>
+                            </div>
+                            
+                            <button type="submit" class="btn">작업일 계산</button>
+                        </form>
+                        
+                        <div id="count-workdays-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">작업일 계산 결과</h3>
+                            <div class="result-value" id="workdays-count-result"></div>
+                            <div class="result-details" id="workdays-details"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="find-date-by-workdays" class="calculator-content">
+                        <form id="find-date-by-workdays-form">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="workday-base-date">기준 날짜:</label>
+                                        <input type="date" id="workday-base-date" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="workday-count">작업일 수:</label>
+                                        <input type="number" id="workday-count" class="form-control" min="1" value="10" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>작업일 설정:</label>
+                                <div>
+                                    <label><input type="checkbox" id="monday-workday-find" checked> 월요일</label>
+                                    <label><input type="checkbox" id="tuesday-workday-find" checked> 화요일</label>
+                                    <label><input type="checkbox" id="wednesday-workday-find" checked> 수요일</label>
+                                    <label><input type="checkbox" id="thursday-workday-find" checked> 목요일</label>
+                                    <label><input type="checkbox" id="friday-workday-find" checked> 금요일</label>
+                                    <label><input type="checkbox" id="saturday-workday-find"> 토요일</label>
+                                    <label><input type="checkbox" id="sunday-workday-find"> 일요일</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="holidays-find">공휴일 (선택 사항):</label>
+                                <textarea id="holidays-find" class="form-control" placeholder="YYYY-MM-DD 형식으로 각 줄에 하나씩 입력하세요. 예: 2025-01-01"></textarea>
+                                <small>각 공휴일을 한 줄에 하나씩 YYYY-MM-DD 형식으로 입력하세요.</small>
+                            </div>
+                            
+                            <button type="submit" class="btn">날짜 찾기</button>
+                        </form>
+                        
+                        <div id="find-date-by-workdays-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">날짜 찾기 결과</h3>
+                            <div class="result-value" id="date-by-workdays-result"></div>
+                            <div class="result-details" id="date-by-workdays-details"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 나이 계산 -->
+                <div id="age-calculator" class="calculator-content">
+                    <h2>나이 계산</h2>
+                    <p>생년월일을 기준으로 정확한 나이를 계산합니다.</p>
+                    
+                    <form id="age-calculator-form">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="birth-date">생년월일:</label>
+                                    <input type="date" id="birth-date" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="age-calc-date">기준 날짜:</label>
+                                    <input type="date" id="age-calc-date" class="form-control">
+                                    <small>비워두면 오늘 날짜로 계산합니다.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">나이 계산</button>
+                    </form>
+                    
+                    <div id="age-calculator-result" class="result-container" style="display: none;">
+                        <h3 class="result-title">나이 계산 결과</h3>
+                        <div class="result-value" id="age-result"></div>
+                        <div id="age-details">
+                            <div class="date-info-item">
+                                <span class="info-label">만 나이:</span>
+                                <span class="info-value" id="international-age"></span>
+                            </div>
+                            <div class="date-info-item">
+                                <span class="info-label">세는 나이(한국식):</span>
+                                <span class="info-value" id="korean-age"></span>
+                            </div>
+                            <div class="date-info-item">
+                                <span class="info-label">개월 수:</span>
+                                <span class="info-value" id="months-old"></span>
+                            </div>
+                            <div class="date-info-item">
+                                <span class="info-label">일 수:</span>
+                                <span class="info-value" id="days-old"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 광고 삽입 위치 2: 컨텐츠 중간 삽입형 -->
+                <div class="ad-container">
+                    <span class="ad-label">광고</span>
+                    <div class="ad-banner">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이 반응형]수평형 중간광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="1318093088"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                    </div>
+                </div>
+                
+                <!-- 기념일/카운트다운 -->
+                <div id="countdown" class="calculator-content">
+                    <h2>기념일/카운트다운</h2>
+                    <p>특정 날짜까지 남은 일 수를 계산하거나 기념일 관련 날짜를 확인합니다.</p>
+                    
+                    <div class="calculator-tabs">
+                        <button class="tab-btn active" data-subtab="countdown-calc">카운트다운</button>
+                        <button class="tab-btn" data-subtab="anniversary-calc">기념일 계산</button>
+                    </div>
+                    
+                    <div id="countdown-calc" class="calculator-content active">
+                        <form id="countdown-form">
+                            <div class="form-group">
+                                <label for="target-date">목표 날짜:</label>
+                                <input type="date" id="target-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-name">이벤트 이름 (선택 사항):</label>
+                                <input type="text" id="event-name" class="form-control" placeholder="예: 생일, 결혼기념일, 여행">
+                            </div>
+                            <button type="submit" class="btn">카운트다운 계산</button>
+                        </form>
+                        
+                        <div id="countdown-result" class="result-container" style="display: none;">
+                            <h3 class="result-title" id="countdown-event-name">카운트다운</h3>
+                            <div class="result-value" id="days-remaining"></div>
+                            <div class="result-details" id="countdown-details"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="anniversary-calc" class="calculator-content">
+                        <form id="anniversary-form">
+                            <div class="form-group">
+                                <label for="anniversary-date">기준 날짜:</label>
+                                <input type="date" id="anniversary-date" class="form-control" required>
+                                <small>예: 결혼일, 교제 시작일 등</small>
+                            </div>
+                            <button type="submit" class="btn">기념일 계산</button>
+                        </form>
+                        
+                        <div id="anniversary-result" class="result-container" style="display: none;">
+                            <h3 class="result-title">기념일 계산 결과</h3>
+                            <div id="anniversary-list">
+                                <!-- 결과가 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="about" class="section">
+                    <h2 class="section-title">날짜/시간 계산기 소개</h2>
+                    <p>
+                        날짜/시간 계산기는 **날짜와 시간에 관련된 모든 계산을 한 곳에서** 쉽게 할 수 있는 무료 온라인 도구입니다.
+                        두 날짜 사이의 간격 계산, 날짜에 일/주/월/년 더하거나 빼기, 작업일 계산, 타임존 변환 등 다양한 기능을 제공합니다.
+                    </p>
+                    <p>
+                        <strong>주요 기능:</strong>
+                    </p>
+                    <ul>
+                        <li>**두 날짜 사이의 정확한 기간 계산** (일, 주, 월, 년)</li>
+                        <li>**날짜 더하기/빼기** 계산</li>
+                        <li>**시간 계산 및 변환**</li>
+                        <li>**타임존 변환**으로 전 세계 시간 확인</li>
+                        <li>**요일 계산** 및 특정 요일 날짜 찾기</li>
+                        <li>**주말과 공휴일을 제외한 작업일** 계산</li>
+                        <li>**나이 계산** (만 나이, 세는 나이)</li>
+                        <li>**기념일/카운트다운** 계산</li>
+                    </ul>
+                    <p>
+                        회의 일정을 잡거나, 프로젝트 기한을 계산하거나, 여행 계획을 세우거나, 중요한 이벤트까지 남은 시간을 확인하는 등
+                        **일상 생활과 업무에 필요한 모든 날짜/시간 계산**을 이 도구 하나로 해결하세요.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <aside class="sidebar">
+            <!-- 광고 삽입 위치 3: 사이드바 광고 -->
+            <div class="ad-container">
+                <span class="ad-label">광고</span>
+                <div class="ad-banner ad-sidebar">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [오른쪽]사이드바 광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="9830643277"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">자주 찾는 날짜</h2>
+                <div id="popular-dates">
+                    <div class="date-info-item">
+                        <span class="info-label">오늘:</span>
+                        <span class="info-value" id="today-date"></span>
+                    </div>
+                    <div class="date-info-item">
+                        <span class="info-label">이번 주 토요일:</span>
+                        <span class="info-value" id="this-saturday"></span>
+                    </div>
+                    <div class="date-info-item">
+                        <span class="info-label">이번 주 일요일:</span>
+                        <span class="info-value" id="this-sunday"></span>
+                    </div>
+                    <div class="date-info-item">
+                        <span class="info-label">이번 달 마지막 날:</span>
+                        <span class="info-value" id="last-day-of-month"></span>
+                    </div>
+                    <div class="date-info-item">
+                        <span class="info-label">올해 남은 일수:</span>
+                        <span class="info-value" id="days-left-in-year"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">계산 기록</h2>
+                <div id="calculation-history">
+                    <p id="no-history">아직 계산 기록이 없습니다.</p>
+                    <!-- 계산 기록이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">공유하기</h2>
+                <p>이 계산기가 유용하셨나요? 친구들과 공유해보세요:</p>
+                <div class="social-share-buttons">
+                    <button class="btn" onclick="shareOnSocial('facebook')">페이스북에 공유</button>
+                    <button class="btn" onclick="shareOnSocial('twitter')">트위터에 공유</button>
+                    <button class="btn" onclick="shareOnSocial('kakaotalk')">카카오톡으로 공유</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">팁 & 트릭</h2>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <h3>작업일 계산 시 공휴일 포함하기</h3>
+                        <p>공휴일이 많은 기간에는 정확한 작업일 계산을 위해 공휴일 목록을 입력하세요.</p>
+                    </div>
+                    <div class="tip-item">
+                        <h3>타임존 변환 활용하기</h3>
+                        <p>국제 회의를 계획할 때 타임존 변환 기능을 사용하여 모든 참가자에게 적합한 시간을 찾으세요.</p>
+                    </div>
+                    <div class="tip-item">
+                        <h3>기념일 미리 확인하기</h3>
+                        <p>중요한 기념일이나 이벤트는 카운트다운 기능으로 미리 준비하세요.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- 광고 삽입 위치 4: 하단 배너 -->
+    <div class="ad-container">
+        <span class="ad-label">광고</span>
+        <div class="ad-banner">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3 class="footer-title">날짜/시간 계산기</h3>
+                <p>모든 날짜와 시간 계산을 위한 완벽한 온라인 도구</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon" title="페이스북"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="social-icon" title="트위터"><i class="fa fa-twitter"></i></a>
+                    <a href="#" class="social-icon" title="인스타그램"><i class="fa fa-instagram"></i></a>
+                    <a href="#" class="social-icon" title="핀터레스트"><i class="fa fa-pinterest"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">빠른 링크</h3>
+                <ul class="footer-links">
+                    <li><a href="#date-difference">날짜 간격 계산</a></li>
+                    <li><a href="#date-add-subtract">날짜 더하기/빼기</a></li>
+                    <li><a href="#time-calculator">시간 계산</a></li>
+                    <li><a href="#timezone-converter">타임존 변환</a></li>
+                    <li><a href="#weekday-calculator">요일 계산</a></li>
+                    <li><a href="#workday-calculator">작업일 계산</a></li>
+                    <li><a href="#age-calculator">나이 계산</a></li>
+                    <li><a href="#countdown">기념일/카운트다운</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">관련 도구</h3>
+                <ul class="footer-links">
+                    <li><a href="#">단위 변환기</a></li>
+                    <li><a href="#">계산기</a></li>
+                    <li><a href="#">통화 변환기</a></li>
+                    <li><a href="#">할인 계산기</a></li>
+                    <li><a href="#">대출 계산기</a></li>
+                    <li><a href="#">BMI 계산기</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">고객 지원</h3>
+                <ul class="footer-links">
+                    <li><a href="#">자주 묻는 질문</a></li>
+                    <li><a href="#">문의하기</a></li>
+                    <li><a href="#">피드백 보내기</a></li>
+                    <li><a href="#">개인정보처리방침</a></li>
+                    <li><a href="#">이용약관</a></li>
+                </ul>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 날짜/시간 계산기. 모든 권리 보유.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 광고 삽입 위치 5: 모바일 스티키 광고 -->
+    <div class="sticky-ad-mobile">
+        <span class="ad-label">광고</span>
+        <div class="ad-banner" style="height: 50px;">
+           <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- 모바일스티키광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="2276095347"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+    </div>
+    
+    <script>
+        // 현재 시간 및 날짜 가져오기 위한 유틸리티 함수
+        function getCurrentDateTime() {
+            return new Date();
+        }
+        
+        // 날짜 포맷팅 함수
+        function formatDate(date, format = 'YYYY-MM-DD') {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            
+            if (format === 'YYYY-MM-DD') {
+                return `${year}-${month}-${day}`;
+            } else if (format === 'YYYY년 MM월 DD일') {
+                return `${year}년 ${month}월 ${day}일`;
+            } else if (format === 'MM/DD/YYYY') {
+                return `${month}/${day}/${year}`;
+            }
+            
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 시간 포맷팅 함수
+        function formatTime(date, includeSeconds = false) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return includeSeconds ? `${hours}:${minutes}:${seconds}` : `${hours}:${minutes}`;
+        }
+        
+        // 요일 이름 가져오기
+        function getDayName(date, locale = 'ko-KR') {
+            return date.toLocaleDateString(locale, { weekday: 'long' });
+        }
+        
+        // 두 날짜 사이의 일수 계산
+        function getDaysBetween(startDate, endDate, includeEndDate = true) {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+            
+            const end = new Date(endDate);
+            end.setHours(0, 0, 0, 0);
+            
+            const diffTime = end - start;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            return includeEndDate ? diffDays + 1 : diffDays;
+        }
+        
+        // 두 날짜 사이의 상세 기간 계산 (년, 월, 일)
+        function getDetailedPeriod(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            
+            let years = end.getFullYear() - start.getFullYear();
+            let months = end.getMonth() - start.getMonth();
+            let days = end.getDate() - start.getDate();
+            
+            if (days < 0) {
+                const lastMonthDate = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+                days += lastMonthDate;
+                months--;
+            }
+            
+            if (months < 0) {
+                months += 12;
+                years--;
+            }
+            
+            return { years, months, days };
+        }
+        
+        // 날짜에 일/주/월/년 더하기
+        function addToDate(date, value, unit) {
+            const result = new Date(date);
+            
+            switch (unit) {
+                case 'days':
+                    result.setDate(result.getDate() + value);
+                    break;
+                case 'weeks':
+                    result.setDate(result.getDate() + (value * 7));
+                    break;
+                case 'months':
+                    result.setMonth(result.getMonth() + value);
+                    break;
+                case 'years':
+                    result.setFullYear(result.getFullYear() + value);
+                    break;
+            }
+            
+            return result;
+        }
+        
+        // 날짜에 일/주/월/년 빼기
+        function subtractFromDate(date, value, unit) {
+            return addToDate(date, -value, unit);
+        }
+        
+        // 시간 더하기
+        function addTime(time, hours, minutes) {
+            const [h, m] = time.split(':').map(Number);
+            
+            let totalMinutes = h * 60 + m + hours * 60 + minutes;
+            totalMinutes = totalMinutes % (24 * 60); // 24시간 형식으로 정규화
+            
+            if (totalMinutes < 0) {
+                totalMinutes += 24 * 60;
+            }
+            
+            const newHours = Math.floor(totalMinutes / 60);
+            const newMinutes = totalMinutes % 60;
+            
+            return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+        }
+        
+        // 시간 차이 계산
+        function getTimeDifference(startTime, endTime) {
+            const [startHour, startMinute] = startTime.split(':').map(Number);
+            const [endHour, endMinute] = endTime.split(':').map(Number);
+            
+            let startMinutes = startHour * 60 + startMinute;
+            let endMinutes = endHour * 60 + endMinute;
+            
+            if (endMinutes < startMinutes) {
+                endMinutes += 24 * 60; // 다음 날로 넘어가는 경우
+            }
+            
+            const diffMinutes = endMinutes - startMinutes;
+            const hours = Math.floor(diffMinutes / 60);
+            const minutes = diffMinutes % 60;
+            
+            return { hours, minutes, totalMinutes: diffMinutes };
+        }
+        
+        // 작업일 계산
+        function countWorkdays(startDate, endDate, workdays, holidays = []) {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+            
+            const end = new Date(endDate);
+            end.setHours(0, 0, 0, 0);
+            
+            let count = 0;
+            const holidaySet = new Set(holidays.map(h => h.toISOString().split('T')[0]));
+            
+            const current = new Date(start);
+            while (current <= end) {
+                const dayOfWeek = current.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
+                const dateString = current.toISOString().split('T')[0];
+                
+                if (workdays[dayOfWeek] && !holidaySet.has(dateString)) {
+                    count++;
+                }
+                
+                current.setDate(current.getDate() + 1);
+            }
+            
+            return count;
+        }
+        
+        // 특정 날짜로부터 작업일 수 이후의 날짜 찾기
+        function findDateByWorkdays(startDate, workdayCount, workdays, holidays = []) {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+            
+            let count = 0;
+            const holidaySet = new Set(holidays.map(h => h.toISOString().split('T')[0]));
+            
+            const result = new Date(start);
+            while (count < workdayCount) {
+                result.setDate(result.getDate() + 1);
+                
+                const dayOfWeek = result.getDay();
+                const dateString = result.toISOString().split('T')[0];
+                
+                if (workdays[dayOfWeek] && !holidaySet.has(dateString)) {
+                    count++;
+                }
+            }
+            
+            return result;
+        }
+        
+        // 날짜의 요일 찾기
+        function getWeekday(date) {
+            const d = new Date(date);
+            return d.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
+        }
+        
+        // 특정 월의 특정 요일의 n번째 발생 날짜 찾기
+        function findDateByWeekday(year, month, dayOfWeek, occurrence) {
+            const firstDayOfMonth = new Date(year, month, 1);
+            
+            // 첫 번째 요일 찾기
+            let dayOffset = dayOfWeek - firstDayOfMonth.getDay();
+            if (dayOffset < 0) dayOffset += 7;
+            
+            const firstOccurrence = new Date(year, month, 1 + dayOffset);
+            
+            if (occurrence > 0) {
+                // n번째 발생
+                const targetDate = new Date(firstOccurrence);
+                targetDate.setDate(targetDate.getDate() + (occurrence - 1) * 7);
+                
+                // 같은 달인지 확인
+                if (targetDate.getMonth() !== month) {
+                    return null; // 해당 달에 n번째 발생이 없음
+                }
+                
+                return targetDate;
+            } else if (occurrence === -1) {
+                // 마지막 발생
+                const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+                const lastDayDate = new Date(year, month, lastDayOfMonth);
+                
+                let daysToSubtract = lastDayDate.getDay() - dayOfWeek;
+                if (daysToSubtract < 0) daysToSubtract += 7;
+                
+                return new Date(year, month, lastDayOfMonth - daysToSubtract);
+            }
+            
+            return null;
+        }
+        
+        // 나이 계산
+        function calculateAge(birthDate, currentDate = new Date()) {
+            const birth = new Date(birthDate);
+            const now = new Date(currentDate);
+            
+            let years = now.getFullYear() - birth.getFullYear();
+            let months = now.getMonth() - birth.getMonth();
+            let days = now.getDate() - birth.getDate();
+            
+            // 생일이 아직 오지 않은 경우 조정
+            if (months < 0 || (months === 0 && days < 0)) {
+                years--;
+                months += 12;
+            }
+            
+            if (days < 0) {
+                const lastMonthDate = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                days += lastMonthDate;
+                months--;
+            }
+            
+            // 한국식 나이 (세는 나이)
+            const koreanAge = now.getFullYear() - birth.getFullYear() + 1;
+            
+            // 총 개월 수
+            const ageInMonths = years * 12 + months;
+            
+            // 총 일 수
+            const ageInDays = Math.floor((now - birth) / (1000 * 60 * 60 * 24));
+            
+            return {
+                years,         // 만 나이 (년)
+                months,        // 만 나이 (개월 부분)
+                days,          // 만 나이 (일 부분)
+                koreanAge,     // 한국식 나이
+                ageInMonths,   // 총 개월 수
+                ageInDays      // 총 일 수
+            };
+        }
+        
+        // 기념일 계산
+        function calculateAnniversaries(baseDate, currentDate = new Date()) {
+            const base = new Date(baseDate);
+            
+            const anniversaries = [];
+            
+            // 100일, 200일, ... 1000일
+            for (let i = 1; i <= 10; i++) {
+                const days = i * 100;
+                const date = new Date(base);
+                date.setDate(date.getDate() + days);
+                anniversaries.push({
+                    type: '일',
+                    value: days,
+                    date: date,
+                    passed: date < currentDate
+                });
+            }
+            
+            // 1년, 2년, ... 10년
+            for (let i = 1; i <= 10; i++) {
+                const date = new Date(base);
+                date.setFullYear(date.getFullYear() + i);
+                anniversaries.push({
+                    type: '년',
+                    value: i,
+                    date: date,
+                    passed: date < currentDate
+                });
+            }
+            
+            return anniversaries.sort((a, b) => a.date - b.date);
+        }
+        
+        // 계산 기록 관리
+        const historyManager = {
+            history: [],
+            maxItems: 5,
+            
+            addItem: function(type, query, result) {
+                this.history.unshift({
+                    type,
+                    query,
+                    result,
+                    timestamp: new Date()
+                });
+                
+                if (this.history.length > this.maxItems) {
+                    this.history.pop();
+                }
+                
+                this.renderHistory();
+                this.saveHistory();
+            },
+            
+            renderHistory: function() {
+                const container = document.getElementById('calculation-history');
+                const noHistoryElem = document.getElementById('no-history');
+                
+                if (this.history.length === 0) {
+                    noHistoryElem.style.display = 'block';
+                    return;
+                }
+                
+                noHistoryElem.style.display = 'none';
+                
+                container.innerHTML = '';
+                
+                this.history.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    
+                    const time = new Date(item.timestamp).toLocaleTimeString('ko-KR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    historyItem.innerHTML = `
+                        <div class="history-query">${item.query}</div>
+                        <div class="history-result">${item.result}</div>
+                        <div class="history-time">${time}</div>
+                    `;
+                    
+                    container.appendChild(historyItem);
+                });
+            },
+            
+            saveHistory: function() {
+                localStorage.setItem('calculationHistory', JSON.stringify(this.history));
+            },
+            
+            loadHistory: function() {
+                const saved = localStorage.getItem('calculationHistory');
+                if (saved) {
+                    this.history = JSON.parse(saved);
+                    this.renderHistory();
+                }
+            }
+        };
+        
+        // UI 컨트롤러
+        const UIController = {
+            init: function() {
+                this.setupEventListeners();
+                this.setupTabs();
+                this.initializeFormValues();
+                this.updatePopularDates();
+                
+                // 계산 기록 로드
+                historyManager.loadHistory();
+            },
+            
+            setupEventListeners: function() {
+                // 모든 계산 폼에 이벤트 리스너 추가
+                document.getElementById('date-difference-form').addEventListener('submit', this.handleDateDifference);
+                document.getElementById('date-add-subtract-form').addEventListener('submit', this.handleDateAddSubtract);
+                document.getElementById('time-difference-form').addEventListener('submit', this.handleTimeDifference);
+                document.getElementById('time-add-subtract-form').addEventListener('submit', this.handleTimeAddSubtract);
+                document.getElementById('timezone-converter-form').addEventListener('submit', this.handleTimezoneConverter);
+                document.getElementById('find-weekday-form').addEventListener('submit', this.handleFindWeekday);
+                document.getElementById('find-date-by-weekday-form').addEventListener('submit', this.handleFindDateByWeekday);
+                document.getElementById('count-workdays-form').addEventListener('submit', this.handleCountWorkdays);
+                document.getElementById('find-date-by-workdays-form').addEventListener('submit', this.handleFindDateByWorkdays);
+                document.getElementById('age-calculator-form').addEventListener('submit', this.handleAgeCalculator);
+                document.getElementById('countdown-form').addEventListener('submit', this.handleCountdown);
+                document.getElementById('anniversary-form').addEventListener('submit', this.handleAnniversary);
+                
+                // 내비게이션 링크 처리
+                document.querySelectorAll('nav a').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href').substring(1);
+                        
+                        // 해당 탭 활성화
+                        document.querySelectorAll('.tab-btn').forEach(btn => {
+                            if (btn.getAttribute('data-tab') === targetId) {
+                                btn.click();
+                            }
+                        });
+                        
+                        // 해당 섹션으로 스크롤
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+            },
+            
+            setupTabs: function() {
+                // 주요 탭 설정
+                document.querySelectorAll('.calculator-tabs .tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tabContainer = this.closest('.calculator-tabs');
+                        const tabContentClass = this.getAttribute('data-tab') || this.getAttribute('data-subtab');
+                        
+                        // 형제 요소 중 모든 탭 비활성화
+                        tabContainer.querySelectorAll('.tab-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+                        
+                        // 클릭한 탭 활성화
+                        this.classList.add('active');
+                        
+                        // 해당 콘텐츠 영역 찾기
+                        const parent = tabContainer.parentElement;
+                        const contentParent = tabContainer.getAttribute('data-subtab') ? parent : document.querySelector('.section');
+                        
+                        // 모든 콘텐츠 영역 숨기기
+                        contentParent.querySelectorAll('.calculator-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
+                        
+                        // 해당 콘텐츠 영역 표시
+                        const targetContent = document.getElementById(tabContentClass);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                        }
+                    });
+                });
+                
+                // 서브 탭 설정 (시간 계산기, 요일 계산기 등)
+                document.querySelectorAll('[data-subtab]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const subtabContainer = this.closest('.calculator-tabs');
+                        const subtabContent = this.getAttribute('data-subtab');
+                        
+                        // 형제 요소 중 모든 서브탭 비활성화
+                        subtabContainer.querySelectorAll('.tab-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+                        
+                        // 클릭한 서브탭 활성화
+                        this.classList.add('active');
+                        
+                        // 해당 콘텐츠 영역 찾기
+                        const parent = subtabContainer.parentElement;
+                        
+                        // 모든 서브탭 콘텐츠 영역 숨기기
+                        parent.querySelectorAll('.calculator-content').forEach(content => {
+                            if (content.id !== parent.id) {
+                                content.classList.remove('active');
+                            }
+                        });
+                        
+                        // 해당 서브탭 콘텐츠 영역 표시
+                        const targetContent = document.getElementById(subtabContent);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                        }
+                    });
+                });
+            },
+            
+            initializeFormValues: function() {
+                // 오늘 날짜 설정
+                const today = getCurrentDateTime();
+                const todayStr = formatDate(today);
+                
+                // 날짜 입력 필드에 기본값 설정
+                document.getElementById('date-from').value = todayStr;
+                document.getElementById('date-to').value = todayStr;
+                document.getElementById('base-date').value = todayStr;
+                document.getElementById('workday-start-date').value = todayStr;
+                document.getElementById('workday-end-date').value = formatDate(addToDate(today, 7, 'days'));
+                document.getElementById('workday-base-date').value = todayStr;
+                
+                // 생년월일은 20년 전으로 기본값 설정
+                const twentyYearsAgo = new Date(today);
+                twentyYearsAgo.setFullYear(today.getFullYear() - 20);
+                document.getElementById('birth-date').value = formatDate(twentyYearsAgo);
+                document.getElementById('age-calc-date').value = todayStr;
+                
+                // 기념일 날짜는 1년 전으로 기본값 설정
+                const oneYearAgo = new Date(today);
+                oneYearAgo.setFullYear(today.getFullYear() - 1);
+                document.getElementById('anniversary-date').value = formatDate(oneYearAgo);
+                
+                // 목표 날짜는 30일 후로 기본값 설정
+                const thirtyDaysLater = new Date(today);
+                thirtyDaysLater.setDate(today.getDate() + 30);
+                document.getElementById('target-date').value = formatDate(thirtyDaysLater);
+                
+                // 현재 시간 설정
+                const currentTime = formatTime(today);
+                const oneHourLater = formatTime(addToDate(today, 1, 'hours'));
+                
+                document.getElementById('start-time').value = currentTime;
+                document.getElementById('end-time').value = oneHourLater;
+                document.getElementById('base-time').value = currentTime;
+                
+                // 현재 날짜와 시간 설정
+                const now = new Date();
+                const localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                document.getElementById('source-datetime').value = localDatetime;
+            },
+            
+            updatePopularDates: function() {
+                const today = getCurrentDateTime();
+                
+                // 오늘 날짜
+                document.getElementById('today-date').textContent = formatDate(today, 'YYYY년 MM월 DD일');
+                
+                // 이번 주 토요일
+                const thisSaturday = new Date(today);
+                const dayToSaturday = (6 - today.getDay() + 7) % 7 || 7;
+                thisSaturday.setDate(today.getDate() + dayToSaturday);
+                document.getElementById('this-saturday').textContent = formatDate(thisSaturday, 'YYYY년 MM월 DD일');
+                
+                // 이번 주 일요일
+                const thisSunday = new Date(today);
+                const dayToSunday = (0 - today.getDay() + 7) % 7 || 7;
+                thisSunday.setDate(today.getDate() + dayToSunday);
+                document.getElementById('this-sunday').textContent = formatDate(thisSunday, 'YYYY년 MM월 DD일');
+                
+                // 이번 달 마지막 날
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                document.getElementById('last-day-of-month').textContent = formatDate(lastDayOfMonth, 'YYYY년 MM월 DD일');
+                
+                // 올해 남은 일수
+                const lastDayOfYear = new Date(today.getFullYear(), 11, 31);
+                const daysLeftInYear = getDaysBetween(today, lastDayOfYear, true) - 1;
+                document.getElementById('days-left-in-year').textContent = `${daysLeftInYear}일`;
+                
+                // 1시간마다 업데이트
+                setTimeout(this.updatePopularDates.bind(this), 60 * 60 * 1000);
+            },
+            
+            // 날짜 간격 계산 핸들러
+            handleDateDifference: function(e) {
+                e.preventDefault();
+                
+                const dateFrom = document.getElementById('date-from').value;
+                const dateTo = document.getElementById('date-to').value;
+                const includeEndDate = document.getElementById('include-end-date').checked;
+                
+                const days = getDaysBetween(dateFrom, dateTo, includeEndDate);
+                const period = getDetailedPeriod(dateFrom, dateTo);
+                
+                const startDateObj = new Date(dateFrom);
+                const endDateObj = new Date(dateTo);
+                
+                let resultText = '';
+                if (days === 0) {
+                    resultText = '같은 날입니다';
+                } else if (days < 0) {
+                    resultText = `${Math.abs(days)}일 전입니다`;
+                } else {
+                    resultText = `${days}일`;
+                }
+                
+                document.getElementById('days-result').textContent = resultText;
+                
+                let detailedResult = '';
+                if (days !== 0) {
+                    detailedResult += `총 ${Math.abs(days)}일 / ${Math.ceil(Math.abs(days) / 7)}주`;
+                    
+                    if (period.years > 0 || period.months > 0) {
+                        detailedResult += '<br>';
+                        if (period.years > 0) {
+                            detailedResult += `${period.years}년 `;
+                        }
+                        if (period.months > 0) {
+                            detailedResult += `${period.months}개월 `;
+                        }
+                        if (period.days > 0) {
+                            detailedResult += `${period.days}일`;
+                        }
+                    }
+                }
+                
+                document.getElementById('detailed-result').innerHTML = detailedResult;
+                document.getElementById('date-difference-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const query = `${formatDate(startDateObj, 'YYYY년 MM월 DD일')}부터 ${formatDate(endDateObj, 'YYYY년 MM월 DD일')}까지`;
+                historyManager.addItem('날짜 간격', query, resultText);
+                
+                // 모바일에서는 결과 사이에 네이티브 광고 표시
+                if (window.innerWidth <= 768) {
+                    const resultContainer = document.getElementById('date-difference-result');
+                    const adMobile = document.createElement('div');
+                    adMobile.className = 'ad-mobile';
+                    adMobile.innerHTML = `
+                        <span class="ad-label">광고</span>
+                        <div class="ad-banner">
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- 모바일스티키광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="2276095347"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+                        </div>
+                    `;
+                    resultContainer.parentNode.insertBefore(adMobile, resultContainer.nextSibling);
+                }
+            },
+            
+            // 날짜 더하기/빼기 핸들러
+            handleDateAddSubtract: function(e) {
+                e.preventDefault();
+                
+                const baseDate = document.getElementById('base-date').value;
+                const operation = document.getElementById('operation').value;
+                const timeValue = parseInt(document.getElementById('time-value').value);
+                const timeUnit = document.getElementById('time-unit').value;
+                
+                let newDate;
+                if (operation === 'add') {
+                    newDate = addToDate(baseDate, timeValue, timeUnit);
+                } else {
+                    newDate = subtractFromDate(baseDate, timeValue, timeUnit);
+                }
+                
+                const baseDateObj = new Date(baseDate);
+                const dayDiff = getDaysBetween(baseDate, newDate, true) - 1;
+                
+                const unitText = {
+                    'days': '일',
+                    'weeks': '주',
+                    'months': '개월',
+                    'years': '년'
+                }[timeUnit];
+                
+                document.getElementById('new-date-result').textContent = formatDate(newDate, 'YYYY년 MM월 DD일') + ` (${getDayName(newDate)})`;
+                
+                const opText = operation === 'add' ? '더한' : '뺀';
+                document.getElementById('new-date-details').textContent = `${formatDate(baseDateObj, 'YYYY년 MM월 DD일')}에서 ${timeValue}${unitText}을(를) ${opText} 날짜입니다.`;
+                
+                document.getElementById('date-add-subtract-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const opSymbol = operation === 'add' ? '+' : '-';
+                const query = `${formatDate(baseDateObj, 'YYYY년 MM월 DD일')} ${opSymbol} ${timeValue}${unitText}`;
+                historyManager.addItem('날짜 계산', query, formatDate(newDate, 'YYYY년 MM월 DD일'));
+            },
+            
+            // 시간 차이 계산 핸들러
+            handleTimeDifference: function(e) {
+                e.preventDefault();
+                
+                const startTime = document.getElementById('start-time').value;
+                const endTime = document.getElementById('end-time').value;
+                
+                const timeDiff = getTimeDifference(startTime, endTime);
+                
+                let resultText = '';
+                if (timeDiff.hours > 0) {
+                    resultText += `${timeDiff.hours}시간 `;
+                }
+                if (timeDiff.minutes > 0 || timeDiff.hours === 0) {
+                    resultText += `${timeDiff.minutes}분`;
+                }
+                
+                document.getElementById('time-diff-result').textContent = resultText;
+                document.getElementById('time-diff-details').textContent = `총 ${timeDiff.totalMinutes}분`;
+                document.getElementById('time-difference-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const query = `${startTime}부터 ${endTime}까지`;
+                historyManager.addItem('시간 차이', query, resultText);
+            },
+            
+            // 시간 더하기/빼기 핸들러
+            handleTimeAddSubtract: function(e) {
+                e.preventDefault();
+                
+                const baseTime = document.getElementById('base-time').value;
+                const operation = document.getElementById('time-operation').value;
+                const hoursValue = parseInt(document.getElementById('hours-value').value) || 0;
+                const minutesValue = parseInt(document.getElementById('minutes-value').value) || 0;
+                
+                let newTime;
+                if (operation === 'add') {
+                    newTime = addTime(baseTime, hoursValue, minutesValue);
+                } else {
+                    newTime = addTime(baseTime, -hoursValue, -minutesValue);
+                }
+                
+                document.getElementById('new-time-result').textContent = newTime;
+                document.getElementById('time-add-subtract-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const opSymbol = operation === 'add' ? '+' : '-';
+                let opText = '';
+                if (hoursValue > 0) opText += `${hoursValue}시간 `;
+                if (minutesValue > 0) opText += `${minutesValue}분`;
+                const query = `${baseTime} ${opSymbol} ${opText}`;
+                historyManager.addItem('시간 계산', query, newTime);
+            },
+            
+            // 타임존 변환 핸들러
+            handleTimezoneConverter: function(e) {
+                e.preventDefault();
+                
+                const sourceTimezone = document.getElementById('source-timezone').value;
+                const sourceDatetime = document.getElementById('source-datetime').value;
+                const targetTimezones = Array.from(document.getElementById('target-timezones').selectedOptions).map(option => option.value);
+                
+                if (targetTimezones.length === 0) {
+                    alert('최소 하나 이상의 목적지 시간대를 선택해주세요.');
+                    return;
+                }
+                
+                const sourceDate = new Date(sourceDatetime);
+                
+                const timezoneResults = document.getElementById('timezone-results');
+                timezoneResults.innerHTML = '';
+                
+                targetTimezones.forEach(timezone => {
+                    const timezoneOptionElement = document.querySelector(`#target-timezones option[value="${timezone}"]`);
+                    const timezoneName = timezoneOptionElement ? timezoneOptionElement.textContent : timezone;
+                    
+                    const options = {
+                        timeZone: timezone,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    };
+                    
+                    const localTime = sourceDate.toLocaleString('ko-KR', options);
+                    
+                    const timezoneElement = document.createElement('div');
+                    timezoneElement.className = 'timezone-pair';
+                    timezoneElement.innerHTML = `
+                        <div class="timezone-name">${timezoneName}</div>
+                        <div class="timezone-time">${localTime}</div>
+                    `;
+                    
+                    timezoneResults.appendChild(timezoneElement);
+                });
+                
+                document.getElementById('timezone-converter-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const sourceOption = document.querySelector(`#source-timezone option[value="${sourceTimezone}"]`);
+                const sourceTimezoneName = sourceOption ? sourceOption.textContent : sourceTimezone;
+                const query = `${sourceTimezoneName} ${sourceDate.toLocaleString('ko-KR', { hour: '2-digit', minute: '2-digit' })}`;
+                historyManager.addItem('타임존 변환', query, `${targetTimezones.length}개 타임존 변환`);
+            },
+            
+            // 요일 찾기 핸들러
+            handleFindWeekday: function(e) {
+                e.preventDefault();
+                
+                const dateValue = document.getElementById('weekday-date').value;
+                const date = new Date(dateValue);
+                
+                const weekdayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                const weekday = getWeekday(date);
+                
+                document.getElementById('weekday-result').textContent = weekdayNames[weekday];
+                document.getElementById('weekday-details').textContent = `${formatDate(date, 'YYYY년 MM월 DD일')}은(는) ${weekdayNames[weekday]}입니다.`;
+                document.getElementById('find-weekday-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const query = formatDate(date, 'YYYY년 MM월 DD일');
+                historyManager.addItem('요일 찾기', query, weekdayNames[weekday]);
+            },
+            
+            // 요일로 날짜 찾기 핸들러
+            handleFindDateByWeekday: function(e) {
+                e.preventDefault();
+                
+                const targetWeekday = parseInt(document.getElementById('target-weekday').value);
+                const month = parseInt(document.getElementById('weekday-month').value);
+                const year = parseInt(document.getElementById('weekday-year').value);
+                const occurrence = parseInt(document.getElementById('weekday-occurrence').value);
+                
+                const weekdayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+                
+                const result = findDateByWeekday(year, month, targetWeekday, occurrence);
+                
+                if (result) {
+                    document.getElementById('date-by-weekday-result').textContent = `${formatDate(result, 'YYYY년 MM월 DD일')} (${weekdayNames[targetWeekday]})`;
+                } else {
+                    document.getElementById('date-by-weekday-result').textContent = `${year}년 ${monthNames[month]}에 ${occurrence}번째 ${weekdayNames[targetWeekday]}이(가) 없습니다.`;
+                }
+                
+                document.getElementById('find-date-by-weekday-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                let occurrenceText = '';
+                if (occurrence === -1) {
+                    occurrenceText = '마지막';
+                } else {
+                    occurrenceText = ['첫', '두', '세', '네', '다섯'][occurrence - 1] + '번째';
+                }
+                
+                const query = `${year}년 ${monthNames[month]}의 ${occurrenceText} ${weekdayNames[targetWeekday]}`;
+                historyManager.addItem('날짜 찾기', query, result ? formatDate(result, 'YYYY년 MM월 DD일') : '없음');
+            },
+            
+            // 작업일 수 계산 핸들러
+            handleCountWorkdays: function(e) {
+                e.preventDefault();
+                
+                const startDate = document.getElementById('workday-start-date').value;
+                const endDate = document.getElementById('workday-end-date').value;
+                const workdays = [
+                    document.getElementById('sunday-workday').checked,
+                    document.getElementById('monday-workday').checked,
+                    document.getElementById('tuesday-workday').checked,
+                    document.getElementById('wednesday-workday').checked,
+                    document.getElementById('thursday-workday').checked,
+                    document.getElementById('friday-workday').checked,
+                    document.getElementById('saturday-workday').checked
+                ];
+                
+                // 공휴일 처리
+                const holidaysText = document.getElementById('holidays').value.trim();
+                const holidays = holidaysText ? holidaysText.split('\n').map(h => new Date(h.trim())) : [];
+                
+                const workdayCount = countWorkdays(startDate, endDate, workdays, holidays);
+                
+                document.getElementById('workdays-count-result').textContent = `${workdayCount}일`;
+                
+                const totalDays = getDaysBetween(startDate, endDate, true);
+                document.getElementById('workdays-details').textContent = `총 ${totalDays}일 중 ${workdayCount}일이 작업일입니다.`;
+                
+                document.getElementById('count-workdays-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const startObj = new Date(startDate);
+                const endObj = new Date(endDate);
+                const query = `${formatDate(startObj, 'YYYY년 MM월 DD일')}부터 ${formatDate(endObj, 'YYYY년 MM월 DD일')}까지 작업일`;
+                historyManager.addItem('작업일 계산', query, `${workdayCount}일`);
+            },
+            
+            // 작업일로 날짜 찾기 핸들러
+            handleFindDateByWorkdays: function(e) {
+                e.preventDefault();
+                
+                const baseDate = document.getElementById('workday-base-date').value;
+                const workdayCount = parseInt(document.getElementById('workday-count').value);
+                const workdays = [
+                    document.getElementById('sunday-workday-find').checked,
+                    document.getElementById('monday-workday-find').checked,
+                    document.getElementById('tuesday-workday-find').checked,
+                    document.getElementById('wednesday-workday-find').checked,
+                    document.getElementById('thursday-workday-find').checked,
+                    document.getElementById('friday-workday-find').checked,
+                    document.getElementById('saturday-workday-find').checked
+                ];
+                
+                // 공휴일 처리
+                const holidaysText = document.getElementById('holidays-find').value.trim();
+                const holidays = holidaysText ? holidaysText.split('\n').map(h => new Date(h.trim())) : [];
+                
+                const resultDate = findDateByWorkdays(baseDate, workdayCount, workdays, holidays);
+                
+                document.getElementById('date-by-workdays-result').textContent = `${formatDate(resultDate, 'YYYY년 MM월 DD일')} (${getDayName(resultDate)})`;
+                
+                const totalDays = getDaysBetween(baseDate, resultDate, false);
+                document.getElementById('date-by-workdays-details').textContent = `${formatDate(new Date(baseDate), 'YYYY년 MM월 DD일')}부터 ${workdayCount}작업일 이후는 ${formatDate(resultDate, 'YYYY년 MM월 DD일')}입니다. (총 ${totalDays}일)`;
+                
+                document.getElementById('find-date-by-workdays-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const baseObj = new Date(baseDate);
+                const query = `${formatDate(baseObj, 'YYYY년 MM월 DD일')}부터 ${workdayCount}작업일 후`;
+                historyManager.addItem('작업일 계산', query, formatDate(resultDate, 'YYYY년 MM월 DD일'));
+            },
+            
+            // 나이 계산 핸들러
+            handleAgeCalculator: function(e) {
+                e.preventDefault();
+                
+                const birthDate = document.getElementById('birth-date').value;
+                let calcDate = document.getElementById('age-calc-date').value;
+                
+                if (!calcDate) {
+                    calcDate = formatDate(getCurrentDateTime());
+                    document.getElementById('age-calc-date').value = calcDate;
+                }
+                
+                const ageDetail = calculateAge(birthDate, calcDate);
+                
+                let ageText = '';
+                if (ageDetail.years > 0) {
+                    ageText = `만 ${ageDetail.years}세`;
+                    if (ageDetail.months > 0) {
+                        ageText += ` ${ageDetail.months}개월`;
+                    }
+                } else if (ageDetail.months > 0) {
+                    ageText = `만 ${ageDetail.months}개월`;
+                    if (ageDetail.days > 0) {
+                        ageText += ` ${ageDetail.days}일`;
+                    }
+                } else {
+                    ageText = `만 ${ageDetail.days}일`;
+                }
+                
+                document.getElementById('age-result').textContent = ageText;
+                document.getElementById('international-age').textContent = `${ageDetail.years}세`;
+                document.getElementById('korean-age').textContent = `${ageDetail.koreanAge}세`;
+                document.getElementById('months-old').textContent = `${ageDetail.ageInMonths}개월`;
+                document.getElementById('days-old').textContent = `${ageDetail.ageInDays}일`;
+                
+                document.getElementById('age-calculator-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const birthObj = new Date(birthDate);
+                const calcObj = new Date(calcDate);
+                const query = `${formatDate(birthObj, 'YYYY년 MM월 DD일')} 출생 (${formatDate(calcObj, 'YYYY년 MM월 DD일')} 기준)`;
+                historyManager.addItem('나이 계산', query, ageText);
+            },
+            
+            // 카운트다운 핸들러
+            handleCountdown: function(e) {
+                e.preventDefault();
+                
+                const targetDate = document.getElementById('target-date').value;
+                const eventName = document.getElementById('event-name').value.trim();
+                
+                const today = getCurrentDateTime();
+                today.setHours(0, 0, 0, 0);
+                
+                const target = new Date(targetDate);
+                target.setHours(0, 0, 0, 0);
+                
+                const daysRemaining = getDaysBetween(today, target, false);
+                
+                let resultText = '';
+                let detailsText = '';
+                
+                if (daysRemaining === 0) {
+                    resultText = '오늘입니다!';
+                    detailsText = '축하합니다! 오늘이 바로 그날입니다.';
+                } else if (daysRemaining > 0) {
+                    resultText = `${daysRemaining}일 남음`;
+                    detailsText = `${formatDate(target, 'YYYY년 MM월 DD일')} (${getDayName(target)})까지 ${daysRemaining}일 남았습니다.`;
+                } else {
+                    resultText = `${Math.abs(daysRemaining)}일 지남`;
+                    detailsText = `${formatDate(target, 'YYYY년 MM월 DD일')} (${getDayName(target)})로부터 ${Math.abs(daysRemaining)}일이 지났습니다.`;
+                }
+                
+                document.getElementById('countdown-event-name').textContent = eventName || '카운트다운';
+                document.getElementById('days-remaining').textContent = resultText;
+                document.getElementById('countdown-details').textContent = detailsText;
+                
+                document.getElementById('countdown-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const targetObj = new Date(targetDate);
+                const name = eventName || '목표 날짜';
+                const query = `${name} (${formatDate(targetObj, 'YYYY년 MM월 DD일')})`;
+                historyManager.addItem('카운트다운', query, resultText);
+            },
+            
+            // 기념일 계산 핸들러
+            handleAnniversary: function(e) {
+                e.preventDefault();
+                
+                const anniversaryDate = document.getElementById('anniversary-date').value;
+                const today = getCurrentDateTime();
+                
+                const anniversaries = calculateAnniversaries(anniversaryDate, today);
+                
+                const anniversaryList = document.getElementById('anniversary-list');
+                anniversaryList.innerHTML = '';
+                
+                anniversaries.forEach(anniversary => {
+                    const isPassed = anniversary.passed;
+                    const daysDiff = getDaysBetween(today, anniversary.date, false);
+                    
+                    let statusText = '';
+                    if (isPassed) {
+                        statusText = `${Math.abs(daysDiff)}일 전`;
+                    } else if (daysDiff === 0) {
+                        statusText = '오늘';
+                    } else {
+                        statusText = `${daysDiff}일 후`;
+                    }
+                    
+                    const item = document.createElement('div');
+                    item.className = 'date-info-item';
+                    item.innerHTML = `
+                        <span class="info-label">${anniversary.value}${anniversary.type} 기념일:</span>
+                        <span class="info-value">${formatDate(anniversary.date, 'YYYY년 MM월 DD일')} (${statusText})</span>
+                    `;
+                    
+                    anniversaryList.appendChild(item);
+                });
+                
+                document.getElementById('anniversary-result').style.display = 'block';
+                
+                // 계산 기록에 추가
+                const annivObj = new Date(anniversaryDate);
+                const query = `${formatDate(annivObj, 'YYYY년 MM월 DD일')} 기준 기념일`;
+                historyManager.addItem('기념일 계산', query, `${anniversaries.length}개 기념일`);
+            }
+        };
+        
+        // 소셜 미디어 공유 함수
+        function shareOnSocial(platform) {
+            const url = window.location.href;
+            const title = document.title;
+            const text = '날짜/시간 계산이 필요할 때 사용하는 완벽한 계산기';
+            
+            let shareUrl;
+            
+            switch (platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                    break;
+                case 'kakaotalk':
+                    // 카카오톡 공유는 SDK가 필요하므로 여기서는 알림으로 대체
+                    alert('카카오톡 공유 기능은 구현되지 않았습니다. 실제 서비스에서는 카카오 SDK를 통해 구현해야 합니다.');
+                    return;
+                default:
+                    return;
+            }
+            
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+        
+        // 페이지 로드 시 UI 컨트롤러 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            UIController.init();
+            
+            // 폰트어썸 아이콘 대체 (실제 서비스에서는 폰트어썸을 로드해야 함)
+            document.querySelectorAll('.fa-facebook').forEach(el => { el.textContent = 'F'; });
+            document.querySelectorAll('.fa-twitter').forEach(el => { el.textContent = 'T'; });
+            document.querySelectorAll('.fa-instagram').forEach(el => { el.textContent = 'I'; });
+            document.querySelectorAll('.fa-pinterest').forEach(el => { el.textContent = 'P'; });
+        });
+    </script>
+</body>
+</html>
