@@ -12,4 +12,5 @@ Allow: /image_size_converter_en.html
 Allow: /image_size_converter.html
 Allow: /internet_speed_check.html
 Allow: /make_easy_password.html
+Allow: /make_easy_pallet.html
 Disallow:
