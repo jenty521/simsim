@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>색상 선택기 - HEX, RGB, HSL 변환기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .color-display {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .color-display::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1)),
+                        linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1));
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.1;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .input-group h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #6c757d;
+            min-width: 40px;
+        }
+
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #dee2e6;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .palette-section {
+            margin-top: 30px;
+        }
+
+        .palette-section h3 {
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .saved-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .color-item {
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .color-item .color-code {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px;
+            font-size: 11px;
+            text-align: center;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .color-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .color-item:hover .delete-btn {
+            display: flex;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .copy-feedback.show {
+            transform: translateX(0);
+        }
+
+        .preset-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .preset-color {
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .preset-color:hover {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 색상 선택기</h1>
+        
+        <div class="color-display" id="colorDisplay"></div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <h3>색상 선택</h3>
+                <input type="color" id="colorPicker" value="#007bff">
+                
+                <div class="input-row">
+                    <label>HEX:</label>
+                    <input type="text" id="hexInput" value="#007bff" placeholder="#000000">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <h3>RGB</h3>
+                <div class="input-row">
+                    <label>R:</label>
+                    <input type="range" id="rRange" min="0" max="255" value="0">
+                    <input type="number" id="rInput" min="0" max="255" value="0" style="width: 60px;">
+                </div>
+                <div class="input-row">
+                    <label>G:</label>
+                    <input type="range" id="gRange" min="0" max="255" value="123">
+                    <input type="number" id="gInput" min="0" max="255" value="123" style="width: 60px;">
+                </div>
+                <div class="input-row">
+                    <label>B:</label>
+                    <input type="range" id="bRange" min="0" max="255" value="255">
+                    <input type="number" id="bInput" min="0" max="255" value="255" style="width: 60px;">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <h3>HSL</h3>
+                <div class="input-row">
+                    <label>H:</label>
+                    <input type="range" id="hRange" min="0" max="360" value="211">
+                    <input type="number" id="hInput" min="0" max="360" value="211" style="width: 60px;">
+                </div>
+                <div class="input-row">
+                    <label>S:</label>
+                    <input type="range" id="sRange" min="0" max="100" value="100">
+                    <input type="number" id="sInput" min="0" max="100" value="100" style="width: 60px;">
+                </div>
+                <div class="input-row">
+                    <label>L:</label>
+                    <input type="range" id="lRange" min="0" max="100" value="50">
+                    <input type="number" id="lInput" min="0" max="100" value="50" style="width: 60px;">
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn btn-primary" onclick="saveColor()">현재 색상 저장</button>
+            <button class="btn btn-secondary" onclick="copyToClipboard()">HEX 복사</button>
+        </div>
+        
+        <div class="palette-section">
+            <h3>저장된 색상</h3>
+            <div class="saved-colors" id="savedColors"></div>
+            
+            <h3>프리셋 색상</h3>
+            <div class="preset-colors" id="presetColors"></div>
+        </div>
+    </div>
+    
+    <div class="copy-feedback" id="copyFeedback">색상 코드가 복사되었습니다!</div>
+
+    <script>
+        // 프리셋 색상
+        const presetColors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57',
+            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
+            '#F8B500', '#00A8CC', '#FF6348', '#30336B', '#130F40',
+            '#535C68', '#95AFC0', '#EB4D4B', '#6AB04C', '#F0932B',
+            '#686DE0', '#4834D4', '#22A6B3', '#F9CA24', '#F0932B'
+        ];
+
+        let currentColor = {
+            hex: '#007bff',
+            rgb: { r: 0, g: 123, b: 255 },
+            hsl: { h: 211, s: 100, l: 50 }
+        };
+
+        // 요소들 가져오기
+        const colorDisplay = document.getElementById('colorDisplay');
+        const colorPicker = document.getElementById('colorPicker');
+        const hexInput = document.getElementById('hexInput');
+        const rRange = document.getElementById('rRange');
+        const rInput = document.getElementById('rInput');
+        const gRange = document.getElementById('gRange');
+        const gInput = document.getElementById('gInput');
+        const bRange = document.getElementById('bRange');
+        const bInput = document.getElementById('bInput');
+        const hRange = document.getElementById('hRange');
+        const hInput = document.getElementById('hInput');
+        const sRange = document.getElementById('sRange');
+        const sInput = document.getElementById('sInput');
+        const lRange = document.getElementById('lRange');
+        const lInput = document.getElementById('lInput');
+
+        // 초기화
+        function init() {
+            updateDisplay();
+            loadSavedColors();
+            loadPresetColors();
+            
+            // 이벤트 리스너 추가
+            colorPicker.addEventListener('input', handleColorPickerChange);
+            hexInput.addEventListener('input', handleHexChange);
+            
+            // RGB 이벤트
+            [rRange, rInput, gRange, gInput, bRange, bInput].forEach(input => {
+                input.addEventListener('input', handleRGBChange);
+            });
+            
+            // HSL 이벤트
+            [hRange, hInput, sRange, sInput, lRange, lInput].forEach(input => {
+                input.addEventListener('input', handleHSLChange);
+            });
+        }
+
+        // 색상 변환 함수들
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+
+        // 이벤트 핸들러
+        function handleColorPickerChange(e) {
+            const hex = e.target.value;
+            currentColor.hex = hex;
+            currentColor.rgb = hexToRgb(hex);
+            currentColor.hsl = rgbToHsl(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b);
+            updateDisplay();
+        }
+
+        function handleHexChange(e) {
+            const hex = e.target.value;
+            if (/^#[0-9A-F]{6}$/i.test(hex)) {
+                currentColor.hex = hex;
+                currentColor.rgb = hexToRgb(hex);
+                currentColor.hsl = rgbToHsl(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b);
+                updateDisplay();
+            }
+        }
+
+        function handleRGBChange(e) {
+            currentColor.rgb.r = parseInt(rRange.value);
+            currentColor.rgb.g = parseInt(gRange.value);
+            currentColor.rgb.b = parseInt(bRange.value);
+            
+            currentColor.hex = rgbToHex(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b);
+            currentColor.hsl = rgbToHsl(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b);
+            updateDisplay();
+        }
+
+        function handleHSLChange(e) {
+            currentColor.hsl.h = parseInt(hRange.value);
+            currentColor.hsl.s = parseInt(sRange.value);
+            currentColor.hsl.l = parseInt(lRange.value);
+            
+            currentColor.rgb = hslToRgb(currentColor.hsl.h, currentColor.hsl.s, currentColor.hsl.l);
+            currentColor.hex = rgbToHex(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b);
+            updateDisplay();
+        }
+
+        // 디스플레이 업데이트
+        function updateDisplay() {
+            // 색상 디스플레이
+            colorDisplay.style.backgroundColor = currentColor.hex;
+            
+            // 입력 필드 업데이트
+            colorPicker.value = currentColor.hex;
+            hexInput.value = currentColor.hex;
+            
+            // RGB
+            rRange.value = rInput.value = currentColor.rgb.r;
+            gRange.value = gInput.value = currentColor.rgb.g;
+            bRange.value = bInput.value = currentColor.rgb.b;
+            
+            // HSL
+            hRange.value = hInput.value = currentColor.hsl.h;
+            sRange.value = sInput.value = currentColor.hsl.s;
+            lRange.value = lInput.value = currentColor.hsl.l;
+        }
+
+        // 색상 저장
+        function saveColor() {
+            let savedColors = JSON.parse(localStorage.getItem('savedColors') || '[]');
+            
+            // 중복 체크
+            if (!savedColors.includes(currentColor.hex)) {
+                savedColors.unshift(currentColor.hex);
+                // 최대 24개까지만 저장
+                if (savedColors.length > 24) {
+                    savedColors = savedColors.slice(0, 24);
+                }
+                localStorage.setItem('savedColors', JSON.stringify(savedColors));
+                loadSavedColors();
+            }
+        }
+
+        // 저장된 색상 불러오기
+        function loadSavedColors() {
+            const savedColors = JSON.parse(localStorage.getItem('savedColors') || '[]');
+            const container = document.getElementById('savedColors');
+            
+            container.innerHTML = savedColors.map((color, index) => `
+                <div class="color-item" style="background-color: ${color}" onclick="selectColor('${color}')">
+                    <button class="delete-btn" onclick="deleteColor(${index}, event)">×</button>
+                    <div class="color-code">${color}</div>
+                </div>
+            `).join('');
+        }
+
+        // 프리셋 색상 불러오기
+        function loadPresetColors() {
+            const container = document.getElementById('presetColors');
+            container.innerHTML = presetColors.map(color => `
+                <div class="preset-color" style="background-color: ${color}" onclick="selectColor('${color}')" title="${color}"></div>
+            `).join('');
+        }
+
+        // 색상 선택
+        function selectColor(hex) {
+            currentColor.hex = hex;
+            currentColor.rgb = hexToRgb(hex);
+            currentColor.hsl = rgbToHsl(currentColor.rgb.r, currentColor.rgb.g, currentColor.rgb.b);
+            updateDisplay();
+        }
+
+        // 색상 삭제
+        function deleteColor(index, event) {
+            event.stopPropagation();
+            let savedColors = JSON.parse(localStorage.getItem('savedColors') || '[]');
+            savedColors.splice(index, 1);
+            localStorage.setItem('savedColors', JSON.stringify(savedColors));
+            loadSavedColors();
+        }
+
+        // 클립보드에 복사
+        function copyToClipboard() {
+            navigator.clipboard.writeText(currentColor.hex).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('show');
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        // 초기화 실행
+        init();
+    </script>
+</body>
+</html>

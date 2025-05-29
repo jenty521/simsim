@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>단위 변환기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #f97316;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .category-tab:hover {
+            border-color: var(--primary-light);
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .converter-section {
+            display: none;
+        }
+
+        .converter-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .converter-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: start;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--text);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+
+        .unit-input {
+            flex: 1;
+            padding: 0.75rem;
+            font-size: 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+        }
+
+        .unit-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .unit-select {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .unit-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .swap-button {
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            align-self: center;
+            margin-top: 2rem;
+        }
+
+        .swap-button:hover {
+            background: var(--primary-dark);
+            transform: rotate(180deg);
+        }
+
+        .swap-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .quick-conversions {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .quick-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-item {
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .quick-item-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .quick-item-value {
+            color: var(--primary);
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .history-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .history-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clear-history {
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-history:hover {
+            background: var(--border);
+        }
+
+        .history-item {
+            padding: 0.75rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-conversion {
+            font-weight: 500;
+        }
+
+        .history-time {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .empty-history {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .converter-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .swap-button {
+                margin: 1rem auto;
+                transform: rotate(90deg);
+            }
+
+            .swap-button:hover {
+                transform: rotate(270deg);
+            }
+
+            .category-tabs {
+                margin-bottom: 1.5rem;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 다크모드 지원 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #0f172a;
+                --surface: #1e293b;
+                --text: #f8fafc;
+                --text-secondary: #cbd5e1;
+                --border: #334155;
+            }
+
+            .unit-input,
+            .unit-select,
+            .input-group,
+            .quick-item,
+            .history-section,
+            .quick-conversions {
+                background: var(--surface);
+                color: var(--text);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>단위 변환기</h1>
+        <p class="subtitle">길이, 무게, 온도 등 다양한 단위를 쉽게 변환하세요</p>
+
+        <!-- 카테고리 탭 -->
+        <div class="category-tabs">
+            <button class="category-tab active" onclick="showCategory('length')">길이</button>
+            <button class="category-tab" onclick="showCategory('weight')">무게</button>
+            <button class="category-tab" onclick="showCategory('temperature')">온도</button>
+            <button class="category-tab" onclick="showCategory('area')">면적</button>
+            <button class="category-tab" onclick="showCategory('volume')">부피</button>
+            <button class="category-tab" onclick="showCategory('speed')">속도</button>
+            <button class="category-tab" onclick="showCategory('time')">시간</button>
+            <button class="category-tab" onclick="showCategory('data')">데이터</button>
+        </div>
+
+        <!-- 변환기 섹션들 -->
+        <div id="length" class="converter-section active">
+            <div class="converter-grid">
+                <div class="input-group">
+                    <label class="input-label">변환할 값</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="unit-input" id="length-from-value" placeholder="0" oninput="convert('length')">
+                        <select class="unit-select" id="length-from-unit" onchange="convert('length')">
+                            <option value="mm">밀리미터 (mm)</option>
+                            <option value="cm">센티미터 (cm)</option>
+                            <option value="m" selected>미터 (m)</option>
+                            <option value="km">킬로미터 (km)</option>
+                            <option value="inch">인치 (in)</option>
+                            <option value="ft">피트 (ft)</option>
+                            <option value="yard">야드 (yd)</option>
+                            <option value="mile">마일 (mi)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="swap-button" onclick="swapUnits('length')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/>
+                    </svg>
+                </button>
+
+                <div class="input-group">
+                    <label class="input-label">변환된 값</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="unit-input" id="length-to-value" placeholder="0" oninput="convertReverse('length')">
+                        <select class="unit-select" id="length-to-unit" onchange="convert('length')">
+                            <option value="mm">밀리미터 (mm)</option>
+                            <option value="cm">센티미터 (cm)</option>
+                            <option value="m">미터 (m)</option>
+                            <option value="km" selected>킬로미터 (km)</option>
+                            <option value="inch">인치 (in)</option>
+                            <option value="ft">피트 (ft)</option>
+                            <option value="yard">야드 (yd)</option>
+                            <option value="mile">마일 (mi)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-conversions">
+                <h3 class="quick-title">자주 사용하는 변환</h3>
+                <div class="quick-grid">
+                    <div class="quick-item" onclick="quickConvert('length', 1, 'm', 'ft')">
+                        <div class="quick-item-title">1 미터</div>
+                        <div class="quick-item-value">= 3.28084 피트</div>
+                    </div>
+                    <div class="quick-item" onclick="quickConvert('length', 1, 'km', 'mile')">
+                        <div class="quick-item-title">1 킬로미터</div>
+                        <div class="quick-item-value">= 0.621371 마일</div>
+                    </div>
+                    <div class="quick-item" onclick="quickConvert('length', 1, 'inch', 'cm')">
+                        <div class="quick-item-title">1 인치</div>
+                        <div class="quick-item-value">= 2.54 센티미터</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 다른 카테고리들은 동일한 구조로 구현 -->
+        <div id="weight" class="converter-section">
+            <div class="converter-grid">
+                <div class="input-group">
+                    <label class="input-label">변환할 값</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="unit-input" id="weight-from-value" placeholder="0" oninput="convert('weight')">
+                        <select class="unit-select" id="weight-from-unit" onchange="convert('weight')">
+                            <option value="mg">밀리그램 (mg)</option>
+                            <option value="g">그램 (g)</option>
+                            <option value="kg" selected>킬로그램 (kg)</option>
+                            <option value="ton">톤 (t)</option>
+                            <option value="oz">온스 (oz)</option>
+                            <option value="lb">파운드 (lb)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="swap-button" onclick="swapUnits('weight')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/>
+                    </svg>
+                </button>
+
+                <div class="input-group">
+                    <label class="input-label">변환된 값</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="unit-input" id="weight-to-value" placeholder="0" oninput="convertReverse('weight')">
+                        <select class="unit-select" id="weight-to-unit" onchange="convert('weight')">
+                            <option value="mg">밀리그램 (mg)</option>
+                            <option value="g">그램 (g)</option>
+                            <option value="kg">킬로그램 (kg)</option>
+                            <option value="ton">톤 (t)</option>
+                            <option value="oz">온스 (oz)</option>
+                            <option value="lb" selected>파운드 (lb)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-conversions">
+                <h3 class="quick-title">자주 사용하는 변환</h3>
+                <div class="quick-grid">
+                    <div class="quick-item" onclick="quickConvert('weight', 1, 'kg', 'lb')">
+                        <div class="quick-item-title">1 킬로그램</div>
+                        <div class="quick-item-value">= 2.20462 파운드</div>
+                    </div>
+                    <div class="quick-item" onclick="quickConvert('weight', 1, 'oz', 'g')">
+                        <div class="quick-item-title">1 온스</div>
+                        <div class="quick-item-value">= 28.3495 그램</div>
+                    </div>
+                    <div class="quick-item" onclick="quickConvert('weight', 1, 'ton', 'kg')">
+                        <div class="quick-item-title">1 톤</div>
+                        <div class="quick-item-value">= 1000 킬로그램</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="temperature" class="converter-section">
+            <div class="converter-grid">
+                <div class="input-group">
+                    <label class="input-label">변환할 값</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="unit-input" id="temperature-from-value" placeholder="0" oninput="convert('temperature')">
+                        <select class="unit-select" id="temperature-from-unit" onchange="convert('temperature')">
+                            <option value="celsius" selected>섭씨 (°C)</option>
+                            <option value="fahrenheit">화씨 (°F)</option>
+                            <option value="kelvin">켈빈 (K)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="swap-button" onclick="swapUnits('temperature')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/>
+                    </svg>
+                </button>
+
+                <div class="input-group">
+                    <label class="input-label">변환된 값</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="unit-input" id="temperature-to-value" placeholder="0" oninput="convertReverse('temperature')">
+                        <select class="unit-select" id="temperature-to-unit" onchange="convert('temperature')">
+                            <option value="celsius">섭씨 (°C)</option>
+                            <option value="fahrenheit" selected>화씨 (°F)</option>
+                            <option value="kelvin">켈빈 (K)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-conversions">
+                <h3 class="quick-title">주요 온도 참고값</h3>
+                <div class="quick-grid">
+                    <div class="quick-item" onclick="quickConvert('temperature', 0, 'celsius', 'fahrenheit')">
+                        <div class="quick-item-title">물의 어는점</div>
+                        <div class="quick-item-value">0°C = 32°F</div>
+                    </div>
+                    <div class="quick-item" onclick="quickConvert('temperature', 100, 'celsius', 'fahrenheit')">
+                        <div class="quick-item-title">물의 끓는점</div>
+                        <div class="quick-item-value">100°C = 212°F</div>
+                    </div>
+                    <div class="quick-item" onclick="quickConvert('temperature', 37, 'celsius', 'fahrenheit')">
+                        <div class="quick-item-title">체온</div>
+                        <div class="quick-item-value">37°C = 98.6°F</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 변환 기록 -->
+        <div class="history-section">
+            <div class="history-title">
+                <span>최근 변환 기록</span>
+                <button class="clear-history" onclick="clearHistory()">전체 삭제</button>
+            </div>
+            <div id="history-list">
+                <div class="empty-history">변환 기록이 없습니다</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 단위 변환 데이터
+        const conversionData = {
+            length: {
+                mm: 0.001,
+                cm: 0.01,
+                m: 1,
+                km: 1000,
+                inch: 0.0254,
+                ft: 0.3048,
+                yard: 0.9144,
+                mile: 1609.34
+            },
+            weight: {
+                mg: 0.000001,
+                g: 0.001,
+                kg: 1,
+                ton: 1000,
+                oz: 0.0283495,
+                lb: 0.453592
+            },
+            area: {
+                mm2: 0.000001,
+                cm2: 0.0001,
+                m2: 1,
+                km2: 1000000,
+                inch2: 0.00064516,
+                ft2: 0.092903,
+                acre: 4046.86,
+                hectare: 10000
+            },
+            volume: {
+                ml: 0.001,
+                l: 1,
+                m3: 1000,
+                gallon: 3.78541,
+                quart: 0.946353,
+                pint: 0.473176,
+                cup: 0.236588,
+                oz: 0.0295735
+            },
+            speed: {
+                'ms': 1,
+                'kmh': 0.277778,
+                'mph': 0.44704,
+                'knot': 0.514444
+            },
+            time: {
+                ms: 0.001,
+                s: 1,
+                min: 60,
+                hour: 3600,
+                day: 86400,
+                week: 604800,
+                month: 2628000,
+                year: 31536000
+            },
+            data: {
+                bit: 0.125,
+                byte: 1,
+                kb: 1024,
+                mb: 1048576,
+                gb: 1073741824,
+                tb: 1099511627776
+            }
+        };
+
+        let conversionHistory = JSON.parse(localStorage.getItem('conversionHistory') || '[]');
+
+        // 카테고리 전환
+        function showCategory(category) {
+            // 모든 탭과 섹션 비활성화
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.converter-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 선택된 카테고리 활성화
+            event.target.classList.add('active');
+            document.getElementById(category).classList.add('active');
+        }
+
+        // 단위 변환
+        function convert(category) {
+            const fromValue = parseFloat(document.getElementById(`${category}-from-value`).value) || 0;
+            const fromUnit = document.getElementById(`${category}-from-unit`).value;
+            const toUnit = document.getElementById(`${category}-to-unit`).value;
+
+            let result;
+            
+            if (category === 'temperature') {
+                result = convertTemperature(fromValue, fromUnit, toUnit);
+            } else {
+                const fromBase = fromValue * conversionData[category][fromUnit];
+                result = fromBase / conversionData[category][toUnit];
+            }
+
+            document.getElementById(`${category}-to-value`).value = result.toFixed(6).replace(/\.?0+$/, '');
+
+            // 기록 저장
+            if (fromValue !== 0) {
+                addToHistory(category, fromValue, fromUnit, result, toUnit);
+            }
+        }
+
+        // 역방향 변환
+        function convertReverse(category) {
+            const toValue = parseFloat(document.getElementById(`${category}-to-value`).value) || 0;
+            const fromUnit = document.getElementById(`${category}-from-unit`).value;
+            const toUnit = document.getElementById(`${category}-to-unit`).value;
+
+            let result;
+            
+            if (category === 'temperature') {
+                result = convertTemperature(toValue, toUnit, fromUnit);
+            } else {
+                const toBase = toValue * conversionData[category][toUnit];
+                result = toBase / conversionData[category][fromUnit];
+            }
+
+            document.getElementById(`${category}-from-value`).value = result.toFixed(6).replace(/\.?0+$/, '');
+        }
+
+        // 온도 변환
+        function convertTemperature(value, from, to) {
+            let celsius;
+            
+            // 섭씨로 변환
+            switch(from) {
+                case 'celsius':
+                    celsius = value;
+                    break;
+                case 'fahrenheit':
+                    celsius = (value - 32) * 5/9;
+                    break;
+                case 'kelvin':
+                    celsius = value - 273.15;
+                    break;
+            }
+            
+            // 목표 단위로 변환
+            switch(to) {
+                case 'celsius':
+                    return celsius;
+                case 'fahrenheit':
+                    return celsius * 9/5 + 32;
+                case 'kelvin':
+                    return celsius + 273.15;
+            }
+        }
+
+        // 단위 교체
+        function swapUnits(category) {
+            const fromUnit = document.getElementById(`${category}-from-unit`).value;
+            const toUnit = document.getElementById(`${category}-to-unit`).value;
+            
+            document.getElementById(`${category}-from-unit`).value = toUnit;
+            document.getElementById(`${category}-to-unit`).value = fromUnit;
+            
+            convert(category);
+        }
+
+        // 빠른 변환
+        function quickConvert(category, value, fromUnit, toUnit) {
+            document.getElementById(`${category}-from-value`).value = value;
+            document.getElementById(`${category}-from-unit`).value = fromUnit;
+            document.getElementById(`${category}-to-unit`).value = toUnit;
+            
+            convert(category);
+        }
+
+        // 변환 기록 추가
+        function addToHistory(category, fromValue, fromUnit, toValue, toUnit) {
+            const historyItem = {
+                category,
+                from: `${fromValue} ${getUnitDisplay(fromUnit)}`,
+                to: `${toValue.toFixed(6).replace(/\.?0+$/, '')} ${getUnitDisplay(toUnit)}`,
+                timestamp: new Date().toISOString()
+            };
+            
+            conversionHistory.unshift(historyItem);
+            if (conversionHistory.length > 10) {
+                conversionHistory = conversionHistory.slice(0, 10);
+            }
+            
+            localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+            updateHistoryDisplay();
+        }
+
+        // 단위 표시 이름 가져오기
+        function getUnitDisplay(unit) {
+            const unitDisplayNames = {
+                // 길이
+                mm: 'mm', cm: 'cm', m: 'm', km: 'km',
+                inch: 'in', ft: 'ft', yard: 'yd', mile: 'mi',
+                // 무게
+                mg: 'mg', g: 'g', kg: 'kg', ton: 't',
+                oz: 'oz', lb: 'lb',
+                // 온도
+                celsius: '°C', fahrenheit: '°F', kelvin: 'K',
+                // 기타
+                ms: 'm/s', kmh: 'km/h', mph: 'mph', knot: 'knot'
+            };
+            
+            return unitDisplayNames[unit] || unit;
+        }
+
+        // 기록 표시 업데이트
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('history-list');
+            
+            if (conversionHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">변환 기록이 없습니다</div>';
+                return;
+            }
+            
+            historyList.innerHTML = conversionHistory.map(item => {
+                const time = new Date(item.timestamp).toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="history-item">
+                        <div class="history-conversion">${item.from} → ${item.to}</div>
+                        <div class="history-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 기록 삭제
+        function clearHistory() {
+            conversionHistory = [];
+            localStorage.removeItem('conversionHistory');
+            updateHistoryDisplay();
+        }
+
+        // 초기화
+        updateHistoryDisplay();
+
+        // 면적, 부피, 속도, 시간, 데이터 카테고리 HTML 추가
+        const additionalCategories = {
+            area: {
+                units: [
+                    { value: 'mm2', label: '제곱밀리미터 (mm²)' },
+                    { value: 'cm2', label: '제곱센티미터 (cm²)' },
+                    { value: 'm2', label: '제곱미터 (m²)', selected: true },
+                    { value: 'km2', label: '제곱킬로미터 (km²)' },
+                    { value: 'inch2', label: '제곱인치 (in²)' },
+                    { value: 'ft2', label: '제곱피트 (ft²)' },
+                    { value: 'acre', label: '에이커 (acre)' },
+                    { value: 'hectare', label: '헥타르 (ha)' }
+                ],
+                quickConversions: [
+                    { from: 1, fromUnit: 'm2', toUnit: 'ft2', fromLabel: '1 제곱미터', toLabel: '10.7639 제곱피트' },
+                    { from: 1, fromUnit: 'hectare', toUnit: 'acre', fromLabel: '1 헥타르', toLabel: '2.47105 에이커' },
+                    { from: 1, fromUnit: 'km2', toUnit: 'm2', fromLabel: '1 제곱킬로미터', toLabel: '1,000,000 제곱미터' }
+                ]
+            },
+            volume: {
+                units: [
+                    { value: 'ml', label: '밀리리터 (ml)' },
+                    { value: 'l', label: '리터 (L)', selected: true },
+                    { value: 'm3', label: '세제곱미터 (m³)' },
+                    { value: 'gallon', label: '갤런 (gal)' },
+                    { value: 'quart', label: '쿼트 (qt)' },
+                    { value: 'pint', label: '파인트 (pt)' },
+                    { value: 'cup', label: '컵 (cup)' },
+                    { value: 'oz', label: '액량온스 (fl oz)' }
+                ],
+                quickConversions: [
+                    { from: 1, fromUnit: 'l', toUnit: 'gallon', fromLabel: '1 리터', toLabel: '0.264172 갤런' },
+                    { from: 1, fromUnit: 'gallon', toUnit: 'l', fromLabel: '1 갤런', toLabel: '3.78541 리터' },
+                    { from: 1, fromUnit: 'cup', toUnit: 'ml', fromLabel: '1 컵', toLabel: '236.588 밀리리터' }
+                ]
+            },
+            speed: {
+                units: [
+                    { value: 'ms', label: '미터/초 (m/s)' },
+                    { value: 'kmh', label: '킬로미터/시 (km/h)', selected: true },
+                    { value: 'mph', label: '마일/시 (mph)' },
+                    { value: 'knot', label: '노트 (knot)' }
+                ],
+                quickConversions: [
+                    { from: 100, fromUnit: 'kmh', toUnit: 'mph', fromLabel: '100 km/h', toLabel: '62.1371 mph' },
+                    { from: 60, fromUnit: 'mph', toUnit: 'kmh', fromLabel: '60 mph', toLabel: '96.5606 km/h' },
+                    { from: 1, fromUnit: 'ms', toUnit: 'kmh', fromLabel: '1 m/s', toLabel: '3.6 km/h' }
+                ]
+            },
+            time: {
+                units: [
+                    { value: 'ms', label: '밀리초 (ms)' },
+                    { value: 's', label: '초 (s)', selected: true },
+                    { value: 'min', label: '분 (min)' },
+                    { value: 'hour', label: '시간 (h)' },
+                    { value: 'day', label: '일 (day)' },
+                    { value: 'week', label: '주 (week)' },
+                    { value: 'month', label: '월 (month)' },
+                    { value: 'year', label: '년 (year)' }
+                ],
+                quickConversions: [
+                    { from: 1, fromUnit: 'hour', toUnit: 'min', fromLabel: '1 시간', toLabel: '60 분' },
+                    { from: 1, fromUnit: 'day', toUnit: 'hour', fromLabel: '1 일', toLabel: '24 시간' },
+                    { from: 1, fromUnit: 'year', toUnit: 'day', fromLabel: '1 년', toLabel: '365 일' }
+                ]
+            },
+            data: {
+                units: [
+                    { value: 'bit', label: '비트 (bit)' },
+                    { value: 'byte', label: '바이트 (B)' },
+                    { value: 'kb', label: '킬로바이트 (KB)' },
+                    { value: 'mb', label: '메가바이트 (MB)', selected: true },
+                    { value: 'gb', label: '기가바이트 (GB)' },
+                    { value: 'tb', label: '테라바이트 (TB)' }
+                ],
+                quickConversions: [
+                    { from: 1, fromUnit: 'gb', toUnit: 'mb', fromLabel: '1 GB', toLabel: '1,024 MB' },
+                    { from: 1, fromUnit: 'tb', toUnit: 'gb', fromLabel: '1 TB', toLabel: '1,024 GB' },
+                    { from: 1024, fromUnit: 'mb', toUnit: 'gb', fromLabel: '1,024 MB', toLabel: '1 GB' }
+                ]
+            }
+        };
+
+        // 추가 카테고리 HTML 생성
+        Object.entries(additionalCategories).forEach(([category, data]) => {
+            const section = document.createElement('div');
+            section.id = category;
+            section.className = 'converter-section';
+            
+            const fromOptions = data.units.map(unit => 
+                `<option value="${unit.value}" ${unit.selected ? 'selected' : ''}>${unit.label}</option>`
+            ).join('');
+            
+            const toOptions = data.units.map((unit, index) => 
+                `<option value="${unit.value}" ${index === 1 ? 'selected' : ''}>${unit.label}</option>`
+            ).join('');
+            
+            const quickItems = data.quickConversions.map(item => `
+                <div class="quick-item" onclick="quickConvert('${category}', ${item.from}, '${item.fromUnit}', '${item.toUnit}')">
+                    <div class="quick-item-title">${item.fromLabel}</div>
+                    <div class="quick-item-value">= ${item.toLabel}</div>
+                </div>
+            `).join('');
+            
+            section.innerHTML = `
+                <div class="converter-grid">
+                    <div class="input-group">
+                        <label class="input-label">변환할 값</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="unit-input" id="${category}-from-value" placeholder="0" oninput="convert('${category}')">
+                            <select class="unit-select" id="${category}-from-unit" onchange="convert('${category}')">
+                                ${fromOptions}
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="swap-button" onclick="swapUnits('${category}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/>
+                        </svg>
+                    </button>
+
+                    <div class="input-group">
+                        <label class="input-label">변환된 값</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="unit-input" id="${category}-to-value" placeholder="0" oninput="convertReverse('${category}')">
+                            <select class="unit-select" id="${category}-to-unit" onchange="convert('${category}')">
+                                ${toOptions}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-conversions">
+                    <h3 class="quick-title">자주 사용하는 변환</h3>
+                    <div class="quick-grid">
+                        ${quickItems}
+                    </div>
+                </div>
+            `;
+            
+            document.querySelector('.history-section').before(section);
+        });
+    </script>
+</body>
+</html>

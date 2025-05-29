@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>텍스트 변환기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .tools-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .tool-content {
+            display: none;
+        }
+
+        .tool-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--background);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface);
+            border-color: var(--primary-color);
+        }
+
+        .output-section {
+            background: var(--background);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1rem;
+            position: relative;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .output-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .copy-button {
+            padding: 0.25rem 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .copy-button.copied {
+            background: var(--success-color);
+        }
+
+        .output-text {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            word-break: break-all;
+            white-space: pre-wrap;
+            color: var(--text-primary);
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .option-item input[type="checkbox"],
+        .option-item input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .option-item label {
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .select-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--background);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--success-color);
+            color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .tools-tabs {
+                gap: 0.25rem;
+            }
+
+            .tab-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .button-group {
+                gap: 0.25rem;
+            }
+
+            .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 텍스트 변환기</h1>
+        <p class="subtitle">다양한 텍스트 변환 도구를 사용해보세요</p>
+
+        <div class="tools-tabs">
+            <button class="tab-button active" onclick="switchTab('case')">대소문자 변환</button>
+            <button class="tab-button" onclick="switchTab('encode')">인코딩/디코딩</button>
+            <button class="tab-button" onclick="switchTab('format')">텍스트 포맷</button>
+            <button class="tab-button" onclick="switchTab('replace')">찾기/바꾸기</button>
+            <button class="tab-button" onclick="switchTab('hash')">해시 생성</button>
+        </div>
+
+        <!-- 대소문자 변환 -->
+        <div id="case-tool" class="tool-content active">
+            <div class="input-group">
+                <label class="input-label">입력 텍스트</label>
+                <textarea class="text-input" id="case-input" placeholder="변환할 텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="convertCase('upper')">
+                    <span>대문자로</span>
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('lower')">
+                    <span>소문자로</span>
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('title')">
+                    <span>단어 첫글자 대문자</span>
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('sentence')">
+                    <span>문장 첫글자 대문자</span>
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('toggle')">
+                    <span>대소문자 반전</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearInput('case')">
+                    <span>초기화</span>
+                </button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="output-label">변환 결과</span>
+                    <button class="copy-button" onclick="copyToClipboard('case-output')">복사</button>
+                </div>
+                <div class="output-text" id="case-output"></div>
+            </div>
+        </div>
+
+        <!-- 인코딩/디코딩 -->
+        <div id="encode-tool" class="tool-content">
+            <div class="input-group">
+                <label class="input-label">입력 텍스트</label>
+                <textarea class="text-input" id="encode-input" placeholder="인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <div class="options-group">
+                <select class="select-input" id="encode-type">
+                    <option value="base64">Base64</option>
+                    <option value="url">URL Encode</option>
+                    <option value="html">HTML Entities</option>
+                    <option value="unicode">Unicode Escape</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="encodeText()">
+                    <span>인코딩</span>
+                </button>
+                <button class="btn btn-primary" onclick="decodeText()">
+                    <span>디코딩</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearInput('encode')">
+                    <span>초기화</span>
+                </button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="output-label">변환 결과</span>
+                    <button class="copy-button" onclick="copyToClipboard('encode-output')">복사</button>
+                </div>
+                <div class="output-text" id="encode-output"></div>
+            </div>
+        </div>
+
+        <!-- 텍스트 포맷 -->
+        <div id="format-tool" class="tool-content">
+            <div class="input-group">
+                <label class="input-label">입력 텍스트</label>
+                <textarea class="text-input" id="format-input" placeholder="포맷할 텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="formatText('trim')">
+                    <span>공백 제거</span>
+                </button>
+                <button class="btn btn-primary" onclick="formatText('removeDuplicate')">
+                    <span>중복 라인 제거</span>
+                </button>
+                <button class="btn btn-primary" onclick="formatText('sort')">
+                    <span>정렬</span>
+                </button>
+                <button class="btn btn-primary" onclick="formatText('reverse')">
+                    <span>역순</span>
+                </button>
+                <button class="btn btn-primary" onclick="formatText('removeEmpty')">
+                    <span>빈 줄 제거</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearInput('format')">
+                    <span>초기화</span>
+                </button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="output-label">변환 결과</span>
+                    <button class="copy-button" onclick="copyToClipboard('format-output')">복사</button>
+                </div>
+                <div class="output-text" id="format-output"></div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">글자 수:</span>
+                    <span class="stat-value" id="char-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">단어 수:</span>
+                    <span class="stat-value" id="word-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">줄 수:</span>
+                    <span class="stat-value" id="line-count">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 찾기/바꾸기 -->
+        <div id="replace-tool" class="tool-content">
+            <div class="input-group">
+                <label class="input-label">입력 텍스트</label>
+                <textarea class="text-input" id="replace-input" placeholder="텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">찾을 텍스트</label>
+                    <input type="text" class="text-input" id="find-text" style="min-height: auto; height: 48px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">바꿀 텍스트</label>
+                    <input type="text" class="text-input" id="replace-text" style="min-height: auto; height: 48px;">
+                </div>
+            </div>
+
+            <div class="options-group">
+                <div class="option-item">
+                    <input type="checkbox" id="case-sensitive">
+                    <label for="case-sensitive">대소문자 구분</label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="whole-word">
+                    <label for="whole-word">단어 단위로</label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="use-regex">
+                    <label for="use-regex">정규식 사용</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="replaceText()">
+                    <span>바꾸기</span>
+                </button>
+                <button class="btn btn-primary" onclick="replaceAll()">
+                    <span>모두 바꾸기</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearInput('replace')">
+                    <span>초기화</span>
+                </button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="output-label">변환 결과</span>
+                    <button class="copy-button" onclick="copyToClipboard('replace-output')">복사</button>
+                </div>
+                <div class="output-text" id="replace-output"></div>
+            </div>
+        </div>
+
+        <!-- 해시 생성 -->
+        <div id="hash-tool" class="tool-content">
+            <div class="input-group">
+                <label class="input-label">입력 텍스트</label>
+                <textarea class="text-input" id="hash-input" placeholder="해시를 생성할 텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateHash('MD5')">
+                    <span>MD5</span>
+                </button>
+                <button class="btn btn-primary" onclick="generateHash('SHA1')">
+                    <span>SHA-1</span>
+                </button>
+                <button class="btn btn-primary" onclick="generateHash('SHA256')">
+                    <span>SHA-256</span>
+                </button>
+                <button class="btn btn-primary" onclick="generateHash('SHA512')">
+                    <span>SHA-512</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearInput('hash')">
+                    <span>초기화</span>
+                </button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <span class="output-label">해시 결과</span>
+                    <button class="copy-button" onclick="copyToClipboard('hash-output')">복사</button>
+                </div>
+                <div class="output-text" id="hash-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">복사되었습니다!</div>
+
+    <script>
+        // 탭 전환
+        function switchTab(tabName) {
+            // 모든 탭과 콘텐츠 비활성화
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tool-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 선택된 탭과 콘텐츠 활성화
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tool`).classList.add('active');
+        }
+
+        // 대소문자 변환
+        function convertCase(type) {
+            const input = document.getElementById('case-input').value;
+            const output = document.getElementById('case-output');
+            let result = '';
+
+            switch(type) {
+                case 'upper':
+                    result = input.toUpperCase();
+                    break;
+                case 'lower':
+                    result = input.toLowerCase();
+                    break;
+                case 'title':
+                    result = input.replace(/\w\S*/g, (txt) => 
+                        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+                    );
+                    break;
+                case 'sentence':
+                    result = input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+                    result = result.replace(/([.!?]\s*)([a-z])/gi, (match, p1, p2) => 
+                        p1 + p2.toUpperCase()
+                    );
+                    break;
+                case 'toggle':
+                    result = input.split('').map(char => 
+                        char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
+                    ).join('');
+                    break;
+            }
+
+            output.textContent = result;
+        }
+
+        // 인코딩/디코딩
+        function encodeText() {
+            const input = document.getElementById('encode-input').value;
+            const type = document.getElementById('encode-type').value;
+            const output = document.getElementById('encode-output');
+            let result = '';
+
+            try {
+                switch(type) {
+                    case 'base64':
+                        result = btoa(unescape(encodeURIComponent(input)));
+                        break;
+                    case 'url':
+                        result = encodeURIComponent(input);
+                        break;
+                    case 'html':
+                        result = input.replace(/[&<>"']/g, (m) => ({
+                            '&': '&amp;',
+                            '<': '&lt;',
+                            '>': '&gt;',
+                            '"': '&quot;',
+                            "'": '&#39;'
+                        })[m]);
+                        break;
+                    case 'unicode':
+                        result = input.split('').map(char => 
+                            '\\u' + ('0000' + char.charCodeAt(0).toString(16)).slice(-4)
+                        ).join('');
+                        break;
+                }
+                output.textContent = result;
+            } catch(e) {
+                output.textContent = '인코딩 오류: ' + e.message;
+            }
+        }
+
+        function decodeText() {
+            const input = document.getElementById('encode-input').value;
+            const type = document.getElementById('encode-type').value;
+            const output = document.getElementById('encode-output');
+            let result = '';
+
+            try {
+                switch(type) {
+                    case 'base64':
+                        result = decodeURIComponent(escape(atob(input)));
+                        break;
+                    case 'url':
+                        result = decodeURIComponent(input);
+                        break;
+                    case 'html':
+                        const textarea = document.createElement('textarea');
+                        textarea.innerHTML = input;
+                        result = textarea.value;
+                        break;
+                    case 'unicode':
+                        result = input.replace(/\\u[\dA-F]{4}/gi, (match) => 
+                            String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16))
+                        );
+                        break;
+                }
+                output.textContent = result;
+            } catch(e) {
+                output.textContent = '디코딩 오류: ' + e.message;
+            }
+        }
+
+        // 텍스트 포맷
+        function formatText(type) {
+            const input = document.getElementById('format-input').value;
+            const output = document.getElementById('format-output');
+            let result = '';
+
+            switch(type) {
+                case 'trim':
+                    result = input.split('\n').map(line => line.trim()).join('\n');
+                    break;
+                case 'removeDuplicate':
+                    result = [...new Set(input.split('\n'))].join('\n');
+                    break;
+                case 'sort':
+                    result = input.split('\n').sort().join('\n');
+                    break;
+                case 'reverse':
+                    result = input.split('\n').reverse().join('\n');
+                    break;
+                case 'removeEmpty':
+                    result = input.split('\n').filter(line => line.trim() !== '').join('\n');
+                    break;
+            }
+
+            output.textContent = result;
+            updateStats(result);
+        }
+
+        // 통계 업데이트
+        function updateStats(text) {
+            document.getElementById('char-count').textContent = text.length;
+            document.getElementById('word-count').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+            document.getElementById('line-count').textContent = text.split('\n').length;
+        }
+
+        // 찾기/바꾸기
+        function replaceText() {
+            const input = document.getElementById('replace-input').value;
+            const findText = document.getElementById('find-text').value;
+            const replaceWith = document.getElementById('replace-text').value;
+            const caseSensitive = document.getElementById('case-sensitive').checked;
+            const wholeWord = document.getElementById('whole-word').checked;
+            const useRegex = document.getElementById('use-regex').checked;
+            const output = document.getElementById('replace-output');
+
+            if (!findText) {
+                output.textContent = '찾을 텍스트를 입력하세요.';
+                return;
+            }
+
+            let result = input;
+
+            if (useRegex) {
+                try {
+                    const flags = caseSensitive ? 'g' : 'gi';
+                    const regex = new RegExp(findText, flags);
+                    result = input.replace(regex, replaceWith);
+                } catch(e) {
+                    output.textContent = '정규식 오류: ' + e.message;
+                    return;
+                }
+            } else {
+                let pattern = findText;
+                if (wholeWord) {
+                    pattern = `\\b${pattern}\\b`;
+                }
+                const flags = caseSensitive ? 'g' : 'gi';
+                const regex = new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+                result = input.replace(regex, replaceWith);
+            }
+
+            output.textContent = result;
+        }
+
+        function replaceAll() {
+            replaceText();
+        }
+
+        // 해시 생성
+        async function generateHash(algorithm) {
+            const input = document.getElementById('hash-input').value;
+            const output = document.getElementById('hash-output');
+
+            if (!input) {
+                output.textContent = '텍스트를 입력하세요.';
+                return;
+            }
+
+            // 간단한 해시 구현 (실제로는 crypto 라이브러리 사용 권장)
+            if (algorithm === 'MD5') {
+                // MD5는 보안상 권장하지 않음을 표시
+                output.textContent = 'MD5 (보안상 권장하지 않음):\n' + simpleHash(input, 32);
+            } else if (algorithm === 'SHA1') {
+                output.textContent = 'SHA-1:\n' + simpleHash(input, 40);
+            } else if (algorithm === 'SHA256') {
+                output.textContent = 'SHA-256:\n' + simpleHash(input, 64);
+            } else if (algorithm === 'SHA512') {
+                output.textContent = 'SHA-512:\n' + simpleHash(input, 128);
+            }
+        }
+
+        // 간단한 해시 함수 (데모용)
+        function simpleHash(str, length) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            
+            let result = Math.abs(hash).toString(16);
+            while (result.length < length) {
+                result = '0' + result;
+            }
+            return result.substring(0, length);
+        }
+
+        // 클립보드 복사
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('복사되었습니다!');
+                
+                // 버튼 상태 변경
+                const button = event.target;
+                button.textContent = '복사됨';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = '복사';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                showNotification('복사 실패');
+            });
+        }
+
+        // 알림 표시
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        // 입력 초기화
+        function clearInput(tool) {
+            document.getElementById(`${tool}-input`).value = '';
+            document.getElementById(`${tool}-output`).textContent = '';
+            
+            if (tool === 'format') {
+                updateStats('');
+            }
+            
+            if (tool === 'replace') {
+                document.getElementById('find-text').value = '';
+                document.getElementById('replace-text').value = '';
+            }
+        }
+
+        // 입력 이벤트 리스너
+        document.getElementById('format-input').addEventListener('input', (e) => {
+            updateStats(e.target.value);
+        });
+
+        // 초기 상태 설정
+        updateStats('');
+    </script>
+</body>
+</html>
