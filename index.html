@@ -3,354 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>정규표현식 가이드</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --background-color: #f8fafc;
-            --text-color: #1e293b;
-            --light-gray: #e2e8f0;
-            --white: #ffffff;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        header {
-            background-color: var(--white);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: var(--primary-color);
-        }
-
-        main {
-            padding: 2rem 0;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 4rem 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .feature-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            text-align: center;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .feature-card a {
-            color: var(--text-color);
-            text-decoration: none;
-            display: block;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            transition: background-color 0.3s;
-        }
-
-        .feature-card a:hover {
-            background-color: var(--light-gray);
-        }
-
-        .tool-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .tool-card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .tool-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .tool-card a {
-            color: var(--text-color);
-            text-decoration: none;
-            display: block;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            transition: background-color 0.3s;
-        }
-
-        .tool-card a:hover {
-            background-color: var(--light-gray);
-        }
-
-        footer {
-            background-color: var(--white);
-            padding: 2rem 0;
-            margin-top: 4rem;
-            border-top: 1px solid var(--light-gray);
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-info {
-            color: var(--text-color);
-        }
-
-        .footer-info a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .footer-info a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            nav ul {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-        }
-    </style>
+    <title>유틸리티 허브</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-    crossorigin="anonymous"></script>
+     crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="/" class="logo">유용한 툴 모음</a>
-                
+    <!-- 네비게이션 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="app.showHome()">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Utility Hub</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="#" onclick="app.showHome()" class="active">홈</a></li>
+                <li class="nav-item"><a href="#" onclick="app.showCategory('converter')">변환도구</a></li>
+                <li class="nav-item"><a href="#" onclick="app.showCategory('calculator')">계산기</a></li>
+                <li class="nav-item"><a href="#" onclick="app.showCategory('generator')">생성기</a></li>
+                <li class="nav-item"><a href="#" onclick="app.showCategory('tools')">도구</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" onclick="app.toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 메인 컨테이너 -->
+    <main class="main-container" id="mainContainer">
+        <section class="hero-section">
+            <h1 class="hero-title">필요한 모든 유틸리티를 한 곳에서</h1>
+            <p class="hero-subtitle">간편하고 빠른 온라인 도구 모음</p>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="도구 검색..." onkeyup="app.searchTools(this.value)">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
             </div>
-        </div>
-    </header>
+        </section>
 
-    <main>
-        <div class="container">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- [디스플레이, 반응형] 최상단 고정광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="8566506642"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-            <section class="hero">
-                <h1>유용한 무료 툴모음음</h1>
-                <p>있으면 좋을것 같은 툴을 모았습니다.</p>
-            </section>
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- [디스플레이 반응형]수평형 중간광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="1318093088"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
-            <section class="features">
-                <article class="feature-card">
-                    <h3>계산기</h3>
-                    <a href="https://tool.wisenote2.com/calc.html">계산기 도구로 이동</a>
-                </article>
-                <article class="feature-card">
-                    <h3>글자수세기</h3>
-                    <a href="https://tool.wisenote2.com/addline_blog.html">글자수세기 도구로 이동</a>
-                </article>
-                <article class="feature-card">
-                    <h3>HTML 태그제거 및 추가</h3>
-                    <a href="https://tool.wisenote2.com/addline_blog.html">HTML 태그 도구로 이동</a>
-                </article>
-            </section>
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- [디스플레이 반응형]수평형 중간광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="1318093088"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
-            <section class="tool-grid">
-                <div class="tool-card">
-                    <h3>단위 변환</h3>
-                    <a href="https://tool.wisenote2.com/unit-converter.html">단위 변환 도구로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>무료 다이어그램</h3>
-                    <a href="https://tool.wisenote2.com/node_diagram.html">다이어그램 도구로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>정규식 사용법 (한글)</h3>
-                    <a href="https://tool.wisenote2.com/regex.html">정규식 가이드로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>정규식 사용법 (영문)</h3>
-                    <a href="https://tool.wisenote2.com/regex_en.html">영문 정규식 가이드로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>QR 생성기 (한글)</h3>
-                    <a href="https://tool.wisenote2.com/qr_maker.html">QR 생성기로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>QR 생성기 (영문)</h3>
-                    <a href="https://tool.wisenote2.com/qr_maker_en.html">영문 QR 생성기로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>사진 크기 변경 (한글)</h3>
-                    <a href="https://tool.wisenote2.com/image_size_converter.html">사진 크기 변경 도구로 이동</a>
-                </div>
-                <div class="tool-card">
-                    <h3>사진 크기 변경 (영문)</h3>
-                    <a href="https://tool.wisenote2.com/image_size_converter_en.html">영문 사진 크기 변경 도구로 이동</a>
-                </div>
-            </section>
-        </div>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
-     crossorigin="anonymous"></script>
-<!-- [디스플레이, 반응형] 하단광고 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-4624141391435876"
-     data-ad-slot="5073984195"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+        <section class="tools-section">
+            <div class="tools-grid" id="toolsGrid">
+                <!-- 도구 카드들이 동적으로 추가됩니다 -->
+            </div>
+        </section>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <p>문의 및 지원: <a href="mailto:jenty521@naver.com">jenty521@naver.com</a></p>
-                    <p>© wisenote2. All rights reserved.</p>
-                </div>
+    <!-- 도구 실행 영역 -->
+    <div class="tool-container" id="toolContainer">
+        <header class="tool-header">
+            <button class="back-button" onclick="app.showHome()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                <span>돌아가기</span>
+            </button>
+            <h2 id="currentToolTitle" class="tool-title">도구</h2>
+            <div class="tool-actions">
+                <button class="action-button" onclick="app.refreshTool()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                </button>
             </div>
+        </header>
+        <iframe class="tool-frame" id="toolFrame" src=""></iframe>
+    </div>
+
+    <!-- 하단 광고 -->
+    <div class="bottom-ad" id="bottomAd">
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+                crossorigin="anonymous"></script>
+            <!-- [디스플레이, 반응형] 하단광고 -->
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-4624141391435876"
+                data-ad-slot="5073984195"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
-    </footer>
+    </div>
+
+    <!-- 전면 광고 -->
+    <div class="fullscreen-ad" id="fullscreenAd">
+        <div class="ad-overlay"></div>
+        <div class="ad-content">
+            <button class="ad-close" onclick="app.closeFullscreenAd()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="ad-body">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+                    crossorigin="anonymous"></script>
+                <!-- 전면광고1 -->
+                <ins class="adsbygoogle"
+                    style="display:block"
+                    data-ad-client="ca-pub-4624141391435876"
+                    data-ad-slot="8572412553"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+            <button class="ad-skip" onclick="app.closeFullscreenAd()">광고 건너뛰기</button>
+        </div>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
