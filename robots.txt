@@ -17,4 +17,12 @@ Allow: /calc_between_date.html
 Allow: /calc_bmi_health.html
 Allow: /calc_easy_ja.html
 Allow: /make_easy_memo.html
+Allow: /tools/text-converter.html
+Allow: /tools/unit-converter.html
+Allow: /tools/color-picker.html
+Allow: /tools/password-generator.html
+Allow: /tools/calculator.html
+Allow: /tools/loan-calculator.html
+Allow: /tools/json-formatter.html
+Allow: /tools/image-compressor.html
 Disallow:
