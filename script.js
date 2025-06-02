@@ -44,14 +44,14 @@ const app = {
             category: 'generator',
             file: 'tools/password-generator.html'
         },
-        {
+     /*   {
             id: 'qr-generator',
             title: 'QR 코드 생성기',
             description: '텍스트, URL을 QR 코드로 변환',
             icon: '📱',
             category: 'generator',
             file: 'tools/qr-generator.html'
-        },
+        },  */
         {
             id: 'calculator',
             title: '공학 계산기',
