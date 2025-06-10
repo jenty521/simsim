@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>패킷 템플릿 관리자</title>
+    <!-- Handsontable CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/handsontable@6.2.2/dist/handsontable.full.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --border-color: #e1e4e8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        .admin-container {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .template-list-section {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .template-detail-section {
+            flex: 2;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .grid-container {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        
+        .error {
+            background-color: #fdecea;
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .success {
+            background-color: #eafaf1;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .tool-actions {
+            margin-bottom: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 템플릿 목록 섹션 -->
+        <div class="template-list-section">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5H5V9H9V5Z" fill="currentColor"/>
+                    <path d="M19 5H15V9H19V5Z" fill="currentColor"/>
+                    <path d="M9 15H5V19H9V15Z" fill="currentColor"/>
+                    <path d="M19 15H15V19H19V15Z" fill="currentColor"/>
+                </svg>
+                패킷 템플릿 목록
+            </h2>
+            
+            <div class="tool-actions">
+                <button id="newTemplateBtn" class="btn btn-primary">새 템플릿</button>
+                <button id="refreshTemplatesBtn" class="btn btn-success">새로고침</button>
+            </div>
+            
+            <div id="templateMessage" class="message hidden"></div>
+            <div id="templateGrid" class="grid-container"></div>
+        </div>
+        
+        <!-- 템플릿 상세 편집 섹션 -->
+        <div class="template-detail-section">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.12 5.12L18.87 8.87L20.71 7.04Z" fill="currentColor"/>
+                    <path d="M3 17.25V21H6.75L17.81 9.93L14.06 6.18L3 17.25Z" fill="currentColor"/>
+                </svg>
+                템플릿 상세 편집
+            </h2>
+            
+            <div class="tool-actions">
+                <button id="saveTemplateBtn" class="btn btn-primary">저장</button>
+                <button id="deleteTemplateBtn" class="btn btn-danger">삭제</button>
+                <button id="addFieldBtn" class="btn btn-success">필드 추가</button>
+            </div>
+            
+            <div id="templateInfo">
+                <div style="margin-bottom: 15px;">
+                    <strong>템플릿 제목: </strong>
+                    <span id="currentTemplateTitle">선택된 템플릿 없음</span>
+                </div>
+            </div>
+            
+            <div id="fieldMessage" class="message hidden"></div>
+            <div id="fieldGrid" class="grid-container"></div>
+        </div>
+    </div>
+
+    <!-- Handsontable JS -->
+    <script src="https://cdn.jsdelivr.net/npm/handsontable@6.2.2/dist/handsontable.full.min.js"></script>
+    <script>
+        // API 기본 URL
+        const API_BASE_URL = 'http://localhost:3001/api';
+        
+        // DOM 요소
+        const templateGridEl = document.getElementById('templateGrid');
+        const fieldGridEl = document.getElementById('fieldGrid');
+        const templateMessageEl = document.getElementById('templateMessage');
+        const fieldMessageEl = document.getElementById('fieldMessage');
+        const currentTemplateTitleEl = document.getElementById('currentTemplateTitle');
+        
+        // 버튼 요소
+        const newTemplateBtn = document.getElementById('newTemplateBtn');
+        const refreshTemplatesBtn = document.getElementById('refreshTemplatesBtn');
+        const saveTemplateBtn = document.getElementById('saveTemplateBtn');
+        const deleteTemplateBtn = document.getElementById('deleteTemplateBtn');
+        const addFieldBtn = document.getElementById('addFieldBtn');
+        
+        // 현재 선택된 템플릿 ID
+        let currentTemplateId = null;
+        
+        // 템플릿 그리드 초기화
+        const templateGrid = new Handsontable(templateGridEl, {
+            data: [],
+            colHeaders: ['ID', '제목', '생성일', '필드 수'],
+            columns: [
+                { data: 'id', type: 'numeric', width: 80 },
+                { data: 'title', type: 'text' },
+                { data: 'created_at', type: 'text', width: 150 },
+                { data: 'field_count', type: 'numeric', width: 80 }
+            ],
+            rowHeaders: true,
+            selectionMode: 'single',
+            height: '100%',
+            licenseKey: 'non-commercial-and-evaluation',
+            afterSelection: (row) => loadTemplateDetail(row)
+        });
+        
+        // 필드 그리드 초기화
+        const fieldGrid = new Handsontable(fieldGridEl, {
+            data: [],
+            colHeaders: ['필드명', '바이트 크기', '설명'],
+            columns: [
+                { data: 'field_name', type: 'text' },
+                { data: 'byte_size', type: 'numeric' },
+                { data: 'description', type: 'text' }
+            ],
+            rowHeaders: true,
+            contextMenu: true,
+            height: '100%',
+            licenseKey: 'non-commercial-and-evaluation'
+        });
+        
+        // 메시지 표시 함수
+        function showMessage(element, message, type = 'success') {
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+            element.classList.remove('hidden');
+            
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // 템플릿 목록 로드
+        async function loadTemplates() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/templates`);
+                if (!response.ok) throw new Error('서버 응답 오류');
+                
+                const templates = await response.json();
+                
+                // 필드 수 계산하여 추가
+                const templatesWithCount = await Promise.all(templates.map(async (template) => {
+                    const fieldResponse = await fetch(`${API_BASE_URL}/templates/${template.id}`);
+                    const { fields } = await fieldResponse.json();
+                    return { ...template, field_count: fields.length };
+                }));
+                
+                templateGrid.loadData(templatesWithCount);
+                showMessage(templateMessageEl, '템플릿 목록을 불러왔습니다', 'success');
+            } catch (error) {
+                showMessage(templateMessageEl, `템플릿 로드 실패: ${error.message}`, 'error');
+                console.error('템플릿 로드 오류:', error);
+            }
+        }
+        
+        // 템플릿 상세 정보 로드
+        async function loadTemplateDetail(row) {
+            try {
+                const template = templateGrid.getSourceDataAtRow(row);
+                if (!template) return;
+                
+                currentTemplateId = template.id;
+                currentTemplateTitleEl.textContent = template.title;
+                
+                const response = await fetch(`${API_BASE_URL}/templates/${template.id}`);
+                if (!response.ok) throw new Error('서버 응답 오류');
+                
+                const { fields } = await response.json();
+                fieldGrid.loadData(fields);
+                
+                deleteTemplateBtn.disabled = false;
+                showMessage(fieldMessageEl, `"${template.title}" 템플릿을 불러왔습니다`, 'success');
+            } catch (error) {
+                showMessage(fieldMessageEl, `템플릿 상세 로드 실패: ${error.message}`, 'error');
+                console.error('템플릿 상세 로드 오류:', error);
+            }
+        }
+        
+        // 새 템플릿 생성
+        newTemplateBtn.addEventListener('click', () => {
+            currentTemplateId = null;
+            currentTemplateTitleEl.textContent = '새 템플릿';
+            fieldGrid.loadData([{ field_name: '', byte_size: 0, description: '' }]);
+            deleteTemplateBtn.disabled = true;
+        });
+        
+        // 필드 추가
+        addFieldBtn.addEventListener('click', () => {
+            const newData = fieldGrid.getSourceData();
+            newData.push({ field_name: '', byte_size: 0, description: '' });
+            fieldGrid.loadData(newData);
+        });
+        
+        // 템플릿 저장
+        saveTemplateBtn.addEventListener('click', async () => {
+            try {
+                const title = prompt('템플릿 제목을 입력하세요');
+                if (!title) return;
+                
+                const fields = fieldGrid.getSourceData();
+                if (fields.some(f => !f.field_name || f.byte_size <= 0)) {
+                    throw new Error('필드명과 바이트 크기는 필수 입력 항목입니다');
+                }
+                
+                const url = currentTemplateId 
+                    ? `${API_BASE_URL}/templates/${currentTemplateId}`
+                    : `${API_BASE_URL}/templates`;
+                
+                const method = currentTemplateId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, fields })
+                });
+                
+                if (!response.ok) throw new Error('저장 실패');
+                
+                showMessage(fieldMessageEl, '템플릿이 성공적으로 저장되었습니다', 'success');
+                loadTemplates();
+            } catch (error) {
+                showMessage(fieldMessageEl, `저장 실패: ${error.message}`, 'error');
+                console.error('템플릿 저장 오류:', error);
+            }
+        });
+        
+        // 템플릿 삭제
+        deleteTemplateBtn.addEventListener('click', async () => {
+            if (!currentTemplateId || !confirm('정말 삭제하시겠습니까?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/templates/${currentTemplateId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('삭제 실패');
+                
+                showMessage(fieldMessageEl, '템플릿이 삭제되었습니다', 'success');
+                currentTemplateId = null;
+                currentTemplateTitleEl.textContent = '선택된 템플릿 없음';
+                fieldGrid.loadData([]);
+                loadTemplates();
+            } catch (error) {
+                showMessage(fieldMessageEl, `삭제 실패: ${error.message}`, 'error');
+                console.error('템플릿 삭제 오류:', error);
+            }
+        });
+        
+        // 새로고침 버튼
+        refreshTemplatesBtn.addEventListener('click', loadTemplates);
+        
+        // 초기화
+        loadTemplates();
+        deleteTemplateBtn.disabled = true;
+    </script>
+</body>
+</html>

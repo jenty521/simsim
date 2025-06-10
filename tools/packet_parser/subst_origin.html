@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>패킷 분석기 & JSON 도구</title>
+    <!-- Handsontable CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/handsontable@6.2.2/dist/handsontable.full.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --border-color: #e1e4e8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Malgun Gothic', Tahoma, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-bottom: -1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-button:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+        
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.08);
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 0 10px 10px 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            min-height: 500px;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: #fafbfc;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            background-color: #fff;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        
+        .error {
+            background-color: #fdecea;
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .success {
+            background-color: #eafaf1;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .grid-container {
+            height: 500px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .json-error-highlight {
+            background-color: #ffdddd;
+            position: relative;
+        }
+        
+        .json-error-marker {
+            position: absolute;
+            width: 5px;
+            background-color: #e74c3c;
+            z-index: 10;
+        }
+        
+        .json-line-number {
+            background-color: #f6f6f6;
+            border-right: 1px solid #e0e0e0;
+            color: #888;
+            padding: 0 10px;
+            text-align: right;
+            min-width: 40px;
+        }
+        
+        .tool-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .json-container {
+            display: flex;
+            width: 100%;
+            overflow: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .json-line-numbers {
+            background-color: #f5f5f5;
+            font-family: monospace;
+            padding: 10px 5px;
+            border-right: 1px solid #ddd;
+            text-align: right;
+            user-select: none;
+        }
+        
+        .json-editor {
+            flex-grow: 1;
+            padding: 10px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            white-space: pre;
+            min-height: 150px;
+            outline: none;
+            overflow: auto;
+        }
+        
+        .json-highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            position: relative;
+        }
+        
+        .handsontable th {
+            background-color: #f8f8f8 !important;
+            font-weight: 600 !important;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #777;
+            margin-top: 50px;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>패킷 분석기 & JSON 도구</h1>
+            <p>Handsontable을 이용한 패킷 분석 및 JSON 유효성 검사 도구</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-button active" data-tab="packet">패킷 분석기</button>
+            <button class="tab-button" data-tab="json">JSON 도구</button>
+        </div>
+        
+        <!-- Packet Analyzer Tab -->
+        <div id="packet" class="tab-content active">
+            <div class="tab-section">
+                <h2 class="section-title">패킷 데이터 입력</h2>
+                <textarea id="packetInput" placeholder="패킷 데이터를 입력하세요 (예: a15fd가나다 absdkm2543-dfdfs...)"></textarea>
+                
+                <div class="tool-actions">
+                    <button class="btn btn-primary" id="analyzeBtn">
+                        패킷 분석하기
+                    </button>
+                    <button class="btn btn-danger" id="clearPacketBtn">
+                        내용 지우기
+                    </button>
+                </div>
+            </div>
+
+            <div class="message-container" style="display: none;">
+                <input id="message-container" readonly></input>
+            </div>
+            
+            <div class="tab-section">
+                <h2 class="section-title">패킷 분석 결과 (Handsontable)</h2>
+                <div class="tool-actions">
+                    <button class="btn btn-primary" id="addFieldBtn">
+                        필드 추가
+                    </button>
+                    <button class="btn btn-danger" id="resetGridBtn">
+                        그리드 초기화
+                    </button>
+                </div>
+                <div id="packetGrid" class="grid-container"></div>
+            </div>
+        </div>
+        
+        <!-- JSON Tools Tab -->
+        <div id="json" class="tab-content">
+            <div class="tab-section">
+                <h2 class="section-title">JSON 입력</h2>
+                <div class="json-container">
+                    <div id="jsonLineNumbers" class="json-line-numbers"></div>
+                    <div id="jsonEditor" class="json-editor" contenteditable="true" spellcheck="false"></div>
+                </div>
+            </div>
+            
+            <div class="tab-section">
+                <h2 class="section-title">JSON 도구</h2>
+                <div class="tool-actions">
+                    <button class="btn btn-primary" id="formatJsonBtn">
+                        포맷 정렬
+                    </button>
+                    <button class="btn btn-primary" id="minifyJsonBtn">
+                        압축하기
+                    </button>
+                    <button class="btn btn-primary" id="validateJsonBtn">
+                        유효성 검사
+                    </button>
+                    <button class="btn btn-primary" id="jsonKeysBtn">
+                        Key 배열 출력
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tab-section">
+                <h2 class="section-title">유효성 검사 결과</h2>
+                <div id="jsonMessage" class="message"></div>
+                <div id="jsonErrorPosition"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 패킷 분석기 & JSON 도구 | Handsontable 6.2.2 기반</p>
+        </footer>
+    </div>
+
+    <!-- Handsontable JS -->
+    <script src="https://cdn.jsdelivr.net/npm/handsontable@6.2.2/dist/handsontable.full.min.js"></script>
+    <script>
+        // 탭 전환 기능
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+                
+                // Handsontable 리렌더링
+                if(this.dataset.tab === 'packet') {
+                    packetGrid.render();
+                }
+            });
+        });
+
+        // 패킷 분석기 기능
+        const packetInput = document.getElementById('packetInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const clearPacketBtn = document.getElementById('clearPacketBtn');
+        const addFieldBtn = document.getElementById('addFieldBtn');
+        const resetGridBtn = document.getElementById('resetGridBtn');
+        
+        // JSON 도구 요소
+        const jsonEditor = document.getElementById('jsonEditor');
+        const jsonLineNumbers = document.getElementById('jsonLineNumbers');
+        const jsonMessageDiv = document.getElementById('jsonMessage');
+        const jsonErrorPositionDiv = document.getElementById('jsonErrorPosition');
+        const formatJsonBtn = document.getElementById('formatJsonBtn');
+        const minifyJsonBtn = document.getElementById('minifyJsonBtn');
+        const validateJsonBtn = document.getElementById('validateJsonBtn');
+        const jsonKeysBtn = document.getElementById('jsonKeysBtn');
+        
+        // JSON 에디터 라인 번호 업데이트
+        function updateLineNumbers() {
+            const lines = jsonEditor.textContent.split('\n').length || 1;
+            let lineNumbersHtml = '';
+            
+            for (let i = 1; i <= lines; i++) {
+                lineNumbersHtml += `<div>${i}</div>`;
+            }
+            
+            jsonLineNumbers.innerHTML = lineNumbersHtml;
+        }
+        
+        // 초기화 시 라인 번호 생성
+        updateLineNumbers();
+        
+        // JSON 에디터 입력 이벤트
+        jsonEditor.addEventListener('input', updateLineNumbers);
+        
+        // Handsontable 초기화
+        const packetGrid = new Handsontable(document.getElementById('packetGrid'), {
+            data: [
+                ['헤더', 8, '패킷 헤더', ''],
+                ['본문', 12, '패킷 본문', ''],
+                ['푸터', 4, '패킷 종료 표시', '']
+            ],
+            colHeaders: ['필드명', '바이트 크기', '설명', '분석 결과'],
+            columns: [
+                { type: 'text' },
+                { type: 'numeric', numericFormat: { pattern: '0' } },
+                { type: 'text' },
+                { type: 'text', readOnly: true }
+            ],
+            rowHeaders: true,
+            contextMenu: true,
+            manualRowResize: true,
+            manualColumnResize: true,
+            stretchH: 'all',
+            height: '100%',
+            licenseKey: 'non-commercial-and-evaluation'
+        });
+
+        // 내용 지우기 버튼 이벤트 추가
+        clearPacketBtn.addEventListener('click', function() {
+            // 1. 패킷 입력창 초기화
+            packetInput.value = '';
+            
+            // 2. 그리드 데이터 초기화 (원본 구조 유지)
+            const originalData = [
+                ['헤더', 8, '패킷 헤더', ''],
+                ['본문', 12, '패킷 본문', ''],
+                ['푸터', 4, '패킷 종료 표시', '']
+            ];
+            packetGrid.loadData(originalData);
+            
+            // 3. 메시지 초기화
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = '';
+            
+            showMessage('입력 내용이 초기화되었습니다', 'success');
+        });
+
+        
+        // 패킷 분석 실행
+        analyzeBtn.addEventListener('click', function() {
+            const packetStr = packetInput.value;
+            if (!packetStr.trim()) {
+                showMessage('패킷 데이터를 입력해주세요', 'error');
+                return;
+            }
+            
+            // 원본 데이터 보존을 위해 복사
+            const originalGridData = packetGrid.getData();
+            let gridData = JSON.parse(JSON.stringify(originalGridData));
+            let currentPosition = 0;
+            let errorOccurred = false;
+            
+            // 기존 필드에 데이터 채우기
+            for (let i = 0; i < gridData.length; i++) {
+                const size = parseInt(gridData[i][1]);
+                if (isNaN(size) || size <= 0) {
+                    gridData[i][3] = "유효하지 않은 크기";
+                    errorOccurred = true;
+                    continue;
+                }
+                
+                // 한글 처리를 위한 바이트 계산
+                let byteCount = 0;
+                let chunk = '';
+                let j = currentPosition;
+                
+                while (j < packetStr.length && byteCount < size) {
+                    const char = packetStr[j];
+                    const charCode = char.charCodeAt(0);
+                    
+                    // 한글 체크 (가-힣 범위)
+                    if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+                        if (byteCount + 2 > size) break;
+                        byteCount += 2;
+                        chunk += char;
+                        j++;
+                    } else {
+                        if (byteCount + 1 > size) break;
+                        byteCount += 1;
+                        chunk += char;
+                        j++;
+                    }
+                }
+                
+                gridData[i][3] = chunk;
+                currentPosition = j;
+                
+                // 더 이상 데이터가 없으면 루프 종료
+                if (currentPosition >= packetStr.length) {
+                    break;
+                }
+            }
+            
+            // 남은 데이터가 있으면 새 행 추가
+            if (currentPosition < packetStr.length) {
+                const remainingData = packetStr.substring(currentPosition);
+                const remainingByteSize = calculateByteSize(remainingData);
+                
+                // 새 행 추가 (원본 데이터 구조 유지)
+                gridData.push(['남은값', remainingByteSize, '추가 데이터', remainingData]);
+            }
+            
+            // 그리드에 데이터 로드
+            packetGrid.loadData(gridData);
+            
+            if (errorOccurred) {
+                showMessage('일부 필드에서 오류가 발생했습니다', 'error');
+            } else {
+                showMessage('패킷 분석이 완료되었습니다!', 'success');
+            }
+        });
+
+        // 문자열의 바이트 크기 계산 함수 (한글 2바이트, 나머지 1바이트)
+        function calculateByteSize(str) {
+            let byteCount = 0;
+            for (let i = 0; i < str.length; i++) {
+                const charCode = str.charCodeAt(i);
+                byteCount += (charCode >= 0xAC00 && charCode <= 0xD7A3) ? 2 : 1;
+            }
+            return byteCount;
+        }
+
+
+
+        
+        // 텍스트를 16진수로 변환 (한글 2바이트 처리) - 이 함수는 필요 없어짐
+        function textToHex(str) {
+            let hex = '';
+            for (let i = 0; i < str.length; i++) {
+                const charCode = str.charCodeAt(i);
+                // 한글 처리 (0xAC00 ~ 0xD7A3)
+                if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+                    hex += charCode.toString(16).padStart(4, '0');
+                } else {
+                    hex += charCode.toString(16).padStart(2, '0');
+                }
+            }
+            return hex.toUpperCase();
+        }
+        
+        // 필드 추가
+        addFieldBtn.addEventListener('click', function() {
+            const data = packetGrid.getData();
+            data.push(['새 필드', 8, '', '']);
+            packetGrid.loadData(data);
+        });
+        
+        // 그리드 초기화
+        resetGridBtn.addEventListener('click', function() {
+            packetGrid.loadData([
+                ['헤더', 8, '패킷 헤더', ''],
+                ['본문', 12, '패킷 본문', ''],
+                ['푸터', 4, '패킷 종료 표시', '']
+            ]);
+        });
+        
+        // 패킷 입력창 지우기
+        // JSON 포맷 정렬
+        formatJsonBtn.addEventListener('click', function() {
+            try {
+                const jsonObj = JSON.parse(jsonEditor.textContent);
+                const formattedJson = JSON.stringify(jsonObj, null, 4);
+                jsonEditor.textContent = formattedJson;
+                jsonMessageDiv.innerHTML = '<div class="success">JSON 포맷 정렬 완료!</div>';
+                jsonErrorPositionDiv.innerHTML = '';
+                updateLineNumbers();
+            } catch (e) {
+                highlightJsonError(e);
+            }
+        });
+        
+        // JSON 압축
+        minifyJsonBtn.addEventListener('click', function() {
+            try {
+                const jsonObj = JSON.parse(jsonEditor.textContent);
+                const minifiedJson = JSON.stringify(jsonObj);
+                jsonEditor.textContent = minifiedJson;
+                jsonMessageDiv.innerHTML = '<div class="success">JSON 압축 완료!</div>';
+                jsonErrorPositionDiv.innerHTML = '';
+                updateLineNumbers();
+            } catch (e) {
+                highlightJsonError(e);
+            }
+        });
+        
+        // JSON 유효성 검사
+        validateJsonBtn.addEventListener('click', function() {
+            try {
+                JSON.parse(jsonEditor.textContent);
+                jsonMessageDiv.innerHTML = '<div class="success">유효한 JSON 형식입니다!</div>';
+                jsonErrorPositionDiv.innerHTML = '';
+            } catch (e) {
+                highlightJsonError(e);
+            }
+        });
+        
+        // JSON Key 배열 출력
+        jsonKeysBtn.addEventListener('click', function() {
+            try {
+                const jsonObj = JSON.parse(jsonEditor.textContent);
+                const keys = extractKeys(jsonObj);
+                jsonMessageDiv.innerHTML = `<div class="success">키 추출 완료! (${keys.length}개)</div>`;
+                jsonErrorPositionDiv.textContent = keys.join('\n');
+            } catch (e) {
+                highlightJsonError(e);
+            }
+        });
+        
+        // JSON 오류 강조 표시 함수
+        function highlightJsonError(error) {
+            const errorMsg = error.message;
+            jsonMessageDiv.innerHTML = `<div class="error">JSON 오류: ${errorMsg}</div>`;
+            
+            // 오류 위치 추출 (Chrome과 Firefox 형식 모두 처리)
+            const positionMatch = errorMsg.match(/position\s+(\d+)/) || 
+                                errorMsg.match(/at position (\d+)/);
+            
+            if (positionMatch && positionMatch[1]) {
+                const errorPosition = parseInt(positionMatch[1]);
+                const text = jsonEditor.textContent;
+                
+                // 에러 주변 텍스트 하이라이트
+                jsonErrorPositionDiv.innerHTML = '';
+                
+                // 오류 위치 계산 (줄/열 위치)
+                let line = 1, col = 1, index = 0;
+                for (; index < text.length && index < errorPosition; index++) {
+                    if (text[index] === '\n') {
+                        line++;
+                        col = 1;
+                    } else {
+                        col++;
+                    }
+                }
+                
+                // 오류 메시지 추가
+                const errorInfo = document.createElement('div');
+                errorInfo.innerHTML = `<strong>오류 위치:</strong> ${line}번째 줄, ${col}번째 문자 근처`;
+                jsonErrorPositionDiv.appendChild(errorInfo);
+                
+                // 오류 위치 표시
+                const range = document.createRange();
+                range.selectNodeContents(jsonEditor);
+                
+                const textNode = jsonEditor.firstChild;
+                range.setStart(textNode, Math.max(0, errorPosition - 20));
+                range.setEnd(textNode, Math.min(text.length, errorPosition + 20));
+                
+                // 기존 하이라이트 제거
+                const highlights = jsonEditor.getElementsByClassName('json-error-highlight');
+                while (highlights[0]) {
+                    highlights[0].classList.remove('json-error-highlight');
+                }
+                
+                // 새 하이라이트 추가
+                const span = document.createElement('span');
+                span.className = 'json-error-highlight';
+                span.textContent = range.toString();
+                
+                // 시각적 표시를 위해 range 교체
+                range.deleteContents();
+                range.insertNode(span);
+                
+                // 오류 위치로 스크롤
+                span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        // JSON 키 추출 함수
+        function extractKeys(obj, prefix = '') {
+            let keys = [];
+            
+            for (let key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const fullPath = prefix ? `${prefix}.${key}` : key;
+                    keys.push(fullPath);
+                    
+                    if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        keys = keys.concat(extractKeys(obj[key], fullPath));
+                    }
+                }
+            }
+            
+            return keys;
+        }
+        
+        // 메시지 표시 함수 (개선된 버전)
+        function showMessage(message, type = 'info') {
+            // 오류 해결: 메시지 요소 찾기
+            const messageContainer = document.getElementById('message-container');
+            if (!messageContainer) {
+                console.error('Message container not found');
+                return;
+            }
+            
+            messageContainer.innerHTML = '';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            messageContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.opacity = '0';
+                setTimeout(() => {
+                    messageContainer.removeChild(messageDiv);
+                }, 500);
+            }, 5000);
+        }
+        
+        // 모든 메시지 초기화
+        function clearMessages() {
+            const messageContainers = document.querySelectorAll('.message');
+            messageContainers.forEach(container => {
+                container.innerHTML = '';
+            });
+        }
+</script>
+</body>
+</html>
