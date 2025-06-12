@@ -25,4 +25,6 @@ Allow: /tools/calculator.html
 Allow: /tools/loan-calculator.html
 Allow: /tools/json-formatter.html
 Allow: /tools/image-compressor.html
+Allow: /postit.html
+Allow: /postit_en.html
 Disallow:
