@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML/JS 압축 도구</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        textarea { width: 100%; height: 300px; margin: 10px 0; font-family: monospace; }
+        button { padding: 10px 15px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .result-area { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>HTML/JS 압축 도구</h1>
+    <p>아래에 HTML/JS 소스를 붙여넣고 "압축하기" 버튼을 클릭하세요.</p>
+    
+    <textarea id="htmlSource" placeholder="HTML 또는 JS 소스를 붙여넣으세요..."></textarea>
+    <div>
+        <button onclick="compressHTML()">압축하기</button>
+        <button onclick="copyToClipboard()">결과 복사</button>
+    </div>
+    
+    <div class="result-area">
+        <h3>압축된 코드:</h3>
+        <textarea id="compressedSource" readonly></textarea>
+    </div>
+
+    <script>
+        function compressHTML() {
+            const original = document.getElementById('htmlSource').value.trim();
+            if (!original) {
+                alert('소스를 입력해주세요!');
+                return;
+            }
+
+            // 1. HTML 주석 제거 (<!-- -->)
+            let compressed = original.replace(/<!--[\s\S]*?-->/g, '');
+
+            // 2. JS 한 줄 주석 제거 (//)
+            compressed = compressed.replace(/\/\/.*$/gm, function(match) {
+                // 주석이 포함된 줄에 코드가 있는지 확인
+                const code = match.replace(/\/\/.*$/, '').trim();
+                return code ? code : ''; // 코드가 있으면 코드만 유지, 없으면 줄 삭제
+            });
+
+            // 3. JS 블록 주석 제거 (/* */)
+            compressed = compressed.replace(/\/\*[\s\S]*?\*\//g, '');
+
+            // 4. 공백 및 줄바꿈 제거
+            compressed = compressed.replace(/\s+/g, ' ');  // 여러 공백 → 하나
+            compressed = compressed.replace(/>\s+</g, '><'); // 태그 사이 공백 제거
+
+            // 5. 결과 출력
+            document.getElementById('compressedSource').value = compressed;
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('compressedSource');
+            output.select();
+            document.execCommand('copy');
+            alert('압축된 코드가 복사되었습니다!');
+        }
+    </script>
+</body>
+</html>
