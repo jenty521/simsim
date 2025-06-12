@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>무료 HTML/JS 압축 도구 - 온라인 코드 미니파이, 주석/공백 제거</title>
-    <meta name="description" content="무료 HTML/JS 압축 도구! 소스 코드를 붙여넣고 클릭 한 번으로 주석과 공백을 제거해 용량을 최소화하세요. 빠르고 간편한 온라인 코드 미니파이어, 광고로 무료 제공.">
-    <meta name="keywords" content="HTML 압축, JS 압축, 코드 미니파이, 코드 최적화, 무료 웹 도구, 주석 제거, 공백 제거, 온라인 미니파이어, 소스 압축, 코드 용량 줄이기">
+    <title>Free Online HTML/JS Minifier – Compress & Optimize Code Instantly</title>
+    <meta name="description" content="Paste your HTML or JavaScript code and click 'Minify' to instantly remove comments and whitespace. Reduce file size, boost website speed, and optimize code for SEO with this free online tool.">
+    <meta name="keywords" content="HTML minifier, JavaScript minifier, online code compressor, free minify tool, remove comments, reduce file size, optimize code, web developer tools, code optimizer, website speed">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://yourdomain.com/">
-    <meta property="og:title" content="무료 HTML/JS 압축 도구 - 온라인 코드 미니파이어">
-    <meta property="og:description" content="HTML/JS 소스를 붙여넣고 클릭 한 번에 주석과 공백을 제거! 빠르고 무료로 코드 용량을 줄이세요.">
+    <meta property="og:title" content="Free Online HTML/JS Minifier – Compress & Optimize Code Instantly">
+    <meta property="og:description" content="Minify HTML or JavaScript code online for free. Instantly remove comments and whitespace, reduce file size, and improve website speed.">
     <meta property="og:image" content="https://yourdomain.com/og-image.png">
     <meta property="og:url" content="https://yourdomain.com/">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="무료 HTML/JS 압축 도구 - 코드 미니파이">
-    <meta name="twitter:description" content="주석과 공백을 제거해 코드를 빠르고 무료로 압축하세요. 온라인 HTML/JS 미니파이어.">
+    <meta name="twitter:title" content="Free Online HTML/JS Minifier – Compress & Optimize Code">
+    <meta name="twitter:description" content="Paste your code, click 'Minify,' and get optimized HTML/JS instantly. Free, fast, and easy to use.">
     <meta name="twitter:image" content="https://yourdomain.com/og-image.png">
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
@@ -36,17 +36,17 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"  crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>HTML/JS 압축 도구</h1>
-    <p>아래에 HTML/JS 소스를 붙여넣고 "압축하기" 버튼을 클릭하세요. <strong>무료로 주석과 공백을 제거하여 코드 용량을 최소화</strong>할 수 있습니다. 빠르고 간편한 온라인 코드 미니파이어!</p>
+    <h1>Free Online HTML/JS Minifier</h1>
+    <p>Paste your HTML or JavaScript code below and click <strong>Minify</strong>. Instantly remove comments and whitespace to reduce file size, speed up your website, and optimize code for SEO. 100% free and easy to use!</p>
     
-    <textarea id="htmlSource" placeholder="HTML 또는 JS 소스를 붙여넣으세요..."></textarea>
+    <textarea id="htmlSource" placeholder="Paste your HTML or JS code here..."></textarea>
     <div>
-        <button onclick="compressHTML()">압축하기</button>
-        <button onclick="copyToClipboard()">결과 복사</button>
+        <button onclick="compressHTML()">Minify</button>
+        <button onclick="copyToClipboard()">Copy Result</button>
     </div>
     
     <div class="result-area">
-        <h3>압축된 코드:</h3>
+        <h3>Minified Code:</h3>
         <textarea id="compressedSource" readonly></textarea>
     </div>
 
@@ -54,27 +54,22 @@
         function compressHTML() {
             const original = document.getElementById('htmlSource').value.trim();
             if (!original) {
-                alert('소스를 입력해주세요!');
+                alert('Please enter your code!');
                 return;
             }
-
-            // 1. HTML 주석 제거 (<!-- -->)
+            // 1. Remove HTML comments (<!-- -->)
             let compressed = original.replace(/<!--[\s\S]*?-->/g, '');
-
-            // 2. JS 한 줄 주석 제거 (//)
+            // 2. Remove JS single-line comments (//)
             compressed = compressed.replace(/\/\/.*$/gm, function(match) {
                 const code = match.replace(/\/\/.*$/, '').trim();
                 return code ? code : '';
             });
-
-            // 3. JS 블록 주석 제거 (/* */)
+            // 3. Remove JS block comments (/* */)
             compressed = compressed.replace(/\/\*[\s\S]*?\*\//g, '');
-
-            // 4. 공백 및 줄바꿈 제거
+            // 4. Remove extra whitespace and line breaks
             compressed = compressed.replace(/\s+/g, ' ');
             compressed = compressed.replace(/>\s+</g, '><');
-
-            // 5. 결과 출력
+            // 5. Output result
             document.getElementById('compressedSource').value = compressed;
         }
 
@@ -82,7 +77,7 @@
             const output = document.getElementById('compressedSource');
             output.select();
             document.execCommand('copy');
-            alert('압축된 코드가 복사되었습니다!');
+            alert('Minified code copied!');
         }
     </script>
 </body>
