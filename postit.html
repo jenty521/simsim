@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Notes 메모장</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-title {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-btn.confirm {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background-color: #f0f0f0;
+        }
+
+
+        #header {
+            display: flex;
+            padding: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            gap: 10px;
+            z-index: 200;
+        }
+
+        #canvas-select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        #canvas-title {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex-grow: 1;
+            max-width: 200px;
+        }
+
+        .header-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4a90e2;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .header-btn:hover {
+            background-color: #357abd;
+        }
+
+        .header-btn.danger {
+            background-color: #e74c3c;
+        }
+
+        .header-btn.danger:hover {
+            background-color: #c0392b;
+        }
+
+        #canvas-container {
+            position: absolute;
+            width: 100%;
+            height: calc(100vh - 80px); /* 투명도 컨트롤러 공간 확보 */
+            overflow: hidden;
+            background-color: #f5f5f5;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: center;
+            transition: transform 0.3s ease;
+            touch-action: none;
+            user-select: none; /* 드래그 시 텍스트 선택 방지 */
+        }
+        
+
+        #canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-origin: 0 0;
+            cursor: default;
+            pointer-events: none; /* 캔버스 자체가 이벤트를 막지 않도록 */
+        }
+
+        .note {
+            position: absolute;
+            width: 200px;
+            min-height: 200px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.3s ease;
+            cursor: grab;
+            resize: none;
+            overflow: hidden;
+            pointer-events: auto; /* 메모지만 이벤트 처리 */
+        }
+
+        .note:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .note-type {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .note-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .note-actions button:hover {
+            opacity: 1;
+        }
+
+        .note-content {
+            flex-grow: 1;
+            outline: none;
+            overflow-wrap: break-word;
+            resize: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            overflow: auto;
+        }
+
+        .note-footer {
+            font-size: 10px;
+            color: rgba(0, 0, 0, 0.5);
+            text-align: right;
+            position: relative;
+            padding-right: 10px;
+        }
+
+        .resize-handle {
+            position: absolute;
+            right: -15px;
+            bottom: -15px;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(240, 18, 18, 0.932);
+            cursor: nwse-resize;
+            border-radius: 2px;
+        }
+
+        #add-note-btn {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ffeb3b;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        #add-note-btn:hover {
+            background-color: #fdd835;
+        }
+
+        #zoom-controls {
+            position: fixed;
+            bottom: 130px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 100;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        #zoom-level {
+            position: fixed;
+            bottom: 180px;
+            right: 30px;
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+
+        #context-menu {
+            position: absolute;
+            display: none;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            min-width: 150px;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .context-menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 4px 0;
+        }
+
+         /* 검색 영역 스타일 추가 */
+         #search-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        #search-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 150px;
+        }
+
+        .search-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4a90e2;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #357abd;
+        }
+
+        .search-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* 검색된 메모 하이라이트 스타일 */
+        .note.highlighted {
+            box-shadow: 0 0 0 3px #ff5722;
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 투명도 컨트롤러 스타일 */
+        #opacity-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        #opacity-slider {
+            flex-grow: 1;
+            margin: 0 10px;
+        }
+
+        #opacity-value {
+            width: 40px;
+            text-align: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <select id="canvas-select"></select>
+        <input type="text" id="canvas-title" placeholder="캔버스 제목">
+        <button id="save-canvas-btn" class="header-btn">캔버스 저장</button>
+        <button id="new-canvas-btn" class="header-btn">새 캔버스</button>
+        <button id="clear-canvas-btn" class="header-btn">캔버스 비우기</button>
+        <button id="delete-canvas-btn" class="header-btn danger">캔버스 삭제</button>
+        <button id="export-btn" class="header-btn">파일로 내보내기</button>
+        <button id="import-btn" class="header-btn">파일 불러오기</button>
+        
+        <!-- 검색 영역 추가 -->
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="검색어 입력">
+            <button id="search-btn" class="search-btn">검색</button>
+            <button id="prev-btn" class="search-btn" disabled>이전</button>
+            <button id="next-btn" class="search-btn" disabled>다음</button>
+        </div>
+    </div>
+
+    <!-- 모달 창 추가 -->
+    <div id="new-canvas-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">새 캔버스 제목 입력</div>
+            <input type="text" id="new-canvas-title" class="modal-input" placeholder="캔버스 제목을 입력하세요">
+            <div class="modal-actions">
+                <button id="cancel-new-canvas" class="modal-btn cancel">취소</button>
+                <button id="confirm-new-canvas" class="modal-btn confirm">생성</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="canvas-container">
+        <div id="canvas"></div>
+    </div>
+    
+    <!-- 투명도 컨트롤러 추가 -->
+    <div id="opacity-controls">
+        <span>투명도:</span>
+        <input type="range" id="opacity-slider" min="30" max="100" value="100">
+        <span id="opacity-value">100%</span>
+    </div>
+    
+    <div id="zoom-controls">
+        <button class="zoom-btn" id="zoom-in">+</button>
+        <button class="zoom-btn" id="zoom-out">-</button>
+        <button class="zoom-btn" id="zoom-reset">↻</button>
+    </div>
+    <div id="zoom-level">100%</div>
+    
+    <button id="add-note-btn">+</button>
+
+    <!-- 컨텍스트 메뉴 추가 -->
+    <div id="context-menu">
+        <div class="context-menu-item" id="context-add-note">메모 추가</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="context-align-notes">시작점 정렬</div>
+    </div>
+
+    <script>
+        // 개발자 커스터마이징 영역 시작
+        // ==============================
+        
+        // 포스트잇 타입과 색상 정의
+        const noteTypes = {
+            default: '#ffeb3b',  // 노란색 (기본)
+            important: '#ff8a65', // 주황색 (중요)
+            idea: '#81d4fa',     // 하늘색 (아이디어)
+            reminder: '#ce93d8', // 보라색 (리마인더)
+            personal: '#a5d6a7'  // 녹색 (개인)
+        };
+        
+        // 새로 생성되는 노트의 기본 타입
+        const defaultNoteType = 'default';
+        
+        // 새 노트의 기본 위치 (화면 중앙)
+        const defaultNotePosition = { left: '50%', top: '50%' };
+        
+        // ==============================
+        // 개발자 커스터마이징 영역 끝
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvasContainer = document.getElementById('canvas-container');
+            const canvas = document.getElementById('canvas');
+            const addNoteBtn = document.getElementById('add-note-btn');
+            const zoomInBtn = document.getElementById('zoom-in');
+            const zoomOutBtn = document.getElementById('zoom-out');
+            const zoomResetBtn = document.getElementById('zoom-reset');
+            const zoomLevelDisplay = document.getElementById('zoom-level');
+            const canvasSelect = document.getElementById('canvas-select');
+            const canvasTitleInput = document.getElementById('canvas-title');
+            const saveCanvasBtn = document.getElementById('save-canvas-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const importBtn = document.getElementById('import-btn');
+            const newCanvasModal = document.getElementById('new-canvas-modal');
+            const newCanvasTitleInput = document.getElementById('new-canvas-title');
+            const confirmNewCanvasBtn = document.getElementById('confirm-new-canvas');
+            const cancelNewCanvasBtn = document.getElementById('cancel-new-canvas');
+            const contextMenu = document.getElementById('context-menu');
+            const contextAddNote = document.getElementById('context-add-note');
+            const contextAlignNotes = document.getElementById('context-align-notes');
+            let lastRightClickPosition = { x: 0, y: 0 };
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const opacitySlider = document.getElementById('opacity-slider');
+            const opacityValue = document.getElementById('opacity-value');
+            let isDraggingCanvas = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            
+            let searchResults = [];
+            let currentSearchIndex = -1;
+            let currentSearchTerm = '';
+            
+            let scale = 1;
+            let translateX = 0;
+            let translateY = 0;
+            let currentCanvasId = null;
+            let canvases = {};
+            
+            // 초기화
+            init();
+            
+            // 초기화 함수
+            function init() {
+                translateX = 0;
+                translateY = 0;
+                scale = 1;
+                isDraggingCanvas = false;
+                loadCanvasesFromLocalStorage();
+                updateCanvasSelect();
+                
+                if (Object.keys(canvases).length === 0) {
+                    showNewCanvasModal();
+                } else {
+                    const firstCanvasId = Object.keys(canvases)[0];
+                    loadCanvas(firstCanvasId);
+                }
+                
+                setupEventListeners();
+
+                // 컨텍스트 메뉴 이벤트 리스너 추가
+                setupContextMenu();
+
+                // 검색 이벤트 리스너 추가
+                setupSearch();
+
+                // 투명도 조절 이벤트 리스너 추가
+                setupOpacityControls();
+
+                setupCanvasDrag(); 
+
+                updateTransform(); // 초기 위치 적용
+
+                // 문서 클릭 이벤트 리스너 추가 (강조 해제용)
+                document.addEventListener('click', (e) => {
+                    // 컨텍스트 메뉴나 검색 관련 요소가 아닌 경우에만 강조 해제
+                    if (!e.target.closest('#context-menu') && 
+                        !e.target.closest('#search-container') &&
+                        !e.target.closest('.note.highlighted')) {
+                        clearHighlights();
+                        updateSearchButtons();
+                    }
+                });
+                
+            }
+
+            // 3. 드래그 핸들러 함수 추가 (새로 작성)
+            function setupCanvasDrag() {
+                const canvasContainer = document.getElementById('canvas-container');
+
+                // 마우스 다운 이벤트 (수정된 부분)
+                canvasContainer.addEventListener('mousedown', (e) => {
+                    // 메모지나 자식 요소 클릭시 무시 (더 정확한 조건)
+                    if (!e.target.classList.contains('note') && e.target === canvasContainer) {
+                        isDraggingCanvas = true;
+                        dragStartX = e.clientX - translateX;
+                        dragStartY = e.clientY - translateY;
+                        canvasContainer.style.cursor = 'grabbing';
+                        e.preventDefault();
+                        console.log("드래그 시작", dragStartX, dragStartY); // 디버깅용
+                    }
+                });
+
+                // 마우스 이동 이벤트
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDraggingCanvas) return;
+
+                    translateX = e.clientX - dragStartX;
+                    translateY = e.clientY - dragStartY;
+                    updateTransform();
+                });
+
+                // 마우스 업 이벤트
+                document.addEventListener('mouseup', () => {
+                    isDraggingCanvas = false;
+                    canvasContainer.style.cursor = 'default';
+                });
+
+                // 터치 이벤트 추가 (모바일 대응)
+                canvasContainer.addEventListener('touchstart', (e) => {
+                    if (e.target !== canvasContainer) return;
+                    isDraggingCanvas = true;
+                    const touch = e.touches[0];
+                    dragStartX = touch.clientX - translateX;
+                    dragStartY = touch.clientY - translateY;
+                    e.preventDefault();
+                });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDraggingCanvas) return;
+                    const touch = e.touches[0];
+                    translateX = touch.clientX - dragStartX;
+                    translateY = touch.clientY - dragStartY;
+                    updateTransform();
+                    e.preventDefault();
+                });
+
+                document.addEventListener('touchend', () => {
+                    isDraggingCanvas = false;
+                });
+            }
+
+            // 투명도 조절 설정 함수 추가
+            function setupOpacityControls() {
+                opacitySlider.addEventListener('input', () => {
+                    const opacity = opacitySlider.value;
+                    opacityValue.textContent = `${opacity}%`;
+                    
+                    // 모든 메모에 투명도 적용
+                    document.querySelectorAll('.note').forEach(note => {
+                        note.style.opacity = opacity / 100;
+                    });
+                    
+                    // 현재 캔버스가 있으면 투명도 설정 저장
+                    if (currentCanvasId) {
+                        canvases[currentCanvasId].opacity = opacity / 100;
+                        saveCurrentCanvas();
+                    }
+                });
+            }
+
+            function showNewCanvasModal() {
+                newCanvasTitleInput.value = '';
+                newCanvasModal.style.display = 'flex';
+                newCanvasTitleInput.focus();
+            }
+
+            // 이벤트 리스너 설정
+            function setupEventListeners() {
+                addNoteBtn.addEventListener('click', () => {
+                    createNote();
+                });
+
+                document.getElementById('new-canvas-btn').addEventListener('click', () => {
+                    createNewCanvas();
+                });
+
+                // 캔버스 삭제 버튼 추가
+                document.getElementById('delete-canvas-btn').addEventListener('click', () => {
+                    if (!currentCanvasId) return;
+                    
+                    if (confirm('정말로 이 캔버스를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.')) {
+                        deleteCanvas(currentCanvasId);
+                    }
+                });
+
+                // 캔버스 비우기 버튼 추가
+                document.getElementById('clear-canvas-btn').addEventListener('click', () => {
+                    if (!currentCanvasId) return;
+                    
+                    if (confirm('현재 캔버스의 모든 메모를 삭제하시겠습니까?')) {
+                        clearCurrentCanvas();
+                    }
+                });
+
+                // 새 캔버스 버튼 - 모달 표시로 변경
+                document.getElementById('new-canvas-btn').addEventListener('click', () => {
+                    showNewCanvasModal();
+                });
+
+                // 모달 확인 버튼
+                confirmNewCanvasBtn.addEventListener('click', () => {
+                    const title = newCanvasTitleInput.value.trim();
+                    if (title) {
+                        createNewCanvas(title);
+                        newCanvasModal.style.display = 'none';
+                    } else {
+                        alert('캔버스 제목을 입력해주세요.');
+                    }
+                });
+
+                // 모달 취소 버튼
+                cancelNewCanvasBtn.addEventListener('click', () => {
+                    newCanvasModal.style.display = 'none';
+                    
+                    // 캔버스가 하나도 없는 경우 기본 캔버스 생성
+                    if (Object.keys(canvases).length === 0) {
+                        createNewCanvas('새 캔버스');
+                    }
+                });
+
+                // 모달 외부 클릭 시 닫기
+                newCanvasModal.addEventListener('click', (e) => {
+                    if (e.target === newCanvasModal) {
+                        newCanvasModal.style.display = 'none';
+                        
+                        // 캔버스가 하나도 없는 경우 기본 캔버스 생성
+                        if (Object.keys(canvases).length === 0) {
+                            createNewCanvas('새 캔버스');
+                        }
+                    }
+                });
+
+                canvasTitleInput.addEventListener('change', () => {
+                    if (!currentCanvasId) return;
+                    
+                    const newTitle = canvasTitleInput.value.trim();
+                    if (!newTitle) return;
+                    
+                    // 제목이 변경된 경우에만 새 캔버스 생성
+                    if (newTitle !== canvases[currentCanvasId].title) {
+                        saveAsNewCanvas(newTitle);
+                    }
+                });
+                
+                zoomInBtn.addEventListener('click', () => {
+                    zoom(1.1);
+                });
+                
+                zoomOutBtn.addEventListener('click', () => {
+                    zoom(0.9);
+                });
+                
+                zoomResetBtn.addEventListener('click', () => {
+                    resetZoom();
+                });
+                
+                canvasSelect.addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        loadCanvas(e.target.value);
+                    }
+                });
+                
+                saveCanvasBtn.addEventListener('click', () => {
+                    saveCurrentCanvas();
+                });
+                
+                exportBtn.addEventListener('click', () => {
+                    exportCanvases();
+                });
+                
+                importBtn.addEventListener('click', () => {
+                    importCanvases();
+                });
+                
+                
+            }
+            
+            // 확대/축소 함수
+            function zoom(factor) {
+                scale *= factor;
+                updateTransform();
+                updateZoomLevel();
+            }
+            
+            // 확대/축소 리셋
+            function resetZoom() {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform();
+                updateZoomLevel();
+            }
+            
+            // 변환 업데이트
+            function updateTransform() {
+                const canvas = document.getElementById('canvas');
+                canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                console.log("현재 위치:", translateX, translateY); // 디버깅용             
+            }
+            
+            // 확대 레벨 표시 업데이트
+            function updateZoomLevel() {
+                zoomLevelDisplay.textContent = `${Math.round(scale * 100)}%`;
+            }
+            
+            // 로컬 스토리지에서 캔버스 불러오기
+            function loadCanvasesFromLocalStorage() {
+                const savedCanvases = localStorage.getItem('stickyNotesCanvases');
+                if (savedCanvases) {
+                    canvases = JSON.parse(savedCanvases);
+                }
+            }
+            
+            // 캔버스 선택 드롭다운 업데이트
+            function updateCanvasSelect() {
+                canvasSelect.innerHTML = '';
+                
+                Object.keys(canvases).forEach(canvasId => {
+                    const option = document.createElement('option');
+                    option.value = canvasId;
+                    option.textContent = canvases[canvasId].title || `캔버스 ${canvasId}`;
+                    canvasSelect.appendChild(option);
+                });
+                
+                // 현재 선택된 캔버스 표시
+                if (currentCanvasId) {
+                    canvasSelect.value = currentCanvasId;
+                }
+            }
+            
+            // 새 캔버스 생성
+            function createNewCanvas(title) {
+                if (!title || !title.trim()) {
+                    alert('캔버스 제목을 입력해주세요.');
+                    return null;
+                }
+                
+                const newCanvasId = Date.now().toString();
+                currentCanvasId = newCanvasId;
+                
+                canvases[newCanvasId] = {
+                    id: newCanvasId,
+                    title: title.trim(),
+                    notes: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    opacity: 1 // 기본 투명도
+                };
+                
+                // 캔버스 선택 드롭다운 업데이트
+                updateCanvasSelect();
+                
+                // 제목 입력 필드 업데이트
+                canvasTitleInput.value = title.trim();
+                
+                // 투명도 슬라이더 초기화
+                opacitySlider.value = 100;
+                opacityValue.textContent = '100%';
+                
+                // 캔버스 내용 초기화
+                clearCanvas();
+                
+                // 로컬 스토리지에 저장
+                localStorage.setItem('stickyNotesCanvases', JSON.stringify(canvases));
+                
+                return newCanvasId;
+            }
+            
+            // 캔버스 로드
+            function loadCanvas(canvasId) {
+                if (!canvases[canvasId]) return;
+                
+                currentCanvasId = canvasId;
+                const canvasData = canvases[canvasId];
+                
+                // 제목 표시
+                canvasTitleInput.value = canvasData.title || '';
+                
+                // 투명도 설정
+                const opacity = canvasData.opacity !== undefined ? canvasData.opacity : 1;
+                opacitySlider.value = opacity * 100;
+                opacityValue.textContent = `${opacity * 100}%`;
+                
+                // 캔버스 내용 초기화
+                clearCanvas();
+                
+                // 노트 로드
+                if (canvasData.notes && canvasData.notes.length > 0) {
+                    canvasData.notes.forEach(note => {
+                        createNote(
+                            note.content, 
+                            note.type, 
+                            note.position, 
+                            note.id,
+                            note.size, // 크기 정보 추가
+                            note.opacity // 투명도 정보 추가
+                        );
+                    });
+                }
+                
+                // 캔버스 선택 드롭다운 업데이트
+                updateCanvasSelect();
+            }
+            
+            // 현재 캔버스 저장
+            function saveCurrentCanvas() {
+                if (!currentCanvasId) return;
+                
+                const title = canvasTitleInput.value.trim();
+                
+                // 캔버스 데이터 업데이트 (기존 캔버스 업데이트)
+                canvases[currentCanvasId].title = title;
+                canvases[currentCanvasId].updatedAt = new Date().toISOString();
+                canvases[currentCanvasId].opacity = parseFloat(opacitySlider.value) / 100;
+                
+                // 노트 데이터 수집
+                const notes = [];
+                const noteElements = document.querySelectorAll('.note');
+                
+                noteElements.forEach(note => {
+                    notes.push({
+                        id: note.id,
+                        content: note.querySelector('.note-content').value,
+                        type: note.querySelector('.note-type').textContent,
+                        position: {
+                            left: note.style.left,
+                            top: note.style.top
+                        },
+                        size: { // 크기 정보 저장
+                            width: note.style.width,
+                            height: note.style.height
+                        },
+                        opacity: parseFloat(note.style.opacity || '1'), // 투명도 정보 저장
+                        createdAt: note.querySelector('.note-footer').textContent
+                    });
+                });
+                
+                canvases[currentCanvasId].notes = notes;
+                
+                // 로컬 스토리지에 저장
+                localStorage.setItem('stickyNotesCanvases', JSON.stringify(canvases));
+                
+                // 캔버스 선택 드롭다운 업데이트
+                updateCanvasSelect();
+            }
+            
+            // 캔버스 내용 초기화
+            function clearCanvas() {
+                canvas.innerHTML = '';
+            }
+
+            // 컨텍스트 메뉴 설정 함수 추가
+            function setupContextMenu() {
+                // 캔버스 컨테이너에서 우클릭 이벤트 처리
+                canvasContainer.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    
+                    // 마우스 위치 저장
+                    lastRightClickPosition = {
+                        x: e.clientX,
+                        y: e.clientY
+                    };
+                    
+                    // 컨텍스트 메뉴 위치 설정
+                    contextMenu.style.display = 'block';
+                    contextMenu.style.left = `${e.clientX}px`;
+                    contextMenu.style.top = `${e.clientY}px`;
+                });
+
+                // 문서 클릭 시 컨텍스트 메뉴 숨기기
+                document.addEventListener('click', () => {
+                    contextMenu.style.display = 'none';
+                });
+
+                // 컨텍스트 메뉴 아이템 클릭 이벤트
+                contextAddNote.addEventListener('click', () => {
+                    // 메모 추가 기능
+                    createNoteAtPosition(lastRightClickPosition);
+                    contextMenu.style.display = 'none';
+                });
+
+                contextAlignNotes.addEventListener('click', () => {
+                    // 메모 정렬 기능
+                    alignNotesFromPosition(lastRightClickPosition);
+                    contextMenu.style.display = 'none';
+                });
+            }
+
+            // 위치에 메모 생성 함수 추가
+            function createNoteAtPosition(position) {
+                if (!currentCanvasId) return;
+                
+                // 캔버스 컨테이너 기준으로 위치 계산
+                const containerRect = canvasContainer.getBoundingClientRect();
+                const x = position.x - containerRect.left - translateX;
+                const y = position.y - containerRect.top - translateY;
+                
+                // 스케일 고려
+                const scaledX = x / scale;
+                const scaledY = y / scale;
+                
+                // 메모 생성
+                const noteId = createNote('', defaultNoteType, {
+                    left: `${scaledX}px`,
+                    top: `${scaledY}px`
+                });
+                
+                // 저장
+                saveCurrentCanvas();
+                
+                return noteId;
+            }
+
+            // 시작점 기준으로 메모 정렬 함수 추가
+            function alignNotesFromPosition(startPosition) {
+                if (!currentCanvasId || !canvases[currentCanvasId] || !canvases[currentCanvasId].notes) return;
+                
+                // 캔버스 컨테이너 기준으로 위치 계산
+                const containerRect = canvasContainer.getBoundingClientRect();
+                const startX = (startPosition.x - containerRect.left - translateX) / scale;
+                const startY = (startPosition.y - containerRect.top - translateY) / scale;
+                
+                // 메모지 크기 및 간격
+                const noteWidth = 200; // 메모지 너비
+                const noteHeight = 200; // 메모지 높이
+                const margin = 20; // 간격
+                
+                // 메모지 데이터 가져오기 (생성 시간 기준 정렬)
+                const notes = [...canvases[currentCanvasId].notes];
+                notes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                
+                // 메모지 DOM 요소 가져오기
+                const noteElements = Array.from(document.querySelectorAll('.note'));
+                
+                // 메모지 정렬
+                notes.forEach((note, index) => {
+                    const noteElement = noteElements.find(el => el.id === note.id);
+                    if (!noteElement) return;
+                    
+                    // 행/열 계산 (한 줄에 5개)
+                    const row = Math.floor(index / 5);
+                    const col = index % 5;
+                    
+                    // 위치 계산
+                    const x = startX + col * (noteWidth + margin);
+                    const y = startY + row * (noteHeight + margin);
+                    
+                    // 위치 적용
+                    noteElement.style.left = `${x}px`;
+                    noteElement.style.top = `${y}px`;
+                    
+                    // 데이터 업데이트
+                    note.position = {
+                        left: `${x}px`,
+                        top: `${y}px`
+                    };
+                });
+                
+                // 캔버스 데이터 업데이트
+                canvases[currentCanvasId].notes = notes;
+                saveCurrentCanvas();
+            }
+            
+            // 노트 생성 함수 (크기와 투명도 파라미터 추가)
+            function createNote(content = '', type = defaultNoteType, position = null, noteId = null, size = null, noteOpacity = null) {
+                noteId = noteId || Date.now().toString();
+                const note = document.createElement('div');
+                note.className = 'note';
+                note.id = noteId;
+                note.style.backgroundColor = noteTypes[type] || noteTypes[defaultNoteType];
+                
+                // 투명도 적용 (개별 노트 투명도 또는 전체 투명도)
+                const opacity = noteOpacity !== null ? noteOpacity : parseFloat(opacitySlider.value) / 100;
+                note.style.opacity = opacity;
+                
+                // 위치 설정
+                if (position) {
+                    note.style.left = position.left;
+                    note.style.top = position.top;
+                } else {
+                    // 화면 중앙에 배치
+                    const canvasRect = canvas.getBoundingClientRect();
+                    note.style.left = `${canvasRect.width / 2 - 100}px`;
+                    note.style.top = `${canvasRect.height / 2 - 100}px`;
+                }
+                
+                // 크기 설정
+                if (size && size.width && size.height) {
+                    note.style.width = size.width;
+                    note.style.height = size.height;
+                } else {
+                    note.style.width = '200px';
+                    note.style.height = '200px';
+                }
+                
+                // 노트 내용
+                note.innerHTML = `
+                    <div class="note-header">
+                        <span class="note-type">${type}</span>
+                        <div class="note-actions">
+                            <button class="change-type-btn">✏️</button>
+                            <button class="delete-btn">🗑️</button>
+                        </div>
+                    </div>
+                    <textarea class="note-content" placeholder="메모를 입력하세요...">${content}</textarea>
+                    <div class="note-footer">${new Date().toLocaleDateString()}
+                        <div class="resize-handle"></div>
+                    </div>
+                `;
+                
+                canvas.appendChild(note);
+                
+                // 드래그 기능 추가
+                makeDraggable(note);
+                
+                // 크기 조절 기능 추가
+                setupResizeHandle(note);
+                
+                // 노트 이벤트 리스너 추가
+                const deleteBtn = note.querySelector('.delete-btn');
+                const changeTypeBtn = note.querySelector('.change-type-btn');
+                const noteContent = note.querySelector('.note-content');
+                
+                deleteBtn.addEventListener('click', () => {
+                    deleteNote(noteId);
+                });
+                
+                changeTypeBtn.addEventListener('click', () => {
+                    changeNoteType(noteId);
+                });
+                
+                noteContent.addEventListener('input', () => {
+                    if (currentCanvasId) {
+                        saveCurrentCanvas();
+                    }
+                });
+                
+                return noteId;
+            }
+            
+            // 노트 드래그 기능
+            function makeDraggable(note) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                let isDragging = false;
+            
+                function dragMouseDown(e) {
+                    // 리사이즈 핸들을 클릭한 경우 드래그 금지
+                    if (e.target.classList.contains('resize-handle')) {
+                        return;
+                    }
+                    
+                    // 텍스트 편집 중에는 드래그 금지
+                    if (e.target.tagName === 'TEXTAREA') {
+                        return;
+                    }
+                    
+                    e.preventDefault();
+                    
+                    // 드래그 시작 위치
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                    note.style.cursor = 'grabbing';
+                    isDragging = true;
+                }
+                
+                function elementDrag(e) {
+                    if (!isDragging) return;
+                    
+                    e = e || window.event;
+                    e.preventDefault();
+                    
+                    // 새 위치 계산
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    // 노트 위치 설정 (스케일 고려)
+                    const currentLeft = parseFloat(note.style.left || '0');
+                    const currentTop = parseFloat(note.style.top || '0');
+                    
+                    note.style.left = (currentLeft - pos1 / scale) + "px";
+                    note.style.top = (currentTop - pos2 / scale) + "px";
+                    
+                    // 위치 변경 시 자동 저장
+                    if (currentCanvasId) {
+                        saveCurrentCanvas();
+                    }
+                }
+                
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                    note.style.cursor = 'grab';
+                    isDragging = false;
+                }
+                
+                note.onmousedown = dragMouseDown;
+            }
+            
+            // 노트 크기 조절 핸들 설정 함수 추가
+            function setupResizeHandle(note) {
+                const resizeHandle = note.querySelector('.resize-handle');
+                let startX, startY, startWidth, startHeight;
+                
+                resizeHandle.addEventListener('mousedown', initResize);
+                
+                function initResize(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 시작 위치 및 크기 저장
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(note).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(note).height, 10);
+                    
+                    document.onmousemove = resize;
+                    document.onmouseup = stopResize;
+                }
+                
+                function resize(e) {
+                    // 최소 크기 설정 (100px)
+                    const minWidth = 100;
+                    const minHeight = 100;
+                    
+                    // 새 크기 계산
+                    let newWidth = startWidth + (e.clientX - startX) / scale;
+                    let newHeight = startHeight + (e.clientY - startY) / scale;
+                    
+                    // 최소 크기 제한
+                    newWidth = Math.max(newWidth, minWidth);
+                    newHeight = Math.max(newHeight, minHeight);
+                    
+                    // 크기 적용
+                    note.style.width = `${newWidth}px`;
+                    note.style.height = `${newHeight}px`;
+                }
+                
+                function stopResize() {
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                    
+                    // 크기 변경 시 자동 저장
+                    if (currentCanvasId) {
+                        saveCurrentCanvas();
+                    }
+                }
+            }
+            
+            // 노트 타입 변경
+            function changeNoteType(noteId) {
+                const note = document.getElementById(noteId);
+                if (!note) return;
+                
+                const currentType = note.querySelector('.note-type').textContent;
+                const types = Object.keys(noteTypes);
+                const currentIndex = types.indexOf(currentType);
+                const nextIndex = (currentIndex + 1) % types.length;
+                const nextType = types[nextIndex];
+                
+                note.querySelector('.note-type').textContent = nextType;
+                note.style.backgroundColor = noteTypes[nextType];
+                
+                // 타입 변경 시 자동 저장
+                if (currentCanvasId) {
+                    saveCurrentCanvas();
+                }
+            }
+
+            // 검색 기능 설정 함수 추가
+            function setupSearch() {
+                // 검색 버튼 클릭 이벤트
+                searchBtn.addEventListener('click', () => {
+                    console.log('검색버튼 누름');
+                    const term = searchInput.value.trim();
+                    if (term) {
+                        searchNotes(term);
+                    }
+                });
+
+                // 이전 버튼 클릭 이벤트
+                prevBtn.addEventListener('click', () => {
+                    console.log('이전버튼 누름');
+                    navigateSearchResult(-1); // -1은 이전 결과로 이동
+                });
+
+                // 다음 버튼 클릭 이벤트
+                nextBtn.addEventListener('click', () => {
+                    console.log('다음버튼 누름');
+                    navigateSearchResult(1); // 1은 다음 결과로 이동
+                });
+
+                // 엔터 키로 검색 가능
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const term = searchInput.value.trim();
+                        if (term) {
+                            searchNotes(term);
+                        }
+                    }
+                });
+            }
+
+            // 하이라이트 제거 함수 수정 (버튼 상태도 함께 업데이트)
+            function clearHighlights() {
+                document.querySelectorAll('.note.highlighted').forEach(note => {
+                    note.classList.remove('highlighted');
+                });
+            }
+
+            // 메모 검색 함수 추가
+            function searchNotes(term) {
+                if (!currentCanvasId || !canvases[currentCanvasId]) return;
+                
+                 // 기존 하이라이트 제거
+                clearHighlights();
+                
+                // 검색어 저장
+                currentSearchTerm = term;
+                
+                // 검색 결과 초기화
+                searchResults = [];
+                
+                // 현재 캔버스의 모든 메모에서 검색
+                const notes = canvases[currentCanvasId].notes;
+                notes.forEach(note => {
+                    const noteElement = document.getElementById(note.id);
+                    if (noteElement && note.content.includes(term)) {
+                        searchResults.push(note.id);
+                    }
+                });
+                
+                if (searchResults.length > 0) {
+                    currentSearchIndex = 0;
+                    highlightNote(searchResults[currentSearchIndex]);
+                    centerNote(searchResults[currentSearchIndex]);
+                    
+                    // 버튼 상태 업데이트
+                    updateSearchButtons();
+                } else {
+                    alert('검색어와 일치하는 메모를 찾을 수 없습니다.');
+                    currentSearchIndex = -1;
+                    updateSearchButtons();
+                }
+                console.log('검색 결과 배열:', searchResults);  // 디버깅
+            }
+
+            // 검색 결과 탐색 함수 추가
+            function navigateSearchResult(direction) {
+                if (searchResults.length === 0) return;
+            
+                // 기존 하이라이트 제거
+                clearHighlights();
+                
+                // 새로운 인덱스 계산 (순환)
+                console.log('currentSearchIndex : '+ currentSearchIndex);
+                console.log('추가할 숫자 : '+ direction);
+                currentSearchIndex += direction;
+                console.log('이동할 순번 : '+ currentSearchIndex);
+                console.log('searchResults.length : '+ searchResults.length);
+                if (currentSearchIndex >= searchResults.length) {
+                    currentSearchIndex = 0; // 처음으로 돌아감
+                } else if (currentSearchIndex < 0) {
+                    currentSearchIndex = searchResults.length - 1; // 마지막으로 이동
+                }
+                
+                // 새 메모 하이라이트 및 중앙 정렬
+                highlightNote(searchResults[currentSearchIndex]);
+                centerNote(searchResults[currentSearchIndex]);
+                
+                // 버튼 상태 업데이트
+                updateSearchButtons();
+            }
+
+            // 메모 하이라이트 함수 추가
+            function highlightNote(noteId) {
+                const note = document.getElementById(noteId);
+                if (note) {
+                    note.classList.add('highlighted');
+                }
+            }
+
+            // 메모를 중앙에 표시하는 함수 추가
+            function centerNote(noteId) {
+                const note = document.getElementById(noteId);
+                if (!note) return;
+                
+                // 메모 위치 정보 가져오기
+                const noteRect = note.getBoundingClientRect();
+                const containerRect = canvasContainer.getBoundingClientRect();
+                
+                // 메모의 중앙 좌표 계산
+                const noteCenterX = noteRect.left + noteRect.width / 2;
+                const noteCenterY = noteRect.top + noteRect.height / 2;
+                
+                // 컨테이너의 중앙 좌표 계산
+                const containerCenterX = containerRect.width / 2;
+                const containerCenterY = containerRect.height / 2;
+                
+                // 이동해야 할 거리 계산
+                const moveX = containerCenterX - noteCenterX;
+                const moveY = containerCenterY - noteCenterY;
+                
+                // 현재 변환 값에 이동 거리 추가
+                translateX += moveX;
+                translateY += moveY;
+                
+                // 화면 업데이트
+                updateTransform();
+            }
+
+            // 검색 버튼 상태 업데이트 함수 추가
+            function updateSearchButtons() {
+                prevBtn.disabled = searchResults.length === 0;
+                nextBtn.disabled = searchResults.length === 0;
+                
+                if (searchInput.value.trim() !== currentSearchTerm) {
+                    searchBtn.disabled = false;
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                } else {
+                    searchBtn.disabled = false;
+                }
+            }
+
+            // 새 캔버스로 저장하는 함수 추가
+            function saveAsNewCanvas(title) {
+                if (!currentCanvasId) return;
+                
+                const oldCanvas = canvases[currentCanvasId];
+                const newCanvasId = Date.now().toString();
+                
+                // 새 캔버스 생성 (기존 데이터 복사)
+                canvases[newCanvasId] = {
+                    id: newCanvasId,
+                    title: title,
+                    notes: JSON.parse(JSON.stringify(oldCanvas.notes)), // 깊은 복사
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    opacity: parseFloat(opacitySlider.value) / 100 // 현재 투명도 저장
+                };
+                
+                // 현재 캔버스 ID 업데이트
+                currentCanvasId = newCanvasId;
+                
+                // 로컬 스토리지에 저장
+                localStorage.setItem('stickyNotesCanvases', JSON.stringify(canvases));
+                
+                // UI 업데이트
+                updateCanvasSelect();
+                
+                // 제목 필드에 새 제목 표시
+                canvasTitleInput.value = title;
+                
+                alert('새 캔버스로 저장되었습니다.');
+            }
+
+            // 캔버스 삭제 함수 추가
+            function deleteCanvas(canvasId) {
+                if (!canvases[canvasId]) return;
+                
+                // 캔버스 삭제
+                delete canvases[canvasId];
+                
+                // 로컬 스토리지 업데이트
+                localStorage.setItem('stickyNotesCanvases', JSON.stringify(canvases));
+                
+                // 다른 캔버스가 있는 경우 첫 번째 캔버스 로드
+                if (Object.keys(canvases).length > 0) {
+                    const firstCanvasId = Object.keys(canvases)[0];
+                    loadCanvas(firstCanvasId);
+                } else {
+                    // 캔버스가 없는 경우 새 캔버스 생성
+                    createNewCanvas();
+                }
+                
+                // 캔버스 선택 드롭다운 업데이트
+                updateCanvasSelect();
+            }
+
+            // 현재 캔버스 비우기 함수 추가
+            function clearCurrentCanvas() {
+                if (!currentCanvasId) return;
+                
+                // 캔버스 내용 초기화
+                clearCanvas();
+                
+                // 데이터 업데이트
+                canvases[currentCanvasId].notes = [];
+                canvases[currentCanvasId].updatedAt = new Date().toISOString();
+                
+                // 로컬 스토리지에 저장
+                localStorage.setItem('stickyNotesCanvases', JSON.stringify(canvases));
+            }
+
+            // 노트 삭제
+            function deleteNote(noteId) {
+                const note = document.getElementById(noteId);
+                if (note) {
+                    note.remove();
+                    // 노트 삭제 시 자동 저장
+                    if (currentCanvasId) {
+                        saveCurrentCanvas();
+                    }
+                }
+            }
+            
+            // 캔버스 데이터 내보내기
+            function exportCanvases() {
+                if (Object.keys(canvases).length === 0) {
+                    alert('내보낼 캔버스가 없습니다.');
+                    return;
+                }
+                
+                const dataStr = JSON.stringify(canvases, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `sticky-notes-${new Date().toISOString().slice(0, 10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            
+            // 캔버스 데이터 불러오기
+            function importCanvases() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = event => {
+                        try {
+                            const importedCanvases = JSON.parse(event.target.result);
+                            
+                            // 기존 캔버스와 병합
+                            canvases = { ...canvases, ...importedCanvases };
+                            
+                            // 로컬 스토리지에 저장
+                            localStorage.setItem('stickyNotesCanvases', JSON.stringify(canvases));
+                            
+                            // 캔버스 선택 드롭다운 업데이트
+                            updateCanvasSelect();
+                            
+                            // 첫 번째 캔버스 로드
+                            const firstCanvasId = Object.keys(importedCanvases)[0];
+                            loadCanvas(firstCanvasId);
+                            
+                            alert('캔버스 데이터가 성공적으로 불러와졌습니다.');
+                        } catch (error) {
+                            alert('파일을 읽는 중 오류가 발생했습니다: ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+        });
+    </script>
+</body>
+</html>
