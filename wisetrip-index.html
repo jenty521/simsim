@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>WiseTrip - 스마트한 여행 경비 관리</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        /* 네비게이션 메뉴 */
+        .navbar {
+            background: linear-gradient(135deg, #2196F3, #5CBDB2);
+            padding: 12px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .nav-logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+        
+        .nav-menu li a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-menu li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-menu li a.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+        
+        /* 모바일 메뉴 토글 */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        /* 메인 컨테이너 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 헤더 섹션 */
+        .hero {
+            background: linear-gradient(135deg, #2196F3, #5CBDB2);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3);
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .hero .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .hero .version {
+            font-size: 14px;
+            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        /* 기능 카드 그리드 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .feature-card .icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2196F3;
+            margin-bottom: 12px;
+        }
+        
+        .feature-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* 통계 섹션 */
+        .stats {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 40px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stats h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #2196F3;
+            margin-bottom: 24px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 24px;
+            text-align: center;
+        }
+        
+        .stat-item .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2196F3;
+            display: block;
+        }
+        
+        .stat-item .label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        /* 빠른 링크 섹션 */
+        .quick-links {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 40px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .quick-links h2 {
+            font-size: 24px;
+            color: #2196F3;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .link-card {
+            display: block;
+            text-decoration: none;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .link-card:hover {
+            background: #e3f2fd;
+            border-color: #2196F3;
+            transform: translateY(-2px);
+        }
+        
+        .link-card .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .link-card .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2196F3;
+            margin-bottom: 4px;
+        }
+        
+        .link-card .description {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 푸터 */
+        .footer {
+            background: #f8f9fa;
+            text-align: center;
+            padding: 32px 20px;
+            margin-top: 60px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .footer p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .footer .contact-info {
+            margin-top: 16px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #2196F3;
+                flex-direction: column;
+                padding: 16px 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            .nav-container {
+                position: relative;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .hero .subtitle {
+                font-size: 16px;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 메뉴 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="wisetrip-index.html" class="nav-logo">🎒 WiseTrip</a>
+            <button class="nav-toggle" onclick="toggleMenu()">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="wisetrip-index.html" class="active">홈</a></li>
+                <li><a href="wisetrip-help.html">도움말</a></li>
+                <li><a href="wisetrip-privacy.html">개인정보처리방침</a></li>
+                <li><a href="wisetrip-yagan.html">이용약관</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 메인 헤로 섹션 -->
+        <section class="hero">
+            <h1>🎒 WiseTrip</h1>
+            <p class="subtitle">스마트한 여행 경비 관리의 새로운 경험</p>
+            <p>친구들과 함께하는 여행을 더욱 쉽고 즐겁게 만들어드립니다</p>
+            <span class="version">Version 1.0.0</span>
+        </section>
+
+        <!-- 주요 기능 소개 -->
+        <section class="features-grid">
+            <div class="feature-card">
+                <span class="icon">💰</span>
+                <h3>다중 화폐 경비 관리</h3>
+                <p>10개 이상의 화폐를 지원하여 해외여행에서도 정확한 경비 계산이 가능합니다. 실시간 환율 적용으로 언제나 정확한 정산을 경험하세요.</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">👥</span>
+                <h3>실시간 협업 기능</h3>
+                <p>친구들과 실시간으로 경비를 공유하고 채팅으로 소통하며 함께 여행을 계획할 수 있습니다. 모든 변경사항이 즉시 동기화됩니다.</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">📅</span>
+                <h3>스마트 일정 관리</h3>
+                <p>여행 일정을 체계적으로 관리하고 체크리스트로 준비사항을 확인하세요. 개인 파일 첨부 기능으로 더욱 상세한 계획이 가능합니다.</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">📍</span>
+                <h3>위치 기반 서비스</h3>
+                <p>GPS 연동으로 실시간 위치 공유가 가능하며, Google Maps 통합으로 장소 검색과 길찾기가 간편합니다.</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">💬</span>
+                <h3>그룹 채팅</h3>
+                <p>여행 멤버들과 실시간 채팅으로 소통하고, 중요한 정보를 빠르게 공유할 수 있습니다. 읽음 표시로 의사소통이 더욱 원활해집니다.</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">🔒</span>
+                <h3>안전한 데이터 보호</h3>
+                <p>AES-256 암호화로 데이터를 안전하게 보호하며, 개인 파일은 기기에만 저장되어 프라이버시가 완벽하게 보장됩니다.</p>
+            </div>
+        </section>
+
+        <!-- 앱 통계 정보 -->
+        <section class="stats">
+            <h2>📊 WiseTrip 한눈에 보기</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="number">10+</span>
+                    <span class="label">지원 화폐</span>
+                </div>
+                <div class="stat-item">
+                    <span class="number">4</span>
+                    <span class="label">로그인 방식</span>
+                </div>
+                <div class="stat-item">
+                    <span class="number">100%</span>
+                    <span class="label">무료 서비스</span>
+                </div>
+                <div class="stat-item">
+                    <span class="number">2</span>
+                    <span class="label">지원 플랫폼</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 빠른 링크 섹션 -->
+        <section class="quick-links">
+            <h2>📚 도움말 및 안내</h2>
+            <div class="links-grid">
+                <a href="wisetrip-help.html" class="link-card">
+                    <span class="icon">📖</span>
+                    <div class="title">사용 도움말</div>
+                    <div class="description">앱 사용법과 기능 안내</div>
+                </a>
+                
+                <a href="wisetrip-privacy.html" class="link-card">
+                    <span class="icon">🛡️</span>
+                    <div class="title">개인정보처리방침</div>
+                    <div class="description">개인정보 보호 정책</div>
+                </a>
+                
+                <a href="wisetrip-yagan.html" class="link-card">
+                    <span class="icon">📋</span>
+                    <div class="title">서비스 이용약관</div>
+                    <div class="description">서비스 이용 규칙과 정책</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 다운로드 안내 -->
+        <section class="quick-links">
+            <h2>📱 지금 다운로드하세요</h2>
+            <div style="text-align: center; padding: 20px;">
+                <p style="font-size: 16px; margin-bottom: 20px; color: #666;">
+                    iOS App Store와 Google Play에서 WiseTrip을 만나보세요
+                </p>
+                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; min-width: 140px;">
+                        <div style="font-size: 20px; margin-bottom: 8px;">🍎</div>
+                        <div style="font-weight: 600; color: #2196F3;">iOS</div>
+                        <div style="font-size: 12px; color: #666;">App Store</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; min-width: 140px;">
+                        <div style="font-size: 20px; margin-bottom: 8px;">🤖</div>
+                        <div style="font-weight: 600; color: #2196F3;">Android</div>
+                        <div style="font-size: 12px; color: #666;">Google Play</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 지원 로그인 방식 -->
+        <section class="quick-links">
+            <h2>🔐 간편 로그인 지원</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; text-align: center;">
+                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px;">
+                    <div style="font-size: 20px; margin-bottom: 8px;">📧</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #2196F3;">이메일</div>
+                </div>
+                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px;">
+                    <div style="font-size: 20px; margin-bottom: 8px;">🔍</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #2196F3;">구글</div>
+                </div>
+                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px;">
+                    <div style="font-size: 20px; margin-bottom: 8px;">🍎</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #2196F3;">애플</div>
+                </div>
+                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px;">
+                    <div style="font-size: 20px; margin-bottom: 8px;">💬</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #2196F3;">카카오</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <p><strong>WiseTrip (Trip Together)</strong> | 버전 1.0.0</p>
+        <p>스마트한 여행 경비 관리의 새로운 기준</p>
+        <div class="contact-info">
+            <p>📧 support@wisetrip.com | 평일 9:00 - 18:00</p>
+            <p>🔧 기술 문의: 앱 내 설정 > 고객센터 > 문의하기</p>
+        </div>
+    </footer>
+
+    <script>
+        // 모바일 메뉴 토글 기능
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // 메뉴 외부 클릭 시 메뉴 닫기
+        document.addEventListener('click', function(event) {
+            const navbar = document.querySelector('.navbar');
+            const navMenu = document.getElementById('navMenu');
+            const navToggle = document.querySelector('.nav-toggle');
+
+            if (!navbar.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // 현재 페이지 메뉴 활성화
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'wisetrip-index.html';
+            const menuLinks = document.querySelectorAll('.nav-menu a');
+            
+            menuLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 부드러운 스크롤 애니메이션
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
