@@ -27,72 +27,7 @@
    <!--구글 애드센스 자동광고 종료-->
 </head>
 <body>
-    <!-- 네비게이션 -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo" onclick="app.showHome()">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">Utility Hub</span>
-            </a>
-            <ul class="nav-menu" id="navMenu">
-                <li class="nav-item"><a href="#" onclick="app.showHome()" class="active">홈</a></li>
-                <li class="nav-item"><a href="#" onclick="app.showCategory('converter')">변환도구</a></li>
-                <li class="nav-item"><a href="#" onclick="app.showCategory('calculator')">계산기</a></li>
-                <li class="nav-item"><a href="#" onclick="app.showCategory('generator')">생성기</a></li>
-                <li class="nav-item"><a href="#" onclick="app.showCategory('tools')">도구</a></li>
-            </ul>
-            <button class="hamburger" id="hamburger" onclick="app.toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- 메인 컨테이너 -->
-    <main class="main-container" id="mainContainer">
-        <section class="hero-section">
-            <h1 class="hero-title">필요한 모든 유틸리티를 한 곳에서</h1>
-            <p class="hero-subtitle">간편하고 빠른 온라인 도구 모음</p>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="도구 검색..." onkeyup="app.searchTools(this.value)">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-            </div>
-        </section>
-
-        <section class="tools-section">
-            <div class="tools-grid" id="toolsGrid">
-                <!-- 도구 카드들이 동적으로 추가됩니다 -->
-            </div>
-        </section>
-    </main>
-
-    <!-- 도구 실행 영역 -->
-    <div class="tool-container" id="toolContainer">
-        <header class="tool-header">
-            <button class="back-button" onclick="app.showHome()">s
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                <span>돌아가기</span>
-            </button>
-            <h2 id="currentToolTitle" class="tool-title">도구</h2>
-            <div class="tool-actions">
-                <button class="action-button" onclick="app.refreshTool()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-                    </svg>
-                </button>
-            </div>
-        </header>
-        <iframe class="tool-frame" id="toolFrame" src=""></iframe>
-    </div>
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loader"></div>
-    </div>
+    <nav class="navbar"><div class="nav-container"><a href="#" class="logo" onclick="app.showHome()"><span class="logo-icon">⚡</span><span class="logo-text">Utility Hub</span></a><ul class="nav-menu" id="navMenu"><li class="nav-item"><a href="#" onclick="app.showHome()" class="active">홈</a></li><li class="nav-item"><a href="#" onclick="app.showCategory('converter')">변환도구</a></li><li class="nav-item"><a href="#" onclick="app.showCategory('calculator')">계산기</a></li><li class="nav-item"><a href="#" onclick="app.showCategory('generator')">생성기</a></li><li class="nav-item"><a href="#" onclick="app.showCategory('tools')">도구</a></li></ul><button class="hamburger" id="hamburger" onclick="app.toggleMenu()"><span></span><span></span><span></span></button></div></nav><main class="main-container" id="mainContainer"><section class="hero-section"><h1 class="hero-title">필요한 모든 유틸리티를 한 곳에서</h1><p class="hero-subtitle">간편하고 빠른 온라인 도구 모음</p><div class="search-container"><input type="text" class="search-input" placeholder="도구 검색..." onkeyup="app.searchTools(this.value)"><svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg></div></section><section class="tools-section"><div class="tools-grid" id="toolsGrid"></div></section></main><div class="tool-container" id="toolContainer"><header class="tool-header"><button class="back-button" onclick="app.showHome()">s <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>돌아가기</span></button><h2 id="currentToolTitle" class="tool-title">도구</h2><div class="tool-actions"><button class="action-button" onclick="app.refreshTool()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button></div></header><iframe class="tool-frame" id="toolFrame" src=""></iframe></div><div class="loading-overlay" id="loadingOverlay"><div class="loader"></div></div>
 
     <script src="script.js"></script>
 </body>
