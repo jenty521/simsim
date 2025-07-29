@@ -11,6 +11,15 @@ const app = {
 
     // 도구 데이터
     tools: [
+         {
+            id: 'sticky_notes',
+            title: '온라인 메모장(포스트잇)',
+            description: '온라인 메모장, 온라인 포스트잇',
+            icon: '📝',
+            category: 'generator',
+            file: 'tools/sticky_notes.html',
+            badge: 'NEW'
+        },
         {
             id: 'text-converter',
             title: '텍스트 변환기',
