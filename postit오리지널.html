@@ -1,467 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sticky Notes 메모장</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-            background-color: #f0f0f0;
-        }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-title {
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .modal-btn.confirm {
-            background-color: #4a90e2;
-            color: white;
-        }
-
-        .modal-btn.cancel {
-            background-color: #f0f0f0;
-        }
-
-
-        #header {
-            display: flex;
-            padding: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            align-items: center;
-            gap: 10px;
-            z-index: 200;
-        }
-
-        #canvas-select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            min-width: 150px;
-        }
-
-        #canvas-title {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            flex-grow: 1;
-            max-width: 200px;
-        }
-
-        .header-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            background-color: #4a90e2;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .header-btn:hover {
-            background-color: #357abd;
-        }
-
-        .header-btn.danger {
-            background-color: #e74c3c;
-        }
-
-        .header-btn.danger:hover {
-            background-color: #c0392b;
-        }
-
-        #canvas-container {
-            position: absolute;
-            width: 100%;
-            height: calc(100vh - 80px); /* 투명도 컨트롤러 공간 확보 */
-            overflow: hidden;
-            background-color: #f5f5f5;
-            background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-            background-position: center;
-            transition: transform 0.3s ease;
-            touch-action: none;
-            user-select: none; /* 드래그 시 텍스트 선택 방지 */
-        }
-        
-
-        #canvas {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform-origin: 0 0;
-            cursor: default;
-            pointer-events: none; /* 캔버스 자체가 이벤트를 막지 않도록 */
-        }
-
-        .note {
-            position: absolute;
-            width: 200px;
-            min-height: 200px;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 2px;
-            display: flex;
-            flex-direction: column;
-            transition: box-shadow 0.3s ease;
-            cursor: grab;
-            resize: none;
-            overflow: hidden;
-            pointer-events: auto; /* 메모지만 이벤트 처리 */
-        }
-
-        .note:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .note-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .note-type {
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .note-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-        .note-actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            opacity: 0.5;
-            transition: opacity 0.2s;
-        }
-
-        .note-actions button:hover {
-            opacity: 1;
-        }
-
-        .note-content {
-            flex-grow: 1;
-            outline: none;
-            overflow-wrap: break-word;
-            resize: none;
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: 14px;
-            line-height: 1.4;
-            margin-bottom: 10px;
-            overflow: auto;
-        }
-
-        .note-footer {
-            font-size: 10px;
-            color: rgba(0, 0, 0, 0.5);
-            text-align: right;
-            position: relative;
-            padding-right: 10px;
-        }
-
-        .resize-handle {
-            position: absolute;
-            right: -15px;
-            bottom: -15px;
-            width: 10px;
-            height: 10px;
-            background-color: rgba(240, 18, 18, 0.932);
-            cursor: nwse-resize;
-            border-radius: 2px;
-        }
-
-        #add-note-btn {
-            position: fixed;
-            bottom: 70px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #ffeb3b;
-            border: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 100;
-        }
-
-        #add-note-btn:hover {
-            background-color: #fdd835;
-        }
-
-        #zoom-controls {
-            position: fixed;
-            bottom: 130px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 100;
-        }
-
-        .zoom-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: white;
-            border: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .zoom-btn:hover {
-            background-color: #f5f5f5;
-        }
-
-        #zoom-level {
-            position: fixed;
-            bottom: 180px;
-            right: 30px;
-            background-color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-
-        #context-menu {
-            position: absolute;
-            display: none;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            min-width: 150px;
-        }
-
-        .context-menu-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .context-menu-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .context-menu-divider {
-            height: 1px;
-            background-color: #eee;
-            margin: 4px 0;
-        }
-
-         /* 검색 영역 스타일 추가 */
-         #search-container {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-left: 10px;
-        }
-
-        #search-input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 150px;
-        }
-
-        .search-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            background-color: #4a90e2;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .search-btn:hover {
-            background-color: #357abd;
-        }
-
-        .search-btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-        /* 검색된 메모 하이라이트 스타일 */
-        .note.highlighted {
-            box-shadow: 0 0 0 3px #ff5722;
-            animation: pulse 0.5s;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* 투명도 컨트롤러 스타일 */
-        #opacity-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background-color: #ffffff;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        #opacity-slider {
-            flex-grow: 1;
-            margin: 0 10px;
-        }
-
-        #opacity-value {
-            width: 40px;
-            text-align: center;
-            font-size: 12px;
-        }
-    </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7NY0VN0ECJ"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    
-    gtag('config', 'G-7NY0VN0ECJ');
-    </script>
-<!--구글 애널리틱스 종료-->
-<!--구글 애드센스 자동광고 시작-->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"  crossorigin="anonymous"></script>
-</head>
-<body>
-    <div id="header">
-        <select id="canvas-select"></select>
-        <input type="text" id="canvas-title" placeholder="캔버스 제목">
-        <button id="save-canvas-btn" class="header-btn">캔버스 저장</button>
-        <button id="new-canvas-btn" class="header-btn">새 캔버스</button>
-        <button id="clear-canvas-btn" class="header-btn">캔버스 비우기</button>
-        <button id="delete-canvas-btn" class="header-btn danger">캔버스 삭제</button>
-        <button id="export-btn" class="header-btn">파일로 내보내기</button>
-        <button id="import-btn" class="header-btn">파일 불러오기</button>
-        
-        <!-- 검색 영역 추가 -->
-        <div id="search-container">
-            <input type="text" id="search-input" placeholder="검색어 입력">
-            <button id="search-btn" class="search-btn">검색</button>
-            <button id="prev-btn" class="search-btn" disabled>이전</button>
-            <button id="next-btn" class="search-btn" disabled>다음</button>
-        </div>
-    </div>
-
-    <!-- 모달 창 추가 -->
-    <div id="new-canvas-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">새 캔버스 제목 입력</div>
-            <input type="text" id="new-canvas-title" class="modal-input" placeholder="캔버스 제목을 입력하세요">
-            <div class="modal-actions">
-                <button id="cancel-new-canvas" class="modal-btn cancel">취소</button>
-                <button id="confirm-new-canvas" class="modal-btn confirm">생성</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="canvas-container">
-        <div id="canvas"></div>
-    </div>
-    
-    <!-- 투명도 컨트롤러 추가 -->
-    <div id="opacity-controls">
-        <span>투명도:</span>
-        <input type="range" id="opacity-slider" min="30" max="100" value="100">
-        <span id="opacity-value">100%</span>
-    </div>
-    
-    <div id="zoom-controls">
-        <button class="zoom-btn" id="zoom-in">+</button>
-        <button class="zoom-btn" id="zoom-out">-</button>
-        <button class="zoom-btn" id="zoom-reset">↻</button>
-    </div>
-    <div id="zoom-level">100%</div>
-    
-    <button id="add-note-btn">+</button>
-
-    <!-- 컨텍스트 메뉴 추가 -->
-    <div id="context-menu">
-        <div class="context-menu-item" id="context-add-note">메모 추가</div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" id="context-align-notes">시작점 정렬</div>
-    </div>
-
-    <script>
         // 개발자 커스터마이징 영역 시작
         // ==============================
         
@@ -584,7 +121,6 @@
                         dragStartY = e.clientY - translateY;
                         canvasContainer.style.cursor = 'grabbing';
                         e.preventDefault();
-                        console.log("드래그 시작", dragStartX, dragStartY); // 디버깅용
                     }
                 });
 
@@ -666,7 +202,7 @@
                 document.getElementById('delete-canvas-btn').addEventListener('click', () => {
                     if (!currentCanvasId) return;
                     
-                    if (confirm('정말로 이 캔버스를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.')) {
+                    if (confirm('Are you sure you want to delete this Board? ')) {
                         deleteCanvas(currentCanvasId);
                     }
                 });
@@ -675,7 +211,7 @@
                 document.getElementById('clear-canvas-btn').addEventListener('click', () => {
                     if (!currentCanvasId) return;
                     
-                    if (confirm('현재 캔버스의 모든 메모를 삭제하시겠습니까?')) {
+                    if (confirm('Are you sure you want to delete all notes on the current Board?')) {
                         clearCurrentCanvas();
                     }
                 });
@@ -692,7 +228,7 @@
                         createNewCanvas(title);
                         newCanvasModal.style.display = 'none';
                     } else {
-                        alert('캔버스 제목을 입력해주세요.');
+                        alert('Please enter the title');
                     }
                 });
 
@@ -702,7 +238,7 @@
                     
                     // 캔버스가 하나도 없는 경우 기본 캔버스 생성
                     if (Object.keys(canvases).length === 0) {
-                        createNewCanvas('새 캔버스');
+                        createNewCanvas('New Board');
                     }
                 });
 
@@ -713,7 +249,7 @@
                         
                         // 캔버스가 하나도 없는 경우 기본 캔버스 생성
                         if (Object.keys(canvases).length === 0) {
-                            createNewCanvas('새 캔버스');
+                            createNewCanvas('New Board');
                         }
                     }
                 });
@@ -783,7 +319,7 @@
             function updateTransform() {
                 const canvas = document.getElementById('canvas');
                 canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                console.log("현재 위치:", translateX, translateY); // 디버깅용             
+                
             }
             
             // 확대 레벨 표시 업데이트
@@ -806,7 +342,7 @@
                 Object.keys(canvases).forEach(canvasId => {
                     const option = document.createElement('option');
                     option.value = canvasId;
-                    option.textContent = canvases[canvasId].title || `캔버스 ${canvasId}`;
+                    option.textContent = canvases[canvasId].title || `Board ${canvasId}`;
                     canvasSelect.appendChild(option);
                 });
                 
@@ -819,7 +355,7 @@
             // 새 캔버스 생성
             function createNewCanvas(title) {
                 if (!title || !title.trim()) {
-                    alert('캔버스 제목을 입력해주세요.');
+                    alert('Please enter the title of the Board.');
                     return null;
                 }
                 
@@ -1090,7 +626,7 @@
                             <button class="delete-btn">🗑️</button>
                         </div>
                     </div>
-                    <textarea class="note-content" placeholder="메모를 입력하세요...">${content}</textarea>
+                    <textarea class="note-content" placeholder="Input Memo...">${content}</textarea>
                     <div class="note-footer">${new Date().toLocaleDateString()}
                         <div class="resize-handle"></div>
                     </div>
@@ -1263,7 +799,7 @@
             function setupSearch() {
                 // 검색 버튼 클릭 이벤트
                 searchBtn.addEventListener('click', () => {
-                    console.log('검색버튼 누름');
+                    
                     const term = searchInput.value.trim();
                     if (term) {
                         searchNotes(term);
@@ -1272,13 +808,13 @@
 
                 // 이전 버튼 클릭 이벤트
                 prevBtn.addEventListener('click', () => {
-                    console.log('이전버튼 누름');
+
                     navigateSearchResult(-1); // -1은 이전 결과로 이동
                 });
 
                 // 다음 버튼 클릭 이벤트
                 nextBtn.addEventListener('click', () => {
-                    console.log('다음버튼 누름');
+
                     navigateSearchResult(1); // 1은 다음 결과로 이동
                 });
 
@@ -1330,11 +866,11 @@
                     // 버튼 상태 업데이트
                     updateSearchButtons();
                 } else {
-                    alert('검색어와 일치하는 메모를 찾을 수 없습니다.');
+                    alert('No notes were found that matched the search term.');
                     currentSearchIndex = -1;
                     updateSearchButtons();
                 }
-                console.log('검색 결과 배열:', searchResults);  // 디버깅
+                
             }
 
             // 검색 결과 탐색 함수 추가
@@ -1345,11 +881,9 @@
                 clearHighlights();
                 
                 // 새로운 인덱스 계산 (순환)
-                console.log('currentSearchIndex : '+ currentSearchIndex);
-                console.log('추가할 숫자 : '+ direction);
+                
                 currentSearchIndex += direction;
-                console.log('이동할 순번 : '+ currentSearchIndex);
-                console.log('searchResults.length : '+ searchResults.length);
+                
                 if (currentSearchIndex >= searchResults.length) {
                     currentSearchIndex = 0; // 처음으로 돌아감
                 } else if (currentSearchIndex < 0) {
@@ -1444,7 +978,7 @@
                 // 제목 필드에 새 제목 표시
                 canvasTitleInput.value = title;
                 
-                alert('새 캔버스로 저장되었습니다.');
+                alert('You have been saved as a new board.');
             }
 
             // 캔버스 삭제 함수 추가
@@ -1500,7 +1034,7 @@
             // 캔버스 데이터 내보내기
             function exportCanvases() {
                 if (Object.keys(canvases).length === 0) {
-                    alert('내보낼 캔버스가 없습니다.');
+                    alert('There are no board to export.');
                     return;
                 }
                 
@@ -1543,9 +1077,9 @@
                             const firstCanvasId = Object.keys(importedCanvases)[0];
                             loadCanvas(firstCanvasId);
                             
-                            alert('캔버스 데이터가 성공적으로 불러와졌습니다.');
+                            alert('Success Load');
                         } catch (error) {
-                            alert('파일을 읽는 중 오류가 발생했습니다: ' + error.message);
+                            alert('error: ' + error.message);
                         }
                     };
                     reader.readAsText(file);
@@ -1554,6 +1088,3 @@
                 input.click();
             }
         });
-    </script>
-</body>
-</html>
