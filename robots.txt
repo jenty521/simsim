@@ -26,8 +26,6 @@ Allow: /tools/loan-calculator.html
 Allow: /tools/json-formatter.html
 Allow: /tools/image-compressor.html
 Allow: /tools/sticky_notes.html
-Allow: /postit.html
-Allow: /postit_en.html
 Allow: /code_press.html
 Allow: /code_press_en.html
 Disallow:
