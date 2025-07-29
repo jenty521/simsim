@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="무료 온라인 QR 코드 생성기 - URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환. 모바일 친화적이고 사용하기 쉬운 인터페이스로 누구나 쉽게 QR 코드를 만들 수 있습니다.">
+    <meta name="keywords" content="QR코드 생성기, 무료 QR코드, 온라인 QR코드, QR코드 만들기, QR코드 생성, QR코드 변환, QR코드 제작">
+    <meta name="author" content="QR 코드 생성기">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://your-domain.com/qr_maker.html">
+    
+    <!-- Open Graph 태그 -->
+    <meta property="og:title" content="무료 온라인 QR 코드 생성기 - 간편한 QR 코드 만들기">
+    <meta property="og:description" content="URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환하는 무료 온라인 툴입니다.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.com/qr_maker.html">
+    <meta property="og:image" content="https://your-domain.com/qr-preview.png">
+    <meta property="og:site_name" content="무료 QR 코드 생성기">
+    
+    <!-- 네이버 웹마스터 도구 -->
+    <meta name="naver-site-verification" content="your-naver-verification-code">
+    
+    <!-- Twitter 카드 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="무료 온라인 QR 코드 생성기 - 간편한 QR 코드 만들기">
+    <meta name="twitter:description" content="URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환하는 무료 온라인 툴입니다.">
+    <meta name="twitter:image" content="https://your-domain.com/qr-preview.png">
+    
+    <title>무료 온라인 QR 코드 생성기 | 간편한 QR 코드 만들기</title>
+    
+    <!-- Schema.org 마크업 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "무료 온라인 QR 코드 생성기",
+      "description": "URL, 텍스트, 연락처 정보를 QR 코드로 즉시 변환하는 무료 온라인 툴입니다.",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      }
+    }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            margin: 2rem auto;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin: 1.5rem 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        #qrcode {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .usage-guide {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            text-align: left;
+        }
+
+        .usage-guide h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .usage-guide ol {
+            padding-left: 1.5rem;
+        }
+
+        .usage-guide li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7NY0VN0ECJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7NY0VN0ECJ');
+</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 최상단 고정광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="8566506642"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        <h1>무료 QR 코드 생성기</h1>
+        <div class="input-group">
+            <input type="text" id="text" placeholder="URL, 텍스트, 연락처 정보 등을 입력하세요">
+        </div>
+        <button onclick="generateQR()">QR 코드 생성하기</button>
+        <div id="qrcode"></div>
+        <button id="downloadBtn" class="download-btn" onclick="downloadQR()">QR 코드 다운로드</button>
+
+        <div class="usage-guide">
+            <h2>사용 방법</h2>
+            <ol>
+                <li>위의 입력창에 QR 코드로 변환하고 싶은 텍스트, URL, 연락처 정보 등을 입력하세요.</li>
+                <li>"QR 코드 생성하기" 버튼을 클릭하세요.</li>
+                <li>생성된 QR 코드를 스마트폰으로 스캔하여 내용을 확인할 수 있습니다.</li>
+                <li>QR 코드를 저장하려면 이미지를 길게 누르거나 마우스 오른쪽 버튼을 클릭하여 저장하세요.</li>
+            </ol>
+        </div>
+    </div>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    <script>
+        let adsbygoogle = window.adsbygoogle || [];  // 전역 변수 선언
+
+        function showAd(callback) {
+            const adContainer = document.createElement('div');
+            adContainer.style.position = 'fixed';
+            adContainer.style.top = '0';
+            adContainer.style.left = '0';
+            adContainer.style.width = '100%';
+            adContainer.style.height = '100%';
+            adContainer.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            adContainer.style.zIndex = '1000';
+            adContainer.style.display = 'none';
+            adContainer.style.justifyContent = 'center';
+            adContainer.style.alignItems = 'center';
+
+            const adContent = document.createElement('div');
+            adContent.style.backgroundColor = 'white';
+            adContent.style.padding = '20px';
+            adContent.style.borderRadius = '10px';
+            adContent.style.width = '336px';
+            adContent.style.height = '280px';
+            adContent.style.position = 'relative';
+
+            const adIns = document.createElement('ins');
+            adIns.className = 'adsbygoogle';
+            adIns.style.display = 'block';
+            adIns.style.width = '336px';
+            adIns.style.height = '280px';
+            adIns.setAttribute('data-ad-client', 'ca-pub-4624141391435876');
+            adIns.setAttribute('data-ad-slot', '8572412553');
+            adIns.setAttribute('data-ad-format', 'rectangle');
+            adIns.setAttribute('data-full-width-responsive', 'false');
+
+            adContent.appendChild(adIns);
+            adContainer.appendChild(adContent);
+            document.body.appendChild(adContainer);
+
+            // 광고 로드 시도
+            let adLoadTimeout = setTimeout(() => {
+                console.error('광고 로드 시간 초과');
+                if (document.body.contains(adContainer)) {
+                    document.body.removeChild(adContainer);
+                    if (callback) callback();
+                }
+            }, 3000);
+
+            try {
+                adContainer.style.display = 'flex';
+                (adsbygoogle = window.adsbygoogle || []).push({
+                    callback: function(e) {
+                        clearTimeout(adLoadTimeout);
+                        if (e && e.type === 'adError') {
+                            console.error('광고 로드 오류:', e);
+                            if (document.body.contains(adContainer)) {
+                                document.body.removeChild(adContainer);
+                                if (callback) callback();
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('광고 로딩 오류:', e);
+                clearTimeout(adLoadTimeout);
+                if (document.body.contains(adContainer)) {
+                    document.body.removeChild(adContainer);
+                    if (callback) callback();
+                }
+                return;
+            }
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '닫기';
+            closeBtn.style.position = 'absolute';
+            closeBtn.style.top = '-30px';
+            closeBtn.style.right = '0';
+            closeBtn.style.padding = '5px 10px';
+            closeBtn.style.backgroundColor = '#6366f1';
+            closeBtn.style.color = 'white';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '5px';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.zIndex = '1001';
+
+            closeBtn.onclick = function () {
+                if (document.body.contains(adContainer)) {
+                    document.body.removeChild(adContainer);
+                    if (callback) callback();
+                }
+            };
+            adContent.appendChild(closeBtn);
+        }
+
+        function generateQR() {
+            const text = document.getElementById('text').value;
+            if (!text) {
+                alert('텍스트를 입력해주세요!');
+                return;
+            }
+
+            showAd(function () {
+                const qrcodeDiv = document.getElementById('qrcode');
+                qrcodeDiv.innerHTML = '';
+                
+                const canvas = document.createElement('canvas');
+                qrcodeDiv.appendChild(canvas);
+                
+                QRCode.toCanvas(canvas, text, {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: '#6366f1',
+                        light: '#ffffff'
+                    }
+                }, function (error) {
+                    if (error) {
+                        console.error(error);
+                        alert('QR 코드 생성 중 오류가 발생했습니다.');
+                    } else {
+                        document.getElementById('downloadBtn').style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) {
+                alert('먼저 QR 코드를 생성해주세요!');
+                return;
+            }
+
+            showAd(function () {
+                const link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+    crossorigin="anonymous"></script>
+<!-- 전면광고1 -->
+<ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-4624141391435876"
+    data-ad-slot="8572412553"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</body>
+</html> 

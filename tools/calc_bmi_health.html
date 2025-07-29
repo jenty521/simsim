@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="무료 BMI 체중 계산기로 건강 상태를 확인하고 권장 체중과 기초 대사량을 계산해보세요.">
+    <meta name="keywords" content="BMI 계산기, 체중 계산기, 건강 계산기, 기초대사량, BMR, 권장 체중, 다이어트, 건강관리">
+    <title>건강 계산기 | BMI, 체중, 기초대사량(BMR) 계산</title>
+    <!-- 파비콘 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
+    
+    <!-- 스타일 시트 -->
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --text-color: #333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        nav {
+            background-color: var(--dark-color);
+            padding: 0.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 0 0.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover, nav ul li a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .calculator-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .info-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .sidebar {
+            width: 250px;
+            margin-left: 2rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--light-color);
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .bmi-category {
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .underweight {
+            color: var(--warning-color);
+        }
+
+        .normal {
+            color: var(--secondary-color);
+        }
+
+        .overweight {
+            color: var(--warning-color);
+        }
+
+        .obese {
+            color: var(--danger-color);
+        }
+
+        .bmi-meter {
+            height: 30px;
+            background: linear-gradient(to right, #3498db, #2ecc71, #f39c12, #e74c3c);
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .bmi-pointer {
+            position: absolute;
+            top: -15px;
+            width: 3px;
+            height: 40px;
+            background-color: black;
+            transform: translateX(-50%);
+        }
+
+        .bmi-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .bmi-ranges {
+            display: flex;
+            margin-top: 0.5rem;
+        }
+
+        .bmi-range {
+            flex: 1;
+            text-align: center;
+            padding: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .bmi-range-1 {
+            background-color: #3498db;
+            color: white;
+            border-top-left-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+        }
+
+        .bmi-range-2 {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .bmi-range-3 {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .bmi-range-4 {
+            background-color: #e74c3c;
+            color: white;
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-right: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .footer-links a {
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            font-size: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .ad-container {
+            padding: 1rem;
+            background-color: #f5f5f5;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            text-align: center;
+            border: 1px dashed #ddd;
+        }
+
+        .ad-text {
+            color: #777;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .ad-sidebar {
+            height: 300px;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .feature h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .cta-box h2 {
+            color: white;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: var(--transition);
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 모바일 스티키 광고 */
+        .mobile-sticky-ad {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 0.5rem;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .close-ad {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1rem;
+            }
+
+            .mobile-sticky-ad {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 0.25rem 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+
+        /* 접근성 강화 */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* 포커스 표시 강화 */
+        a:focus, button:focus, input:focus, select:focus {
+            outline: 3px solid rgba(52, 152, 219, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Skip Navigation */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+
+ 
+</head>
+<body>
+    <!-- 접근성 건너뛰기 링크 -->
+    <a href="#main-content" class="skip-link">메인 컨텐츠로 건너뛰기</a><header><h1>건강 계산기</h1><p>BMI, 권장 체중, 기초 대사량을 간편하게 계산하세요</p></header><nav><ul><li><a href="#bmi-calc">BMI 계산기</a></li><li><a href="#bmr-calc">기초대사량 계산기</a></li><li><a href="#health-info">건강 정보</a></li><li><a href="#faq">자주 묻는 질문</a></li><li><a href="#contact">문의하기</a></li></ul></nav><main id="main-content"><section class="calculator-section"><div class="card"><div class="tabs"><div class="tab active" data-tab="bmi">BMI 계산</div><div class="tab" data-tab="bmr">기초대사량 계산</div></div><div id="bmi-calc" class="tab-content active"><h2>BMI 계산기</h2><p>키와 체중을 입력하여 BMI(체질량지수)를 계산하고 건강 상태를 확인하세요.</p><form id="bmi-form"><div class="form-group"><label for="height">키 (cm)</label><input type="number" id="height" name="height" min="100" max="250" step="0.1" placeholder="예: 170" required></div><div class="form-group"><label for="weight">체중 (kg)</label><input type="number" id="weight" name="weight" min="30" max="200" step="0.1" placeholder="예: 65" required></div><div class="form-group"><label for="gender">성별</label><select id="gender" name="gender"><option value="male">남성</option><option value="female">여성</option></select></div><div class="form-group"><label for="age">나이</label><input type="number" id="age" name="age" min="15" max="100" placeholder="예: 30" required></div><button type="submit">BMI 계산하기</button></form><div id="bmi-result" class="result"><h3>BMI 계산 결과</h3><p>귀하의 BMI: <span id="bmi-value"></span></p><p class="bmi-category" id="bmi-category"></p><div class="bmi-legend"><span>저체중</span><span>정상</span><span>과체중</span><span>비만</span></div><div class="bmi-meter"><div class="bmi-pointer" id="bmi-pointer"></div></div><div class="bmi-ranges"><div class="bmi-range bmi-range-1">18.5 미만</div><div class="bmi-range bmi-range-2">18.5-24.9</div><div class="bmi-range bmi-range-3">25-29.9</div><div class="bmi-range bmi-range-4">30 이상</div></div><p id="weight-recommendation"></p><h3>건강한 체중 관리를 위한 팁</h3><ul><li>규칙적인 운동 습관 유지하기</li><li>균형 잡힌 식단 섭취하기</li><li>충분한 수분 섭취하기</li><li>적절한 수면 취하기</li></ul></div></div><div id="bmr-calc" class="tab-content"><h2>기초대사량(BMR) 계산기</h2><p>나이, 성별, 키, 체중을 바탕으로 기초대사량을 계산하세요.</p><form id="bmr-form"><div class="form-group"><label for="bmr-height">키 (cm)</label><input type="number" id="bmr-height" name="bmr-height" min="100" max="250" step="0.1" placeholder="예: 170" required></div><div class="form-group"><label for="bmr-weight">체중 (kg)</label><input type="number" id="bmr-weight" name="bmr-weight" min="30" max="200" step="0.1" placeholder="예: 65" required></div><div class="form-group"><label for="bmr-gender">성별</label><select id="bmr-gender" name="bmr-gender"><option value="male">남성</option><option value="female">여성</option></select></div><div class="form-group"><label for="bmr-age">나이</label><input type="number" id="bmr-age" name="bmr-age" min="15" max="100" placeholder="예: 30" required></div><div class="form-group"><label for="activity-level">활동 수준</label><select id="activity-level" name="activity-level"><option value="1.2">거의 운동하지 않음 (사무직)</option><option value="1.375">가벼운 운동 (주 1-3일)</option><option value="1.55" selected>보통 수준 운동 (주 3-5일)</option><option value="1.725">활발한 운동 (주 6-7일)</option><option value="1.9">매우 활발한 운동 (육체노동 또는 하루 2회 이상 운동)</option></select></div><button type="submit">기초대사량 계산하기</button></form><div id="bmr-result" class="result"><h3>기초대사량 계산 결과</h3><p>귀하의 기초대사량(BMR): <span id="bmr-value"></span> kcal/일</p><p>일일 권장 칼로리 섭취량: <span id="tdee-value"></span> kcal/일</p><h4>목표별 권장 칼로리</h4><ul><li>체중 감량: <span id="weight-loss"></span> kcal/일</li><li>체중 유지: <span id="weight-maintain"></span> kcal/일</li><li>체중 증가: <span id="weight-gain"></span> kcal/일</li></ul><h3>칼로리 관리 팁</h3><ul><li>단백질 위주의 식단 구성하기</li><li>식사 일지 작성하기</li><li>과도한 칼로리 제한은 피하기</li><li>물 많이 마시기</li></ul></div></div></div><div id="health-info" class="card"><h2>BMI 기준 이해하기</h2><p>BMI(체질량지수)는 체중과 키를 이용해 지방의 양을 추정하는 방법입니다.</p><table><thead><tr><th>BMI 범위</th><th>분류</th><th>건강 위험도</th></tr></thead><tbody><tr><td>18.5 미만</td><td>저체중</td><td>영양 부족, 면역력 약화 등의 위험</td></tr><tr><td>18.5 - 24.9</td><td>정상 체중</td><td>낮음</td></tr><tr><td>25.0 - 29.9</td><td>과체중</td><td>증가됨</td></tr><tr><td>30.0 이상</td><td>비만</td><td>고혈압, 당뇨, 심장질환 등의 위험 높음</td></tr></tbody></table><h3>BMI의 한계점</h3><p>BMI는 간편하게 사용할 수 있는 지표이지만, 근육량, 체형, 성별, 나이 등을 고려하지 않는 한계가 있습니다. 운동선수나 근육량이 많은 사람들은 실제보다 높은 BMI가 나올 수 있으며, 노인은 근육량 감소로 BMI가 정상이더라도 체지방률이 높을 수 있습니다.</p></div><div id="faq" class="card"><h2>자주 묻는 질문 (FAQ)</h2><div class="faq-item"><h3>BMI와 체지방률은 같은 것인가요?</h3><p>아닙니다. BMI는 키와 체중을 이용한 계산값이고, 체지방률은 실제 체내 지방의 비율입니다. BMI는 체지방률을 추정하는 간접적인 방법이며, 정확한 체지방률은 체성분 분석을 통해 측정해야 합니다.</p></div><div class="faq-item"><h3>기초대사량(BMR)과 일일 권장 칼로리 섭취량(TDEE)의 차이는 무엇인가요?</h3><p>기초대사량(BMR)은 생명 유지에 필요한 최소한의 에너지량이며, 일일 권장 칼로리 섭취량(TDEE)은 일상 활동과 운동을 포함한 총 에너지 소비량입니다. TDEE는 BMR에 활동 수준을 곱해 계산합니다.</p></div><div class="faq-item"><h3>BMI가 정상 범위인데도 체형이 마음에 들지 않으면 어떻게 해야 하나요?</h3><p>BMI가 정상이더라도 체형이 마음에 들지 않는다면, 근력 운동을 통해 체형을 개선할 수 있습니다. 체중은 유지하면서 체지방을 줄이고 근육량을 늘리는 "체중 재구성(body recomposition)" 방식이 도움이 될 수 있습니다.</p></div><div class="faq-item"><h3>체중 감량을 위한 적절한 속도는 얼마인가요?</h3><p>건강한 체중 감량의 속도는 일반적으로 주당 0.5-1kg 정도가 적절합니다. 너무 빠른 체중 감량은 근육량 감소, 영양 부족, 대사량 저하 등의 부작용을 일으킬 수 있습니다.</p></div></div><div class="card"><h2>효과적인 건강 관리 팁</h2><div class="features"><div class="feature"><div class="feature-icon">🍎</div><h3>균형 잡힌 식단</h3><p>다양한 영양소를 섭취하고 과일, 채소, 단백질, 건강한 지방을 포함한 균형 잡힌 식단을 유지하세요.</p></div><div class="feature"><div class="feature-icon">🏃‍♂️</div><h3>규칙적인 운동</h3><p>주 150분 이상의 중강도 유산소 운동과 주 2회 이상의 근력 운동을 통해 신체 건강을 유지하세요.</p></div><div class="feature"><div class="feature-icon">😴</div><h3>충분한 수면</h3><p>성인은 하루 7-9시간의 양질의 수면이 필요합니다. 일정한 수면 시간을 유지하세요.</p></div><div class="feature"><div class="feature-icon">🧘‍♀️</div><h3>스트레스 관리</h3><p>명상, 심호흡, 취미 활동 등을 통해 스트레스를 효과적으로 관리하세요.</p></div></div></div><div id="contact" class="card"><h2>건강 정보 공유하기</h2><p>BMI 계산기가 도움이 되셨나요? 친구들과 공유하세요!</p><div class="social-share"><button onclick="shareOnFacebook()" aria-label="페이스북에 공유하기">페이스북에 공유</button><button onclick="shareOnTwitter()" aria-label="트위터에 공유하기">트위터에 공유</button><button onclick="shareOnKakao()" aria-label="카카오톡에 공유하기">카카오톡에 공유</button><button onclick="copyToClipboard()" aria-label="링크 복사하기">링크 복사</button></div><h3>문의하기</h3><p>질문이나 제안사항이 있으시면 아래 이메일로 연락주세요.</p><p><a href="mailto:jenty521@naver.com">jenty521@naver.com</a></p></div><div class="cta-box"><h2>건강한 생활을 시작해보세요!</h2><p>정기적인 건강 체크와 생활 습관 개선으로 더 나은 삶을 만들어가세요.</p><a href="#bmi-calc" class="cta-btn">지금 BMI 계산하기</a></div></section><aside class="sidebar"><div class="card"><h3>관련 건강 계산기</h3><ul><li><a href="#">체지방률 계산기</a></li><li><a href="#">일일 칼로리 계산기</a></li><li><a href="#">임신 주수 계산기</a></li><li><a href="#">타겟 심박수 계산기</a></li><li><a href="#">수분 섭취량 계산기</a></li></ul></div><div class="card"><h3>최신 건강 정보</h3><div class="news-item"><h4>건강한 체중 감량을 위한 5가지 팁</h4><p>효과적이고 지속 가능한 체중 감량 방법에 대해 알아보세요.</p><a href="#">자세히 보기</a></div><div class="news-item"><h4>식이요법과 운동의 균형</h4><p>체중 관리를 위한 식이요법과 운동의 이상적인 조합에 대해 알아보세요.</p><a href="#">자세히 보기</a></div></div></aside></main><footer><div class="footer-links"><a href="#">이용약관</a><a href="#">개인정보처리방침</a><a href="#">광고문의</a><a href="#">제휴문의</a><a href="#">사이트맵</a></div><div class="social-links"><a href="#" aria-label="페이스북">f</a><a href="#" aria-label="트위터">t</a><a href="#" aria-label="인스타그램">i</a><a href="#" aria-label="유튜브">Y</a></div><p>&copy; 2025 건강 계산기. All rights reserved.</p></footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 문서 로드 완료 후 실행
+        const ac=d;(function(e,f){const a5=d,g=e();while(!![]){try{const h=parseInt(a5(0x2f8))/0x1+parseInt(a5(0x20f))/0x2+-parseInt(a5(0x262))/0x3*(-parseInt(a5(0x272))/0x4)+-parseInt(a5(0x21d))/0x5+-parseInt(a5(0x258))/0x6*(-parseInt(a5(0x310))/0x7)+parseInt(a5(0x1de))/0x8*(parseInt(a5(0x2a2))/0x9)+-parseInt(a5(0x1be))/0xa;if(h===f)break;else g['push'](g['shift']());}catch(i){g['push'](g['shift']());}}}(c,0x2f23e));function c(){const aR=['vgDQu1K','AgvPz2H0','u0XHCwC','tMjTt1a','zKncu0G','CgDJwgW','AhjLzG','y2XHC3nmAxn0','DLnSwwu','zxvKv2S','AfHLAvi','D25YugC','vM5wzxi','yM1PlxzHBhvL','ywrK','CxfZyLC','CNfksuC','DhHxEgK','A0TuELe','AuDgDKG','sNL4wuO','Dxz0wuS','yM1PlxbVAw50zxi','s0nWrMy','uuvPvwC','A3Pxve8','t1H4qMq','EgHrvfe','z1jzzhu','wwPkuwC','vMXiDNC','C21VB3rO','AhLpyLq','rM90txO','EhzNDeq','vfbnruW','rNL1wwi','BMHMwKC','tg5nuxO','nZe3mZq3mfj6AgjPwa','C1rnueK','Eg9vtvu','Cgz5A1m','C3r5Bgu','wuLwtu4','z2v0qxr0CMLIDxrL','CMv0DxjUicHMDw5JDgLVBIGPia','y29UC3rYDwn0B3i','yM9KEq','AMLPAgi','zffwsLO','wLH0AhK','CfjdrfG','DgDnq3q','6Rg06Rcv7zwCioYYToYKKsdRSPtSNitSL5aG64+e64US7zwy6RIWioYCHo2vTcdSLB0G','zKjwy0S','vwfhDuK','zM9YrwfJAa','BuTvrg8','DfHkrfK','z1fQEMS','sxDAC3O','y2XVC2uTywq','AxLTC2O','Aw5MBW','y3zjwMe','D2vPz2H0lwXVC3m','ruz0D2S','uKHgC0K','DMHgzvC','z3LOweG','nJmYq1z2EKzh','AgHtqvK','ELLQtvO','6Ro87lk07ksr','z2Tyq24','t2f4DfC','BufhAfm','qNLeAK4','AMjJBvO','C2HHCMvpBLr3Axr0zxi','qNrUrw8','uxrvEKu','Cw1yq3e','Aw5WDxq','DhHeCeG','qvvOs08','y2juvuC','rfHxA08','sLrKB0e','AKThDwi','AMPbrfm','ALPVq20','vhfTDeS','zxHJzxb0Aw9U','AeXdwMK','7kca7lk07ksr','yM1YlxDLAwDODa','wwretfO','EuPirhm','D2vPz2H0lwDHAw4','rvjeBMe','tNn6Bwy','yxbWzw5Kq2HPBgq','AM9rtfC','Awvyv0i','CezSvg4','q2zzAwm','y1b6CuC','ufjTB28','zwTnrNK','yM1YlxzHBhvL','s2fPDLm','qMj5Bfm','Egrwt3u','AKDSsfy','ENHSyvq','CMvTB3zLq2HPBgq','yM1YlwDLBMrLCG','A2CGlsa','nZi0ndmWve9Xv2Lh','CxvLCNLtzwXLy3rVCG','tgzktfe','zgLZCgXHEq','vuHXChC','uLPZCfm','6REa7zwy7j2yioYYToYKKEYDGcdQSBtQSjxTLzWG67ku7jYeioUcToYxKcdSNOJSIRxRI4JRI6qUio2yHoYERcdSSRtSPjeG7jYG7kEa66w8ioQ2JoYEPE2vQEUlIoUlPc4','A3ztAhO','ug9pBNm','AhrWzwW','sw5Swfq','BwjUAey','yNnQANO','yNnUwLm','ndCWmZq1DvnQCwzq','ChjVDg90ExbL','A2FSNOxRI4JRI6qU','qu5rC2e','zxjYB3i','zefkr1i','B0TWuuq','tNLtuwq','AKjpq3G','z2v0rwXLBwvUDej5swq','B3bPv3G','ww5ntwm','zK1bvwS','v2DQDe0','ic0GqK1jicyG7lk07ksrioQZHoYcSoQ4Sa','vuzuCLK','vKTsqMS','yMr4ue4','C0f2AhG','sfLZs00','yM1PlwzVCM0','v2TcCMG','zwTNBKu','vKzOswO','C09XDg0','BLrjDu0','zgLYzu0','vwTLsgO','qw9fC20','lNrHyG','BMvNuum','vM1Xs2i','rwPJzfq','CuDnsvy','yMTuveS','yw9KBw8','yM1PlwnHDgvNB3j5ia','t1vbr0q','rg9UB2G','BwLU','seTKu2q','lNrHyI1JB250zw50','EM5kCNe','v21pAgS','pgjYpUQ3Go2vMoYDMcdTGQqG','AMfvrK8','shPssNK','zgf0ys10ywi','CxvLCNLtzwXLy3rVCKfSBa','tMzgrwG','x2jSyw5R','yM1YlwfNzq','turzrwu','BgnvqM4','y29WEq','Ahr0Chm6lY90D2L0DgvYlMnVBs9PBNrLBNqVDhDLzxq/DxjSpq','66Eb7ygS6Rcaio2bToUMVEUZToUtNoYxKcdRS7xSGQZRKjJSL4JSIRxRI4JRI6qH','y29UC29Szq','uxDKv2i','nZjzD0DIB0u','Avn5EMG','sfPHBg4','Cvz5uKq','y2XPy2S','CunjufG','sNPmu1G','vfPvthu','u2vot3i','wNrhD3K','mJq2oxbhDwPSra','q2fdBLe','BLHoA1a','zxj6wfm','C2HHCMvpBKzHy2vIB29R','C3vIBwL0','BurXshC','zKXIse4','q0PbzMq','DgfIBgu','Bw9IAwXLlxn0AwnREs1Hza','zujtwfq','qK1jioY5To2fJoQZOoUMRdOG','CK5cv3G','CxzvruO','r1f6wNa','mte2neTfz21yDG','vLzXD1i','Bfjjtfy','vunrDgu','Axvcvvu','run2BMC','rNDMuu0','ExrbrfK','yNzuwMy','y23SL5aG64Ya7zwCioQXToQWLE2vNcdSSRtSPjeG67ku7jYe64Quia','EfzcBe0','lNrHyI1JB250zw50w2LKxJ0I','C2vSzwn0','CM91BMq','AezNAfe','D2fYBG','x19WCM90B19F','vu5NvLK','E30Uy29UC3rYDwn0B3iOiNjLDhvYBIb0AgLZiIKOicK','u2XtDhy','vhfpDhK','7kcv7iobioYYToYKKq','wxP5seC','vgjnz3y','y1P1suq','y29WEvrVq2XPCgjVyxjK','BM9Uzq','rMTZEKe','ANPizMm','Be5otu0','tvLoDve','A3fUsvC','uhbyzwi','rxLHCgq','Dg9tDhjPBMC','vuT3ufa','whvWB3a','B3bLBG','ALzsr00','AvLrr3u','Dgv4DenVBNrLBNq','v1vluKO','wLvzD1q','re9nq29UDgvUDeXVywrLza','CuH0rey','BuPjs3G','BgPrCe4','yw9lEg8','mta4ndvMENrxB0q','Dw5Kzxj3zwLNAhq','ywn0AxzPDhKTBgv2zwW','s0r6u1i','yM1YlwHLAwDODa','t1bdwhe','BwfSzq','Du5VwM4','D3Lowgu','DgrLzs12ywX1zq','seXcDLy','Bg9N','y25mDvy','DhjHy2u','z2vUzgvY','quHLzMe','Dhv2sLO','BM9YBwfS','ChjLDMvUDerLzMf1Bhq','ALngCKy','y2XHC3noyw1L','v21bB0q','sgXlyNC','v0zYqLq','ywrKrxzLBNrmAxn0zw5LCG','s1LVAKy','B1rWBfK','rNbNyLK','EezKDvC','u0DiAeu','yuzmCwi','uM9LzuW','sLfZrge','vgXLufy','jNq9','u0jRt0q','Aw5Uzxjive1m','ywj2Afq','t0HUy3G','vNzUD0m','v1H6vxu','rKjouvq','tejmufK','uvjdyM8','Bhz0seu','DMfSDwu','DgDet0C','r2fWBwG','t3bOy28','y2vNrfq','BKjczui','CMrOqwO','BfHJDK0','CKvetLm','Bg9JyxrPB24','A3v6DLK','CxDUtxm','C2nYB2XSsw50B1zPzxC','DgL0Bgu','B29PEuu','vg5fBe4','txj4v3O','AvPOwxy','y0jZy1G','B3zLCNDLAwDODa','rgXAwgS','D2vPz2H0lw1HAw50ywLU','q2ThBfK','uw1ftxi','q090CM8','r1PNtg0','EvLPy1a','su9pCLi','rgLhDhq','EMHlsuq','ywDL','ru5OtNm','A2CG7kAD6Rca6RcaioQ2JoYEPEUqQEUlIoUlPc4','rgzVquO','whnxq2W','BgvUz3rO','BwPSq1C','uK5gCxe','AeLvu3O','rgDOAMG','zxHLy0nVBw1HBMq','mJmWmZKXExfcuvHk','vw5wwuS','y3jLyxrLrwXLBwvUDa','BuXowLC','EerbELi','CvD1BuG','DKHqqxK','wNjxBw4','DwP4ywm','zKjpr2G','yM1YlwzVCM0','uMjIq1e','DNDJzLC','DxrhuNq','EfL0q3m','yxbWBhK','AhzIvxm','A2CG6Rcq65+j7j20ioQ2JoYEPEUqQEUlIoUlPc4','D1nVsMu','yM1PlwnHDgvNB3j5','yMLUza','thj0wfe','jNrLEhq9','CxHurM0','nduWmZHYqxvqA2S','B2jLC2u','D2vPz2H0','rfL0uwe','Ahr0Chm6lY93D3CUzMfJzwjVB2SUy29Tl3nOyxjLCI9ZAgfYzxiUCgHWp3u9','ugTYsgC','s29xENa','rwT5rue','zxD1DeG','ywn0AxzL','A3r6qKC','tgj0uNi','txrYD28','u3fOBM8','AxHXELO','C2HVDW','zKnkEuy','sNrQAKC','wxrWswq','Dg9gAxHLza','yNvqrNi','t3fMq0G','BgvMDa','zxPoyLK','s0HQvK0','wvvxD1K','u2T5s0y','sezfBMS','DeXNyLG','yM1PlxjLC3vSDa','B1LprNu','D2vPz2H0lxjLy29TBwvUzgf0Aw9U','DMrnvfa','CuLvDuK','yM1YlxjLC3vSDa','CMvTB3zL','shbSshq','wefWEfe','EuvYruO'];c=function(){return aR;};return c();}const a3=(function(){const a6=d,e={'CfYic':function(g,h){return g+h;},'YUWwY':function(g,h){return g*h;},'OHncx':function(g,h){return g/h;},'cBscX':function(g,h){return g-h;},'qVyRD':a6(0x28c),'EjcdT':function(g,h){return g===h;},'mKUDo':a6(0x2c1),'buPFr':a6(0x29b),'QEiUg':a6(0x22f),'iYQGu':a6(0x2d5),'direM':a6(0x1b1),'jKGub':a6(0x252)};let f=!![];return function(g,h){const a7=a6,i={'zYjMZ':e[a7(0x25b)],'uNoZn':function(j,k){const a8=a7;return e[a8(0x23d)](j,k);},'ujxac':e[a7(0x1d1)],'KDzSR':e[a7(0x324)],'RbbCQ':function(j,k){const a9=a7;return e[a9(0x23d)](j,k);},'jSFrF':e[a7(0x1af)],'xVBlM':e[a7(0x299)]};if(e[a7(0x23d)](e[a7(0x237)],e[a7(0x1f1)]))g=e[a7(0x202)](0x32,e[a7(0x329)](e[a7(0x2c8)](e[a7(0x2e1)](h,0x19),0x5),0x19));else{const k=f?function(){const aa=a7;if(i[aa(0x2a9)](i[aa(0x300)],i[aa(0x2a5)]))f[aa(0x1c2)][aa(0x212)]=i[aa(0x1e0)];else{if(h){if(i[aa(0x303)](i[aa(0x2b5)],i[aa(0x27c)])){const n=h[aa(0x307)](i,arguments);return j=null,n;}else{const n=h[aa(0x307)](g,arguments);return h=null,n;}}}}:function(){};return f=![],k;}};}()),a4=a3(this,function(){const ab=d,f={'fBVcK':function(j,k){return j(k);},'mJIKx':ab(0x24f),'fCBSH':function(j,k){return j-k;},'ekgnE':function(j,k){return j!==k;},'kvShz':ab(0x2b2),'gkXCn':ab(0x1fd),'aodmo':function(j,k){return j(k);},'VnVer':function(j,k){return j+k;},'xDAzR':function(j,k){return j+k;},'IwZsz':ab(0x1c5),'FotMz':ab(0x284),'qCIPX':function(j){return j();},'jaUFO':ab(0x2fe),'pFlTn':ab(0x1e8),'iGFvH':ab(0x2ad),'qWumH':ab(0x281),'lRILV':ab(0x1d7),'erzXS':ab(0x221),'nBBeB':ab(0x1f5),'jjADS':ab(0x26b),'WgjtM':ab(0x2af),'jZoCm':function(j,k){return j<k;},'ZUYwT':function(j,k){return j===k;},'qwnMs':ab(0x1a8)};let g;try{if(f[ab(0x233)](f[ab(0x216)],f[ab(0x1e2)])){const j=f[ab(0x240)](Function,f[ab(0x1a3)](f[ab(0x2fc)](f[ab(0x1d4)],f[ab(0x1b8)]),');'));g=f[ab(0x25d)](j);}else g=h;}catch(l){if(f[ab(0x233)](f[ab(0x24a)],f[ab(0x201)]))g=window;else{const n=f[ab(0x1ce)](j,k[ab(0x2d8)][ab(0x33d)]),q=f[ab(0x1ce)](l,m[ab(0x2dc)]);n[ab(0x297)](ab(0x314)+n+ab(0x2c4)+q,f[ab(0x29f)]);}}const h=g[ab(0x256)]=g[ab(0x256)]||{},i=[f[ab(0x1aa)],f[ab(0x2fd)],f[ab(0x274)],f[ab(0x265)],f[ab(0x2d4)],f[ab(0x1f2)],f[ab(0x22a)]];for(let n=0x0;f[ab(0x1f3)](n,i[ab(0x2f2)]);n++){if(f[ab(0x29c)](f[ab(0x2da)],f[ab(0x2da)])){const o=a3[ab(0x1c6)][ab(0x21e)][ab(0x30c)](a3),p=i[n],q=h[p]||o;o[ab(0x282)]=a3[ab(0x30c)](a3),o[ab(0x294)]=q[ab(0x294)][ab(0x30c)](q),h[p]=o;}else{const s=f[ab(0x33b)](h,i);j[ab(0x29a)]=ab(0x1cd)+s[ab(0x323)](0x1)+ab(0x2ef);}}});function d(a,b){const e=c();return d=function(f,g){f=f-0x1a0;let h=e[f];if(d['vuVBGQ']===undefined){var i=function(m){const n='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let o='',p='';for(let q=0x0,r,s,t=0x0;s=m['charAt'](t++);~s&&(r=q%0x4?r*0x40+s:s,q++%0x4)?o+=String['fromCharCode'](0xff&r>>(-0x2*q&0x6)):0x0){s=n['indexOf'](s);}for(let u=0x0,v=o['length'];u<v;u++){p+='%'+('00'+o['charCodeAt'](u)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(p);};d['XHipgb']=i,a=arguments,d['vuVBGQ']=!![];}const j=e[0x0],k=f+j,l=a[k];return!l?(h=d['XHipgb'](h),a[k]=h):h=l,h;},d(a,b);}a4(),document[ac(0x2ba)](ac(0x29d),function(){const ad=ac,e={'SlStv':ad(0x1f7),'RZspS':ad(0x2a3),'AHefa':function(n,o){return n===o;},'NbmOP':ad(0x320),'JTdoA':ad(0x2b8),'TZULu':ad(0x24c),'gQjzk':ad(0x319),'OPCXq':ad(0x28c),'YzyHG':ad(0x25c),'WmOhk':ad(0x239),'zxlaT':function(n,o){return n*o;},'rEDNS':function(n,o){return n/o;},'wnrPg':function(n,o){return n+o;},'KoWzp':function(n,o){return n-o;},'Dghjh':ad(0x1eb),'fBOGh':ad(0x253),'pgcXl':function(n,o){return n(o);},'TgjSY':ad(0x255),'hFghQ':ad(0x311),'FkszA':function(n,o){return n+o;},'vSlYe':ad(0x1c5),'iSyzh':ad(0x284),'uvtYK':function(n){return n();},'nhfZG':ad(0x2ad),'sOqtm':ad(0x281),'Sqhno':ad(0x1d7),'GZgLm':ad(0x221),'UFTrY':ad(0x1f5),'jGlHV':ad(0x26b),'yYicP':ad(0x2af),'hXeiR':function(n,o){return n<o;},'QmEMr':function(n,o){return n-o;},'oYOFu':function(n,o){return n-o;},'GQzZp':ad(0x1e1),'Gapmh':ad(0x2e2),'XApxQ':ad(0x32c),'kqnIW':ad(0x338),'mDqHw':ad(0x312),'YdDLZ':ad(0x2b0),'CkGlY':ad(0x2ed),'MrxWz':function(n,o){return n/o;},'QwdWb':function(n,o){return n*o;},'rNBWx':ad(0x1a4),'jBOCx':function(n,o){return n<o;},'xhQTQ':function(n,o){return n===o;},'vdMTP':ad(0x2c0),'TbMgv':function(n,o){return n!==o;},'qvUEJ':ad(0x1a7),'bsnZS':ad(0x287),'IOOrR':ad(0x2b3),'hhSAY':ad(0x26d),'fMAUk':ad(0x2fb),'iZhYv':ad(0x336),'mAGhS':ad(0x30b),'Eyapd':ad(0x1ad),'DfoAJ':function(n,o){return n<o;},'htpel':function(n,o){return n===o;},'OUAGD':ad(0x2ac),'mbnhF':function(n,o){return n*o;},'hIUSz':function(n,o){return n/o;},'HplHt':function(n,o){return n<o;},'VvnwC':ad(0x31c),'ezNbY':function(n,o){return n/o;},'cegDT':function(n,o){return n-o;},'cPzqG':function(n,o){return n<o;},'RNFqq':ad(0x1a6),'Ophco':ad(0x1dc),'LnMQz':function(n,o){return n*o;},'jbcmZ':function(n,o){return n-o;},'LrtXQ':ad(0x2f3),'YIVMN':function(n,o){return n+o;},'iuBUU':function(n,o){return n*o;},'cnLuV':function(n,o){return n-o;},'xYtCs':function(n,o){return n*o;},'jVRGM':ad(0x32f),'ewutH':function(n,o){return n<o;},'ECvng':function(n,o){return n!==o;},'YnMMc':ad(0x2bc),'WXzUu':function(n,o){return n-o;},'ooiyE':function(n,o){return n>o;},'qIUuI':ad(0x243),'PpXeb':function(n,o){return n===o;},'bvTZf':ad(0x23b),'dQVJZ':ad(0x31f),'KHjVM':ad(0x1b6),'HFEnk':function(n,o){return n+o;},'HYsKM':function(n,o){return n*o;},'cZuID':function(n,o){return n/o;},'znJrq':function(n,o){return n+o;},'ZtGwy':function(n,o){return n===o;},'OaxtW':ad(0x1ef),'TqOty':ad(0x2a6),'ieXWB':ad(0x1f8),'VKRBk':ad(0x20d),'EkyEA':ad(0x250),'ERDna':function(n,o){return n(o);},'PkrHg':ad(0x2a4),'EFtwk':ad(0x2a8),'SLaqg':function(n,o){return n!==o;},'CaCnQ':ad(0x28e),'wyNXe':function(n,o){return n-o;},'bkTTK':function(n,o){return n+o;},'ktzBG':function(n,o){return n*o;},'QRCbo':function(n,o){return n*o;},'eudWk':ad(0x209),'tgMCt':ad(0x1ab),'bsjjz':function(n,o){return n*o;},'hvbUs':function(n,o){return n*o;},'hyObT':ad(0x206),'KYojF':ad(0x2ab),'UaGuI':ad(0x1d9),'VlHvw':function(n,o){return n-o;},'SeNOr':ad(0x2e4),'MYNuQ':ad(0x1fb),'vwcfW':function(n,o){return n!==o;},'sTMPI':ad(0x1d2),'jiihb':ad(0x31b),'ytADY':function(n,o){return n(o);},'UCQte':function(n,o){return n(o);},'gyhXH':ad(0x24f),'oKpQD':function(n,o){return n(o);},'txDpH':function(n,o){return n-o;},'ByDjN':function(n,o){return n+o;},'ZrWmn':function(n,o){return n+o;},'hLCZi':function(n,o){return n*o;},'CJAfd':ad(0x245),'JQsDa':function(n,o){return n(o);},'dAJGR':ad(0x1ee),'KCpFf':ad(0x2e7),'TlePV':function(n,o){return n(o);},'FyuYb':function(n,o){return n(o);},'yJHDs':ad(0x1ba),'nXNkP':ad(0x23a),'pfykS':ad(0x246),'TnElN':ad(0x231),'OqfCH':ad(0x32d),'PRmoo':ad(0x267),'nTIuM':ad(0x302),'UkeHj':ad(0x332),'lXcvM':ad(0x1d5),'lvtHE':ad(0x26c),'ANQsa':function(n,o){return n&&o;},'InlXT':ad(0x1ff),'wSoJe':ad(0x211)},f=document[ad(0x24d)](e[ad(0x264)]),g=document[ad(0x24d)](e[ad(0x1c1)]);f[ad(0x1d0)](n=>{const ae=ad,o={'YtpId':e[ae(0x285)],'opiWx':e[ae(0x214)],'FBNQT':function(p,q){const af=ae;return e[af(0x2b1)](p,q);},'SBkOD':e[ae(0x33a)],'ZXthy':e[ae(0x1f0)],'KaivS':e[ae(0x25f)],'NySQd':e[ae(0x1d3)],'XsWCl':e[ae(0x2a7)],'xoUMU':e[ae(0x288)]};e[ae(0x2b1)](e[ae(0x248)],e[ae(0x248)])?n[ae(0x2ba)](e[ae(0x288)],()=>{const ag=ae,p={'DiGtt':o[ag(0x322)],'tgDOG':o[ag(0x227)]};if(o[ag(0x2cb)](o[ag(0x2c5)],o[ag(0x1ca)]))g=p[ag(0x2eb)],h=p[ag(0x2d0)];else{const r=n[ag(0x1c4)](o[ag(0x207)]);f[ag(0x1d0)](s=>s[ag(0x33e)][ag(0x333)](ag(0x319))),n[ag(0x33e)][ag(0x1a5)](o[ag(0x224)]),g[ag(0x1d0)](s=>s[ag(0x33e)][ag(0x333)](ag(0x319))),document[ag(0x210)](ag(0x27d)+r+'\x22]')[ag(0x33e)][ag(0x1a5)](o[ag(0x224)]);}}):g[ae(0x2ba)](o[ae(0x1c0)],()=>{const ah=ae;i[ah(0x1c2)][ah(0x212)]=o[ah(0x2f1)];});});const h=document[ad(0x226)](e[ad(0x2de)]),i=document[ad(0x226)](e[ad(0x325)]);h[ad(0x2ba)](e[ad(0x204)],function(n){const al=ad,o={'JtjjG':function(p,q){const ai=d;return e[ai(0x33c)](p,q);},'FwfQM':function(p,q){const aj=d;return e[aj(0x28d)](p,q);},'kzWTO':function(p,q){const ak=d;return e[ak(0x1a2)](p,q);},'DlZXk':e[al(0x33f)],'HzRJy':e[al(0x259)],'VVqwR':function(p){const am=al;return e[am(0x1ac)](p);},'zhKID':e[al(0x1bc)],'lNNMM':e[al(0x235)],'UHqpw':e[al(0x31d)],'ixqzZ':e[al(0x2e8)],'NfFEh':e[al(0x22c)],'VFhIj':e[al(0x20a)],'VmqKb':e[al(0x2e9)],'ljQpN':function(p,q){const an=al;return e[an(0x1a1)](p,q);},'utGRt':function(p,q){const ao=al;return e[ao(0x2e6)](p,q);},'xFduW':function(p,q){const ap=al;return e[ap(0x1a2)](p,q);},'WmAoD':function(p,q){const aq=al;return e[aq(0x20b)](p,q);},'kuzvY':function(p,q){const ar=al;return e[ar(0x2e6)](p,q);},'aoKxo':function(p,q){const as=al;return e[as(0x32e)](p,q);},'qHtDF':function(p,q){const at=al;return e[at(0x28d)](p,q);},'bdxPN':function(p,q){const au=al;return e[au(0x20b)](p,q);},'AUhKO':e[al(0x271)],'ENhNs':e[al(0x2d1)]};if(e[al(0x2b1)](e[al(0x335)],e[al(0x335)])){n[al(0x2b4)]();const p=e[al(0x2d7)](e[al(0x33c)](parseFloat,document[al(0x226)](e[al(0x291)])[al(0x2cf)]),0x64),q=e[al(0x33c)](parseFloat,document[al(0x226)](e[al(0x268)])[al(0x2cf)]),r=document[al(0x226)](e[al(0x1f9)])[al(0x2cf)],s=e[al(0x33c)](parseInt,document[al(0x226)](e[al(0x2e5)])[al(0x2cf)]),t=e[al(0x2df)](q,e[al(0x257)](p,p));document[al(0x226)](e[al(0x26f)])[al(0x29a)]=t[al(0x323)](0x1);let u='',v='';if(e[al(0x225)](t,18.5))e[al(0x1b2)](e[al(0x330)],e[al(0x330)])?(u=e[al(0x285)],v=e[al(0x214)]):f[al(0x29a)]=al(0x215);else{if(e[al(0x1a1)](t,0x19)){if(e[al(0x289)](e[al(0x270)],e[al(0x270)])){const E=k?function(){const av=al;if(E){const F=u[av(0x307)](v,arguments);return w=null,F;}}:function(){};return p=![],E;}else u=e[al(0x21c)],v=e[al(0x2ea)];}else{if(e[al(0x225)](t,0x1e)){if(e[al(0x289)](e[al(0x1df)],e[al(0x229)]))u=e[al(0x271)],v=e[al(0x2d1)];else{let K;try{const N=VMmqlq[al(0x321)](q,VMmqlq[al(0x278)](VMmqlq[al(0x1b0)](VMmqlq[al(0x2e3)],VMmqlq[al(0x24b)]),');'));K=VMmqlq[al(0x273)](N);}catch(O){K=s;}const L=K[al(0x256)]=K[al(0x256)]||{},M=[VMmqlq[al(0x2ec)],VMmqlq[al(0x28f)],VMmqlq[al(0x213)],VMmqlq[al(0x31e)],VMmqlq[al(0x24e)],VMmqlq[al(0x234)],VMmqlq[al(0x23c)]];for(let P=0x0;VMmqlq[al(0x2a0)](P,M[al(0x2f2)]);P++){const Q=x[al(0x1c6)][al(0x21e)][al(0x30c)](y),R=M[P],S=L[R]||Q;Q[al(0x282)]=z[al(0x30c)](A),Q[al(0x294)]=S[al(0x294)][al(0x30c)](S),L[R]=Q;}}}else e[al(0x1b2)](e[al(0x2e0)],e[al(0x2e0)])?(u='비만',v=e[al(0x280)]):i=o[al(0x305)](o[al(0x2be)](o[al(0x278)](447.593,o[al(0x2b7)](9.247,j)),o[al(0x2b7)](3.098,k)),o[al(0x2b7)](4.33,l));}}const w=document[al(0x226)](e[al(0x1e4)]);w[al(0x29a)]=al(0x26e)+u,w[al(0x2b6)]=al(0x241)+v;const x=document[al(0x226)](e[al(0x293)]);let y=0x0;if(e[al(0x2f0)](t,18.5))e[al(0x218)](e[al(0x242)],e[al(0x242)])?y=e[al(0x21a)](e[al(0x2f5)](t,18.5),0x19):g=e[al(0x20b)](e[al(0x2d7)](h,18.5),0x19);else{if(e[al(0x334)](t,0x19))e[al(0x1b2)](e[al(0x2c9)],e[al(0x2c9)])?y=e[al(0x28d)](0x19,e[al(0x257)](e[al(0x327)](e[al(0x2d3)](t,18.5),6.5),0x19)):g=e[al(0x1a2)](0x19,e[al(0x20b)](e[al(0x2d7)](e[al(0x316)](h,18.5),6.5),0x19));else{if(e[al(0x203)](t,0x1e)){if(e[al(0x1b2)](e[al(0x2f4)],e[al(0x2d2)])){const J=o[al(0x2d9)](h,i);j[al(0x29a)]=al(0x1cd)+J[al(0x323)](0x1)+al(0x309);}else y=e[al(0x1a2)](0x32,e[al(0x1bd)](e[al(0x2d7)](e[al(0x1e6)](t,0x19),0x5),0x19));}else{if(e[al(0x218)](e[al(0x30d)],e[al(0x30d)]))y=e[al(0x1c3)](0x4b,Math[al(0x244)](e[al(0x276)](e[al(0x2d7)](e[al(0x2ae)](t,0x1e),0x5),0x19),0x19));else{const K=j[al(0x1c4)](e[al(0x25f)]);k[al(0x1d0)](L=>L[al(0x33e)][al(0x333)](al(0x319))),l[al(0x33e)][al(0x1a5)](e[al(0x1d3)]),m[al(0x1d0)](L=>L[al(0x33e)][al(0x333)](al(0x319))),n[al(0x210)](al(0x27d)+K+'\x22]')[al(0x33e)][al(0x1a5)](e[al(0x1d3)]);}}}}x[al(0x1c2)][al(0x326)]=y+'%';const z=e[al(0x20b)](e[al(0x21a)](18.5,p),p),A=e[al(0x306)](e[al(0x276)](24.9,p),p),B=document[al(0x226)](e[al(0x298)]);if(e[al(0x318)](t,18.5)){if(e[al(0x277)](e[al(0x228)],e[al(0x228)]))i=o[al(0x2a1)](o[al(0x2be)](o[al(0x29e)](88.362,o[al(0x2b7)](13.397,j)),o[al(0x2b7)](4.799,k)),o[al(0x22e)](5.677,l));else{const L=e[al(0x2ca)](z,q);B[al(0x29a)]=al(0x1cd)+L[al(0x323)](0x1)+al(0x2ef);}}else{if(e[al(0x2dd)](t,24.9)){if(e[al(0x2b1)](e[al(0x331)],e[al(0x331)])){const M=e[al(0x1e6)](q,A);B[al(0x29a)]=al(0x1cd)+M[al(0x323)](0x1)+al(0x309);}else{const O=k[al(0x2fa)](e[al(0x2f6)]);l[al(0x1c7)][al(0x1fe)](O),O[al(0x2cf)]=m[al(0x2d8)][al(0x33d)],O[al(0x27e)](),n[al(0x2f7)](e[al(0x301)]),o[al(0x1c7)][al(0x20c)](O),e[al(0x33c)](p,e[al(0x337)]);}}else e[al(0x292)](e[al(0x27a)],e[al(0x27a)])?B[al(0x29a)]=al(0x215):(g=o[al(0x1ed)],h=o[al(0x2ee)]);}B[al(0x2c6)]+=al(0x249)+e[al(0x20b)](p,0x64)+al(0x27b)+z[al(0x323)](0x1)+al(0x20e)+A[al(0x323)](0x1)+al(0x21f),i[al(0x33e)][al(0x1a5)](e[al(0x1c9)]),i[al(0x2db)]({'behavior':e[al(0x328)]});}else g='비만',h=e[al(0x280)];});const j=document[ad(0x226)](e[ad(0x236)]),k=document[ad(0x226)](e[ad(0x238)]);j[ad(0x2ba)](e[ad(0x204)],function(n){const az=ad,o={'LBLPY':function(p,q){const aw=d;return e[aw(0x33c)](p,q);},'HZaln':function(p,q){const ax=d;return e[ax(0x28d)](p,q);},'cvIZa':function(p,q){const ay=d;return e[ay(0x247)](p,q);},'JzLSX':e[az(0x33f)],'kKTzQ':e[az(0x259)],'YjJQg':function(p){const aA=az;return e[aA(0x1ac)](p);}};if(e[az(0x261)](e[az(0x1e3)],e[az(0x1e3)])){n[az(0x2b4)]();const p=e[az(0x33c)](parseFloat,document[az(0x226)](e[az(0x286)])[az(0x2cf)]),q=e[az(0x33c)](parseFloat,document[az(0x226)](e[az(0x200)])[az(0x2cf)]),r=document[az(0x226)](e[az(0x22d)])[az(0x2cf)],s=e[az(0x33c)](parseInt,document[az(0x226)](e[az(0x317)])[az(0x2cf)]),t=e[az(0x1fc)](parseFloat,document[az(0x226)](e[az(0x315)])[az(0x2cf)]);let u=0x0;if(e[az(0x218)](r,e[az(0x1da)]))e[az(0x339)](e[az(0x263)],e[az(0x263)])?h=e[az(0x32b)](0x4b,i[az(0x244)](e[az(0x230)](e[az(0x28a)](e[az(0x2e6)](j,0x1e),0x5),0x19),0x19)):u=e[az(0x2aa)](e[az(0x247)](e[az(0x23f)](88.362,e[az(0x31a)](13.397,q)),e[az(0x276)](4.799,p)),e[az(0x2cd)](5.677,s));else{if(e[az(0x339)](e[az(0x1a0)],e[az(0x1cc)]))u=e[az(0x2ca)](e[az(0x1a2)](e[az(0x1a2)](447.593,e[az(0x21b)](9.247,q)),e[az(0x276)](3.098,p)),e[az(0x308)](4.33,s));else{const y=QXRBUb[az(0x2cc)](g,QXRBUb[az(0x25a)](QXRBUb[az(0x1d8)](QXRBUb[az(0x25e)],QXRBUb[az(0x1a9)]),');'));h=QXRBUb[az(0x1b4)](y);}}const v=e[az(0x1bd)](u,t);document[az(0x226)](e[az(0x1b7)])[az(0x29a)]=Math[az(0x27f)](u),document[az(0x226)](e[az(0x2bb)])[az(0x29a)]=Math[az(0x27f)](v),document[az(0x226)](e[az(0x1cf)])[az(0x29a)]=Math[az(0x27f)](e[az(0x1b5)](v,0x1f4)),document[az(0x226)](e[az(0x260)])[az(0x29a)]=Math[az(0x27f)](v),document[az(0x226)](e[az(0x290)])[az(0x29a)]=Math[az(0x27f)](e[az(0x1a2)](v,0x1f4)),k[az(0x33e)][az(0x1a5)](e[az(0x1c9)]),k[az(0x2db)]({'behavior':e[az(0x328)]});}else{const z=m[az(0x1c6)][az(0x21e)][az(0x30c)](n),A=o[p],B=q[A]||z;z[az(0x282)]=r[az(0x30c)](s),z[az(0x294)]=B[az(0x294)][az(0x30c)](B),t[A]=z;}});const l=document[ad(0x226)](e[ad(0x2d6)]),m=document[ad(0x226)](e[ad(0x2ce)]);if(e[ad(0x220)](l,m)){if(e[ad(0x277)](e[ad(0x219)],e[ad(0x30a)]))l[ad(0x2ba)](e[ad(0x288)],()=>{const aB=ad;if(e[aB(0x304)](e[aB(0x1bf)],e[aB(0x1c8)]))m[aB(0x1c2)][aB(0x212)]=e[aB(0x2a7)];else{const o={'WkBrh':e[aB(0x25f)],'DYtQa':e[aB(0x1d3)]};k[aB(0x2ba)](e[aB(0x288)],()=>{const aC=aB,w=q[aC(0x1c4)](o[aC(0x232)]);r[aC(0x1d0)](x=>x[aC(0x33e)][aC(0x333)](aC(0x319))),s[aC(0x33e)][aC(0x1a5)](o[aC(0x313)]),t[aC(0x1d0)](x=>x[aC(0x33e)][aC(0x333)](aC(0x319))),u[aC(0x210)](aC(0x27d)+w+'\x22]')[aC(0x33e)][aC(0x1a5)](o[aC(0x313)]);});}});else{const q=e[ad(0x279)](j,k[ad(0x2d8)][ad(0x33d)]),r=e[ad(0x275)](l,m[ad(0x2dc)]+ad(0x22b));n[ad(0x297)](ad(0x254)+q+ad(0x30e)+r,e[ad(0x1dd)]);}}window[ad(0x28b)]=function(){const aE=ad,o={'Xupop':function(p,q){const aD=d;return e[aD(0x279)](p,q);},'xvgtD':e[aE(0x286)],'qmXCq':function(p,q){const aF=aE;return e[aF(0x223)](p,q);},'pRCDX':e[aE(0x200)],'BbylS':e[aE(0x22d)],'qGMIV':e[aE(0x317)],'iymsj':e[aE(0x315)],'PoOns':function(p,q){const aG=aE;return e[aG(0x1b2)](p,q);},'UNgVY':e[aE(0x1da)],'gRYdu':function(p,q){const aH=aE;return e[aH(0x1ec)](p,q);},'WFrBT':function(p,q){const aI=aE;return e[aI(0x23f)](p,q);},'fLbHN':function(p,q){const aJ=aE;return e[aJ(0x1e5)](p,q);},'qxTFm':function(p,q){const aK=aE;return e[aK(0x31a)](p,q);},'ekMFy':function(p,q){const aL=aE;return e[aL(0x2ff)](p,q);},'UnVYK':function(p,q){const aM=aE;return e[aM(0x276)](p,q);},'RHFsI':function(p,q){const aN=aE;return e[aN(0x1f6)](p,q);},'SGHhE':e[aE(0x1b7)],'abvhT':e[aE(0x2bb)],'UKwPP':e[aE(0x1cf)],'TqmtK':function(p,q){const aO=aE;return e[aO(0x316)](p,q);},'FpgbY':e[aE(0x260)],'QtUzE':e[aE(0x290)],'SkyKF':e[aE(0x1c9)],'MDYEe':e[aE(0x328)]};if(e[aE(0x277)](e[aE(0x26a)],e[aE(0x26a)])){A[aE(0x2b4)]();const q=o[aE(0x296)](B,C[aE(0x226)](o[aE(0x1b9)])[aE(0x2cf)]),r=o[aE(0x1ea)](D,E[aE(0x226)](o[aE(0x1cb)])[aE(0x2cf)]),s=F[aE(0x226)](o[aE(0x208)])[aE(0x2cf)],t=o[aE(0x296)](G,H[aE(0x226)](o[aE(0x23e)])[aE(0x2cf)]),u=o[aE(0x1ea)](I,J[aE(0x226)](o[aE(0x1d6)])[aE(0x2cf)]);let v=0x0;o[aE(0x217)](s,o[aE(0x283)])?v=o[aE(0x1b3)](o[aE(0x2b9)](o[aE(0x269)](88.362,o[aE(0x30f)](13.397,r)),o[aE(0x30f)](4.799,q)),o[aE(0x30f)](5.677,t)):v=o[aE(0x1b3)](o[aE(0x205)](o[aE(0x205)](447.593,o[aE(0x30f)](9.247,r)),o[aE(0x2f9)](3.098,q)),o[aE(0x30f)](4.33,t));const w=o[aE(0x1db)](v,u);K[aE(0x226)](o[aE(0x2bf)])[aE(0x29a)]=L[aE(0x27f)](v),M[aE(0x226)](o[aE(0x2c7)])[aE(0x29a)]=N[aE(0x27f)](w),O[aE(0x226)](o[aE(0x295)])[aE(0x29a)]=P[aE(0x27f)](o[aE(0x1f4)](w,0x1f4)),Q[aE(0x226)](o[aE(0x2bd)])[aE(0x29a)]=R[aE(0x27f)](w),S[aE(0x226)](o[aE(0x1e9)])[aE(0x29a)]=T[aE(0x27f)](o[aE(0x2b9)](w,0x1f4)),U[aE(0x33e)][aE(0x1a5)](o[aE(0x32a)]),V[aE(0x2db)]({'behavior':o[aE(0x251)]});}else{const q=document[aE(0x2fa)](e[aE(0x2f6)]);document[aE(0x1c7)][aE(0x1fe)](q),q[aE(0x2cf)]=window[aE(0x2d8)][aE(0x33d)],q[aE(0x27e)](),document[aE(0x2f7)](e[aE(0x301)]),document[aE(0x1c7)][aE(0x20c)](q),e[aE(0x2c2)](alert,e[aE(0x337)]);}},window[ad(0x266)]=function(){const aP=ad;if(e[aP(0x339)](e[aP(0x222)],e[aP(0x1ae)])){const o=e[aP(0x2c3)](encodeURIComponent,window[aP(0x2d8)][aP(0x33d)]),p=e[aP(0x1bb)](encodeURIComponent,document[aP(0x2dc)]);window[aP(0x297)](aP(0x314)+o+aP(0x2c4)+p,e[aP(0x1dd)]);}else{if(i){const r=m[aP(0x307)](n,arguments);return o=null,r;}}},window[ad(0x1e7)]=function(){const aQ=ad;if(e[aQ(0x304)](e[aQ(0x1fa)],e[aQ(0x1fa)]))g=e[aQ(0x21c)],h=e[aQ(0x2ea)];else{const p=e[aQ(0x1fc)](encodeURIComponent,window[aQ(0x2d8)][aQ(0x33d)]),q=e[aQ(0x279)](encodeURIComponent,document[aQ(0x2dc)]+aQ(0x22b));window[aQ(0x297)](aQ(0x254)+p+aQ(0x30e)+q,e[aQ(0x1dd)]);}};});
+    </script>
+</body>
+</html>

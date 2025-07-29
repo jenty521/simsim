@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="naver-site-verification" content="eaaa396dd1949442afce70c45d6e21dc11fbf26e" />
+    <meta name="google-adsense-account" content="ca-pub-4624141391435876">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>블로그 글자수 세기 및 변환 ( WORD COUNTER )</title>
+    <meta name="description" content="글자수 세기 와 변환">
+    <link rel="icon" type="image/x-icon" href="/assets/img/favicon/favicon.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7NY0VN0ECJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7NY0VN0ECJ');
+</script>
+    <style>
+       body { font-family: 'Noto Sans KR', sans-serif; background-color: #f9f7fe; } .btn-primary { background-color: #9c8cd4; transition: all 0.3s ease; } .btn-primary:hover { background-color: #8a7bc4; transform: translateY(-2px); } .btn-secondary { background-color: #f0b9d4; transition: all 0.3s ease; } .btn-secondary:hover { background-color: #e9a7c7; transform: translateY(-2px); } .card { border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); transition: all 0.3s ease; } .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); } textarea:focus, input:focus, select:focus { outline: none; border-color: #9c8cd4; box-shadow: 0 0 0 2px rgba(156, 140, 212, 0.25); } .count-badge { background-color: #fff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 8px; display: flex; align-items: center; } .count-icon { width: 24px; height: 24px; margin-right: 12px; display: flex; align-items: center; justify-content: center; background-color: #f0f0f7; border-radius: 50%; } .banner { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; } .banner img { width: 150px; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease; } .banner img:hover { transform: scale(1.05); } @media (max-width: 768px) { .banner { display: none; } }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+</head>
+<body class="min-h-screen p-4 md:p-6">
+    <!-- 배너 -->
+    <div class="banner">
+        <a href="https://play.google.com/store/apps/details?id=com.icarebiz.mathspuzzle" target="_blank">
+            <img src="./simsim_banner2.webp" alt="배너 이미지">
+        </a>
+    </div>
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-purple-800 mb-2">블로그 글 편집 도구</h1>
+            <p class="text-gray-600">글자수 세기 & HTML 태그 변환을 한번에</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 왼쪽 패널 - 입력 영역 -->
+            <div class="md:col-span-2">
+                <div class="card bg-white p-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-lg font-medium text-purple-700">원본 텍스트</h2>
+                        <div class="flex space-x-2">
+                            <button class="bg-purple-100 text-purple-800 text-sm px-4 py-2 rounded-full hover:bg-purple-200 transition-all flex items-center" onclick="webutilblogaddLineChangeTagdo_evt.removeHtmlTags()">
+                                HTML 태그 제거
+                            </button>
+                            <button class="bg-gray-100 text-gray-800 text-sm px-4 py-2 rounded-full hover:bg-gray-200 transition-all flex items-center" onclick="webutilblogaddLineChangeTagdo_evt.undo()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m0-12l-6 6" />
+                                </svg>
+                                되돌리기
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="w-full p-4 border rounded-xl bg-gray-50 h-64 focus:ring-2 focus:ring-purple-300 transition-all" id="webutilblogaddLineChangeTagdo_origin" placeholder="여기에 원본 텍스트를 입력하세요..."></textarea>
+                    
+                    <!-- 실시간 통계 -->
+                    <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="count-badge">
+                            <div class="count-icon text-purple-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">전체 글자</div>
+                                <div class="font-medium text-gray-800" id="webutilblogaddLineChangeTagdo_charCountWithSpaces">0</div>
+                            </div>
+                        </div>
+                        <div class="count-badge">
+                            <div class="count-icon text-pink-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">공백 제외</div>
+                                <div class="font-medium text-gray-800" id="webutilblogaddLineChangeTagdo_charCountWithoutSpaces">0</div>
+                            </div>
+                        </div>
+                        <div class="count-badge">
+                            <div class="count-icon text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h12M3 12h5" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">단어 수</div>
+                                <div class="font-medium text-gray-800" id="webutilblogaddLineChangeTagdo_wordCount">0</div>
+                            </div>
+                        </div>
+                        <div class="count-badge">
+                            <div class="count-icon text-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500">줄 수</div>
+                                <div class="font-medium text-gray-800" id="webutilblogaddLineChangeTagdo_lineCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽 패널 - 설정 및 변환 영역 -->
+            <div>
+                <!-- 블로그 타입 설정 -->
+                <div class="card bg-white p-5 mb-6">
+                    <h2 class="text-lg font-medium text-purple-700 mb-3">설정</h2>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">블로그 타입</label>
+                        <select class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-300" id="webutilblogaddLineChangeTagdo_reqType" onchange="changeTypeSel(this.value)">
+                            <option value="tistory01">티스토리</option>
+                            <option value="custom">직접 입력</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">문자열 앞</label>
+                        <input type="text" class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-300" id="webutilblogaddLineChangeTagdo_startTxt" value='<p data-ke-size="size16">'>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">문자열 뒤</label>
+                        <input type="text" class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-300" id="webutilblogaddLineChangeTagdo_endTxt" value="</p>">
+                    </div>
+
+                    <!-- 앞뒤 문자 붙이기 버튼 -->
+                    <button class="btn-primary w-full text-white px-4 py-3 rounded-xl flex items-center justify-center" onclick="webutilblogaddLineChangeTagdo_evt.addLineTag()">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        앞뒤 문자 붙이기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 변환 결과 영역 -->
+        <div class="card bg-white p-5 mt-6">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-lg font-medium text-purple-700">변환 결과</h2>
+                <button class="btn-secondary text-white text-sm px-4 py-2 rounded-xl flex items-center justify-center" onclick="webutilblogaddLineChangeTagdo_evt.copyClipboard()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    클립보드 복사
+                </button>
+            </div>
+            <textarea class="w-full p-4 border rounded-xl bg-gray-50 h-48 focus:ring-2 focus:ring-purple-300 transition-all" id="webutilblogaddLineChangeTagdo_convert" placeholder="변환된 결과가 여기에 표시됩니다..."></textarea>
+        </div>
+
+        <!-- 사용 방법 -->
+        <div class="card bg-white p-5 mt-6">
+            <h2 class="text-lg font-medium text-purple-700 mb-3">사용 방법</h2>
+            
+            <div class="space-y-3">
+                <div class="flex items-start">
+                    <div class="bg-purple-100 text-purple-700 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">1</div>
+                    <p class="text-gray-700">왼쪽 원문에 글을 입력하면 실시간으로 글자 수가 계산됩니다.</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="bg-purple-100 text-purple-700 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">2</div>
+                    <p class="text-gray-700">원문 영역 상단의 'HTML 태그 제거' 버튼을 누르면 원문 내 불필요한 HTML 태그가 제거됩니다.</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="bg-purple-100 text-purple-700 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">3</div>
+                    <p class="text-gray-700">'앞뒤 문자 붙이기' 버튼을 클릭하면 설정에서 지정한 문자열이 원문의 각 줄에 앞뒤로 추가됩니다.</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="bg-purple-100 text-purple-700 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">4</div>
+                    <p class="text-gray-700">'클립보드 복사' 버튼을 누르면 변환된 결과가 클립보드에 복사됩니다. 이를 블로그 HTML 편집기에 붙여넣으면 됩니다.</p>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-sm text-gray-500">
+                기능 추가 문의: <a href="mailto:jenty521@naver.com" class="text-purple-500 hover:underline">jenty521@naver.com</a>
+            </div>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+     crossorigin="anonymous"></script>
+<!-- [디스플레이, 반응형] 하단광고 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4624141391435876"
+     data-ad-slot="5073984195"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-gray-500 text-sm">
+            <p>© 2025 도구모음. 모든 권리 보유.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var webutilblogaddLineChangeTagdo_evt = (function() { 'use strict'; return { addLineTag: function() { var startTxt = document.getElementById("webutilblogaddLineChangeTagdo_startTxt").value; var endTxt = document.getElementById("webutilblogaddLineChangeTagdo_endTxt").value; var inputText = document.getElementById("webutilblogaddLineChangeTagdo_origin").value; this.saveTextHistory(inputText); var lines = inputText.split('\n'); var transformedText = lines.map(function(line) { return startTxt + line + endTxt; }).join('\n'); document.getElementById("webutilblogaddLineChangeTagdo_convert").value = transformedText; }, copyClipboard: function() { var outputText = document.getElementById("webutilblogaddLineChangeTagdo_convert"); outputText.select(); outputText.setSelectionRange(0, 99999); document.execCommand("copy"); const btn = document.activeElement; const originalText = btn.innerHTML; btn.innerHTML = ` <svg xmlns="http: <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg> 복사 완료! `; setTimeout(() => { btn.innerHTML = originalText; }, 2000); }, removeHtmlTags: function() { var textarea = document.getElementById("webutilblogaddLineChangeTagdo_origin"); this.saveTextHistory(textarea.value); var text = textarea.value; var cleanedText = text.replace(/<\/?[^>]+(>|$)/g, ""); textarea.value = cleanedText; countText(); }, saveTextHistory: function(targetTxt) { if (history.length >= 10) { history.shift(); } history.push(targetTxt); historyIndex = history.length - 1; }, undo: function() { if (historyIndex > 0) { historyIndex--; var textarea = document.getElementById("webutilblogaddLineChangeTagdo_origin"); textarea.value = history[historyIndex]; countText(); } } }; })(); function countText() { const text = document.getElementById('webutilblogaddLineChangeTagdo_origin').value; const charCountWithSpaces = text.length; const charCountWithoutSpaces = text.replace(/\s/g, '').length; const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length; const lineCount = text.split(/\n/).length; document.getElementById('webutilblogaddLineChangeTagdo_charCountWithSpaces').textContent = charCountWithSpaces; document.getElementById('webutilblogaddLineChangeTagdo_charCountWithoutSpaces').textContent = charCountWithoutSpaces; document.getElementById('webutilblogaddLineChangeTagdo_wordCount').textContent = wordCount; document.getElementById('webutilblogaddLineChangeTagdo_lineCount').textContent = lineCount; } function changeTypeSel(param) { var startTxt = param === 'tistory01' ? '<p data-ke-size="size16">' : ''; var endTxt = param === 'tistory01' ? '</p>' : ''; document.getElementById("webutilblogaddLineChangeTagdo_startTxt").value = startTxt; document.getElementById("webutilblogaddLineChangeTagdo_endTxt").value = endTxt; } let history = []; let historyIndex = -1; document.addEventListener('DOMContentLoaded', function() { const textarea = document.getElementById('webutilblogaddLineChangeTagdo_origin'); textarea.addEventListener('input', function() { webutilblogaddLineChangeTagdo_evt.saveTextHistory(textarea.value); countText(); }); countText(); });
+    </script>
+</body>
+</html>

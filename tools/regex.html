@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Java and JavaScript Regular Expression Samples">
+    <title>Java and JavaScript Regular Expression Samples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        /* Header Styles */
+        header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        /* Table of Contents Styles */
+        .toc-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .toc-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #3498db;
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+
+        .toc-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            list-style-type: none;
+        }
+
+        .toc-item {
+            flex: 1 1 200px;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 0.7rem 1rem;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid #3498db;
+        }
+
+        .toc-link:hover {
+            background-color: #eef2f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toc-link.active {
+            background-color: #3498db;
+            color: white;
+            border-left: 3px solid #2c3e50;
+            font-weight: bold;
+        }
+
+        /* Main Content Styles */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            scroll-margin-top: 100px; /* For smooth scrolling to section */
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #3498db;
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+
+        .section p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* 서브섹션 스타일 */
+        .subsection {
+            margin: 2rem 0;
+            padding-left: 1rem;
+            border-left: 3px solid #3498db;
+            scroll-margin-top: 120px; /* For smooth scrolling to subsection */
+        }
+
+        .subsection h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .subsection h4 {
+            color: #34495e;
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .example-block {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        /* 테이블 스타일 */
+        .regex-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .regex-table th, .regex-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        .regex-table th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        .regex-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .regex-table tr:hover {
+            background-color: #ebf5fb;
+        }
+
+        .regex-table code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            color: #e74c3c;
+        }
+
+        /* 코드 스타일 개선 */
+        .code-container {
+            margin-top: 1.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .code-tabs {
+            display: flex;
+            background: #ecf0f1;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .code-tabs button {
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .code-tabs button:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .code-tabs button.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .code-content {
+            display: none;
+            background: #282c34;
+            color: #f8f8f2;
+            padding: 0;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .code-content.active {
+            display: block;
+        }
+
+        pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+        }
+
+        /* 색상 강조 */
+        .keyword {
+            color: #f92672;
+        }
+
+        .string {
+            color: #a6e22e;
+        }
+
+        .comment {
+            color: #75715e;
+            font-style: italic;
+        }
+
+        .function {
+            color: #66d9ef;
+        }
+
+        .number {
+            color: #ae81ff;
+        }
+
+        /* JSFiddle 버튼 스타일 */
+        .jsfiddle-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .jsfiddle-button:hover {
+            background-color: #1a252f;
+        }
+
+        .jsfiddle-button i {
+            margin-right: 5px;
+        }
+
+        /* 로딩 스피너 */
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 5px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 아이콘 스타일 */
+        .icon {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 5px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .icon-play {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>');
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .section h2 {
+                font-size: 1.5rem;
+            }
+
+            .code-tabs button {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .toc-list {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7NY0VN0ECJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7NY0VN0ECJ');
+</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+    crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1>Java and JavaScript Regular Expression Samples</h1>
+        <p>Practical regex examples for programmers</p>
+    </header>
+
+    <!-- Table of Contents -->
+    <div class="toc-container">
+        <h2 class="toc-title">Table of Contents</h2>
+        <ul class="toc-list">
+            <li class="toc-item"><a href="#what-is-regex" class="toc-link">What is Regex?</a></li>
+            <li class="toc-item"><a href="#regex-guide" class="toc-link">Comprehensive Guide</a></li>
+            <li class="toc-item"><a href="#email-validation" class="toc-link">Email Validation</a></li>
+            <li class="toc-item"><a href="#phone-validation" class="toc-link">Phone Number Validation</a></li>
+            <li class="toc-item"><a href="#extract-numbers" class="toc-link">Extract Numbers</a></li>
+            <li class="toc-item"><a href="#extract-english" class="toc-link">Extract English</a></li>
+            <li class="toc-item"><a href="#remove-special" class="toc-link">Remove Special Characters</a></li>
+            <li class="toc-item"><a href="#remove-spaces" class="toc-link">Remove Whitespace</a></li>
+            <li class="toc-item"><a href="#padding" class="toc-link">String Padding</a></li>
+            <li class="toc-item"><a href="#url-detection" class="toc-link">URL Detection</a></li>
+            <li class="toc-item"><a href="#date-format" class="toc-link">Date Format Validation</a></li>
+            <li class="toc-item"><a href="#html-tag-removal" class="toc-link">HTML Tag Removal</a></li>
+            <li class="toc-item"><a href="#ip-address" class="toc-link">IP Address (IPv4) Validation</a></li>
+            <li class="toc-item"><a href="#password-strength" class="toc-link">Password Strength Checker</a></li>
+            <li class="toc-item"><a href="#word-boundaries" class="toc-link">Word Boundary Matching</a></li>
+        </ul>
+    </div>
+
+    <main>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+        crossorigin="anonymous"></script>
+    <!-- [디스플레이, 반응형] 최상단 고정광고 -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4624141391435876"
+        data-ad-slot="8566506642"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+        <div id="what-is-regex" class="section">
+            <h2>What is Regex?</h2>
+            <p>Regular Expression (Regex) is a powerful tool for finding or replacing specific patterns in strings. Both Java and JavaScript support regex for data validation, searching, transformation, and more.</p>
+        </div>
+
+        <div id="regex-guide" class="section">
+            <h2>Comprehensive Regex Guide</h2>
+            <p>Regular Expression is a powerful tool for searching and manipulating string patterns. This guide will help you understand regex from basic concepts to advanced patterns.</p>
+            
+            <div class="subsection">
+                <h3>Regex Structure</h3>
+                <div class="code-container">
+                    <div class="code-tabs">
+                        <button class="tab-button active" data-target="regex-format-js">JavaScript</button>
+                        <button class="tab-button" data-target="regex-format-java">Java</button>
+                    </div>
+                    <div id="regex-format-js" class="code-content active">
+                        <pre><code>
+// Literal syntax - pattern between slashes (/)
+const regex1 = /pattern/flags;
+
+// Constructor syntax
+const regex2 = new RegExp("pattern", "flags");
+                        </code></pre>
+                    </div>
+                    <div id="regex-format-java" class="code-content">
+                        <pre><code>
+// Using String pattern
+String pattern = "pattern";
+Pattern regex = Pattern.compile(pattern, flags);
+
+// Direct Pattern object creation
+Pattern regex = Pattern.compile("pattern");
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3>Regex Methods</h3>
+                <div class="code-container">
+                    <div class="code-tabs">
+                        <button class="tab-button active" data-target="regex-methods-js">JavaScript</button>
+                        <button class="tab-button" data-target="regex-methods-java">Java</button>
+                    </div>
+                    <div id="regex-methods-js" class="code-content active">
+                        <pre><code>
+// Regex methods
+str.match(/regex/flags)      // Returns matches as an array
+str.replace(/regex/, "replacement") // Replaces matches with replacement string
+str.split(/regex/)           // Splits string at matches into an array
+/regex/.test(str)           // Returns true if match found, false otherwise
+/regex/.exec(str)           // Returns first match as an array
+
+// Examples
+const str = "Hello world 123";
+str.match(/\d+/g);          // ["123"]
+str.replace(/world/, "JS");  // "Hello JS 123"
+/Hello/.test(str);          // true
+                        </code></pre>
+                    </div>
+                    <div id="regex-methods-java" class="code-content">
+                        <pre><code>
+// Java regex methods
+String str = "Hello world 123";
+
+// Check for match
+boolean isMatch = str.matches(".*\\d+.*");  // true
+
+// Find matches
+Pattern pattern = Pattern.compile("\\d+");
+Matcher matcher = pattern.matcher(str);
+while (matcher.find()) {
+    System.out.println(matcher.group());  // Prints "123"
+}
+
+// Replace string
+String replaced = str.replaceAll("world", "Java");  // "Hello Java 123"
+
+// Split string
+String[] parts = str.split("\\s");  // ["Hello", "world", "123"]
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3>Regex Flags</h3>
+                <table class="regex-table">
+                    <tr>
+                        <th>Flag</th>
+                        <th>Description</th>
+                        <th>JavaScript</th>
+                        <th>Java</th>
+                    </tr>
+                    <tr>
+                        <td><strong>g</strong></td>
+                        <td>Global search - find all matches</td>
+                        <td>/pattern/g</td>
+                        <td>Pattern.MULTILINE</td>
+                    </tr>
+                    <tr>
+                        <td><strong>m</strong></td>
+                        <td>Multiline search - search across multiple lines</td>
+                        <td>/pattern/m</td>
+                        <td>Pattern.MULTILINE</td>
+                    </tr>
+                    <tr>
+                        <td><strong>i</strong></td>
+                        <td>Case-insensitive search</td>
+                        <td>/pattern/i</td>
+                        <td>Pattern.CASE_INSENSITIVE</td>
+                    </tr>
+                    <tr>
+                        <td><strong>s</strong></td>
+                        <td>Allow . to match newline characters</td>
+                        <td>/pattern/s</td>
+                        <td>Pattern.DOTALL</td>
+                    </tr>
+                    <tr>
+                        <td><strong>u</strong></td>
+                        <td>Unicode support</td>
+                        <td>/pattern/u</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>y</strong></td>
+                        <td>Sticky mode - search at specific position</td>
+                        <td>/pattern/y</td>
+                        <td>-</td>
+                    </tr>
+                </table>
+                
+                <div class="example-block">
+                    <h4>g: Global Search Example</h4>
+                    <div class="code-container">
+                        <div class="code-tabs">
+                            <button class="tab-button active" data-target="flag-g-js">JavaScript</button>
+                            <button class="tab-button" data-target="flag-g-java">Java</button>
+                        </div>
+                        <div id="flag-g-js" class="code-content active">
+                            <pre><code>
+const str = "apple banana apple";
+
+// Without g flag - returns only first match
+str.match(/apple/);  // ["apple"]
+
+// With g flag - returns all matches
+str.match(/apple/g); // ["apple", "apple"]
+                            </code></pre>
+                        </div>
+                        <div id="flag-g-java" class="code-content">
+                            <pre><code>
+String str = "apple banana apple";
+Pattern pattern = Pattern.compile("apple");
+Matcher matcher = pattern.matcher(str);
+
+// Find all matches
+List<String> matches = new ArrayList<>();
+while (matcher.find()) {
+    matches.add(matcher.group());
+}
+System.out.println(matches);  // [apple, apple]
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3>Regex Symbol Reference</h3>
+                <table class="regex-table">
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td><code>.</code></td>
+                        <td>Matches any character except newline</td>
+                        <td><code>/a.c/</code> - matches "abc", "a1c", etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>^</code></td>
+                        <td>Start of string</td>
+                        <td><code>/^Hello/</code> - matches "Hello world"</td>
+                    </tr>
+                    <tr>
+                        <td><code>$</code></td>
+                        <td>End of string</td>
+                        <td><code>/world$/</code> - matches "Hello world"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\d</code></td>
+                        <td>Digit [0-9]</td>
+                        <td><code>/\d{3}/</code> - matches "123", "456", etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>\w</code></td>
+                        <td>Word character [A-Za-z0-9_]</td>
+                        <td><code>/\w+/</code> - matches "Hello_123"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\s</code></td>
+                        <td>Whitespace (space, tab, newline)</td>
+                        <td><code>/a\sb/</code> - matches "a b"</td>
+                    </tr>
+                    <tr>
+                        <td><code>\b</code></td>
+                        <td>Word boundary</td>
+                        <td><code>/\bworld\b/</code> - matches "world" in "Hello world"</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="subsection">
+                <h3>Regex Quantifiers</h3>
+                <table class="regex-table">
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td><code>*</code></td>
+                        <td>0 or more</td>
+                        <td><code>/a*/</code> - matches "", "a", "aa", "aaa", etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>+</code></td>
+                        <td>1 or more</td>
+                        <td><code>/a+/</code> - matches "a", "aa", "aaa", etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>?</code></td>
+                        <td>0 or 1</td>
+                        <td><code>/colou?r/</code> - matches "color", "colour"</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n}</code></td>
+                        <td>Exactly n times</td>
+                        <td><code>/\d{3}/</code> - matches "123", "456", etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n,}</code></td>
+                        <td>n or more times</td>
+                        <td><code>/\d{2,}/</code> - matches "12", "123", "1234", etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>{n,m}</code></td>
+                        <td>Between n and m times</td>
+                        <td><code>/\d{2,4}/</code> - matches "12", "123", "1234"</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="subsection">
+                <h3>Regex Grouping Patterns</h3>
+                <div class="code-container">
+                    <div class="code-tabs">
+                        <button class="tab-button active" data-target="group-js">JavaScript</button>
+                        <button class="tab-button" data-target="group-java">Java</button>
+                    </div>
+                    <div id="group-js" class="code-content active">
+                        <pre><code>
+// 1. Basic Grouping
+const regex = /(abc)+/;  // 'abc' repeated one or more times
+"abcabc".match(regex);  // ["abcabc", "abc"]
+
+// 2. Capturing Groups
+const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
+const result = "2023-05-15".match(dateRegex);
+// result = ["2023-05-15", "2023", "05", "15"]
+// result[1] = "2023", result[2] = "05", result[3] = "15"
+
+// 3. Non-capturing Groups (?:)
+const nonCapture = /(?:abc)(\d+)/;
+const matches = "abc123".match(nonCapture);
+// matches = ["abc123", "123"]
+// First group 'abc' is not captured
+                        </code></pre>
+                    </div>
+                    <div id="group-java" class="code-content">
+                        <pre><code>
+// 1. Basic Grouping
+Pattern pattern = Pattern.compile("(abc)+");
+Matcher matcher = pattern.matcher("abcabc");
+matcher.find();
+System.out.println(matcher.group(0));  // "abcabc"
+System.out.println(matcher.group(1));  // "abc"
+
+// 2. Capturing Groups
+Pattern datePattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
+Matcher dateMatcher = datePattern.matcher("2023-05-15");
+dateMatcher.find();
+// dateMatcher.group(0) = "2023-05-15"
+// dateMatcher.group(1) = "2023"
+// dateMatcher.group(2) = "05"
+// dateMatcher.group(3) = "15"
+
+// 3. Non-capturing Groups (?:)
+Pattern nonCapture = Pattern.compile("(?:abc)(\\d+)");
+Matcher ncMatcher = nonCapture.matcher("abc123");
+ncMatcher.find();
+System.out.println(ncMatcher.group(0));  // "abc123"
+System.out.println(ncMatcher.group(1));  // "123"
+// First group 'abc' is not captured
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="email-validation" class="section">
+            <h2>Email Validation</h2>
+            <p>This regex validates email addresses based on common email format patterns.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="email-js">JavaScript</button>
+                    <button class="tab-button" data-target="email-java">Java</button>
+                </div>
+                <div id="email-js" class="code-content active">
+                    <pre><code>
+function validateEmail(email) {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+}
+
+console.log(validateEmail("example@domain.com")); // true
+console.log(validateEmail("invalid.email@")); // false
+                    </code></pre>
+                </div>
+                <div id="email-java" class="code-content">
+                    <pre><code>
+public class EmailValidator {
+    public static boolean validateEmail(String email) {
+        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email.matches(regex);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(validateEmail("example@domain.com")); // true
+        System.out.println(validateEmail("invalid.email@")); // false
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+        crossorigin="anonymous"></script>
+   <!-- [디스플레이 반응형]수평형 중간광고 -->
+   <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4624141391435876"
+        data-ad-slot="1318093088"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+   <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+   </script>
+        <div id="phone-validation" class="section">
+            <h2>Phone Number Validation</h2>
+            <p>This regex validates Korean phone number format. Example: 010-1234-5678</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="phone-js">JavaScript</button>
+                    <button class="tab-button" data-target="phone-java">Java</button>
+                </div>
+                <div id="phone-js" class="code-content active">
+                    <pre><code>
+function validatePhone(phone) {
+    const regex = /^010-\d{4}-\d{4}$/;
+    return regex.test(phone);
+}
+
+console.log(validatePhone("010-1234-5678")); // true
+console.log(validatePhone("011-123-4567")); // false
+                    </code></pre>
+                </div>
+                <div id="phone-java" class="code-content">
+                    <pre><code>
+public class PhoneValidator {
+    public static boolean validatePhone(String phone) {
+        String regex = "^010-\\d{4}-\\d{4}$";
+        return phone.matches(regex);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(validatePhone("010-1234-5678")); // true
+        System.out.println(validatePhone("011-123-4567")); // false
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="extract-numbers" class="section">
+            <h2>Extract Numbers</h2>
+            <p>This regex extracts only numbers from a string.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="number-js">JavaScript</button>
+                    <button class="tab-button" data-target="number-java">Java</button>
+                </div>
+                <div id="number-js" class="code-content active">
+                    <pre><code>
+function extractNumbers(str) {
+    return str.match(/\d+/g)?.join("") || "";
+}
+
+console.log(extractNumbers("abc123def456")); // "123456"
+console.log(extractNumbers("no numbers")); // ""
+                    </code></pre>
+                </div>
+                <div id="number-java" class="code-content">
+                    <pre><code>
+public class NumberExtractor {
+    public static String extractNumbers(String str) {
+        return str.replaceAll("[^0-9]", "");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(extractNumbers("abc123def456")); // "123456"
+        System.out.println(extractNumbers("no numbers")); // ""
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="extract-english" class="section">
+            <h2>Extract English</h2>
+            <p>This regex extracts only English letters from a string.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="english-js">JavaScript</button>
+                    <button class="tab-button" data-target="english-java">Java</button>
+                </div>
+                <div id="english-js" class="code-content active">
+                    <pre><code>
+function extractEnglish(str) {
+    return str.match(/[a-zA-Z]+/g)?.join("") || "";
+}
+
+console.log(extractEnglish("hello안녕123world")); // "helloworld"
+console.log(extractEnglish("123가나다")); // ""
+                    </code></pre>
+                </div>
+                <div id="english-java" class="code-content">
+                    <pre><code>
+public class EnglishExtractor {
+    public static String extractEnglish(String str) {
+        return str.replaceAll("[^a-zA-Z]", "");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(extractEnglish("hello안녕123world")); // "helloworld"
+        System.out.println(extractEnglish("123가나다")); // ""
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="remove-special" class="section">
+            <h2>Remove Special Characters</h2>
+            <p>This regex removes special characters from a string.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="special-js">JavaScript</button>
+                    <button class="tab-button" data-target="special-java">Java</button>
+                </div>
+                <div id="special-js" class="code-content active">
+                    <pre><code>
+function removeSpecialChars(str) {
+    return str.replace(/[^a-zA-Z0-9가-힣\s]/g, "");
+}
+
+console.log(removeSpecialChars("hello@world! 안녕#")); // "helloworld 안녕"
+console.log(removeSpecialChars("@#$%")); // ""
+                    </code></pre>
+                </div>
+                <div id="special-java" class="code-content">
+                    <pre><code>
+public class SpecialCharRemover {
+    public static String removeSpecialChars(String str) {
+        return str.replaceAll("[^a-zA-Z0-9가-힣\\s]", "");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(removeSpecialChars("hello@world! 안녕#")); // "helloworld 안녕"
+        System.out.println(removeSpecialChars("@#$%")); // ""
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="remove-spaces" class="section">
+            <h2>Remove Whitespace</h2>
+            <p>Various methods to remove whitespace from strings.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="space-js">JavaScript</button>
+                    <button class="tab-button" data-target="space-java">Java</button>
+                </div>
+                <div id="space-js" class="code-content active">
+                    <pre><code>
+// Remove all whitespace (spaces, tabs, newlines)
+function removeAllSpaces(str) {
+    return str.replace(/\s/g, "");
+}
+
+// Remove whitespace from both ends only
+function trimSpaces(str) {
+    return str.replace(/^\s+|\s+$/g, "");
+    // Or use the built-in method
+    // return str.trim();
+}
+
+// Normalize multiple spaces to single spaces
+function normalizeSpaces(str) {
+    return str.replace(/\s+/g, " ");
+}
+
+const text = "  Hello   World  \n  ";
+console.log(removeAllSpaces(text)); // "HelloWorld"
+console.log(trimSpaces(text)); // "Hello   World"
+console.log(normalizeSpaces(text)); // " Hello World "
+                    </code></pre>
+                </div>
+                <div id="space-java" class="code-content">
+                    <pre><code>
+public class SpaceRemover {
+    // Remove all whitespace (spaces, tabs, newlines)
+    public static String removeAllSpaces(String str) {
+        return str.replaceAll("\\s", "");
+    }
+
+    // Remove whitespace from both ends only
+    public static String trimSpaces(String str) {
+        return str.replaceAll("^\\s+|\\s+$", "");
+        // Or use the built-in method
+        // return str.trim();
+    }
+
+    // Normalize multiple spaces to single spaces
+    public static String normalizeSpaces(String str) {
+        return str.replaceAll("\\s+", " ");
+    }
+
+    public static void main(String[] args) {
+        String text = "  Hello   World  \n  ";
+        System.out.println(removeAllSpaces(text)); // "HelloWorld"
+        System.out.println(trimSpaces(text)); // "Hello   World"
+        System.out.println(normalizeSpaces(text)); // " Hello World "
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="padding" class="section">
+            <h2>String Padding (Lpadding, Rpadding)</h2>
+            <p>Fill the left or right side of a string with specific characters to create a string of specified length.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="padding-js">JavaScript</button>
+                    <button class="tab-button" data-target="padding-java">Java</button>
+                </div>
+                <div id="padding-js" class="code-content active">
+                    <pre><code>
+// Left padding (Lpadding)
+function leftPad(str, length, char = ' ') {
+    return str.length >= length ? str : new Array(length - str.length + 1).join(char) + str;
+}
+
+// Or use ES2017's padStart method
+function leftPadES2017(str, length, char = ' ') {
+    return str.padStart(length, char);
+}
+
+// Right padding (Rpadding)
+function rightPad(str, length, char = ' ') {
+    return str.length >= length ? str : str + new Array(length - str.length + 1).join(char);
+}
+
+// Or use ES2017's padEnd method
+function rightPadES2017(str, length, char = ' ') {
+    return str.padEnd(length, char);
+}
+
+const num = "42";
+console.log(leftPad(num, 5, '0')); // "00042"
+console.log(leftPadES2017(num, 5, '0')); // "00042"
+console.log(rightPad(num, 5, '0')); // "42000"
+console.log(rightPadES2017(num, 5, '0')); // "42000"
+                    </code></pre>
+                </div>
+                <div id="padding-java" class="code-content">
+                    <pre><code>
+public class StringPadder {
+    // Left padding (Lpadding)
+    public static String leftPad(String str, int length, char padChar) {
+        if (str.length() >= length) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length - str.length(); i++) {
+            sb.append(padChar);
+        }
+        sb.append(str);
+        return sb.toString();
+    }
+
+    // Java 11+ offers repeat() method
+    public static String leftPadJava11(String str, int length, char padChar) {
+        if (str.length() >= length) {
+            return str;
+        }
+        return String.valueOf(padChar).repeat(length - str.length()) + str;
+    }
+
+    // Right padding (Rpadding)
+    public static String rightPad(String str, int length, char padChar) {
+        if (str.length() >= length) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str);
+        for (int i = 0; i < length - str.length(); i++) {
+            sb.append(padChar);
+        }
+        return sb.toString();
+    }
+
+    // Java 11+ offers repeat() method
+    public static String rightPadJava11(String str, int length, char padChar) {
+        if (str.length() >= length) {
+            return str;
+        }
+        return str + String.valueOf(padChar).repeat(length - str.length());
+    }
+
+    public static void main(String[] args) {
+        String num = "42";
+        System.out.println(leftPad(num, 5, '0')); // "00042"
+        // System.out.println(leftPadJava11(num, 5, '0')); // "00042" (Java 11+)
+        System.out.println(rightPad(num, 5, '0')); // "42000"
+        // System.out.println(rightPadJava11(num, 5, '0')); // "42000" (Java 11+)
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4624141391435876"
+            crossorigin="anonymous"></script>
+        <!-- [디스플레이, 반응형] 하단광고 -->
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-4624141391435876"
+            data-ad-slot="5073984195"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+
+        <div id="url-detection" class="section">
+            <h2>URL Detection</h2>
+            <p>Extract and validate URLs from text.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="url-js">JavaScript</button>
+                    <button class="tab-button" data-target="url-java">Java</button>
+                </div>
+                <div id="url-js" class="code-content active">
+                    <pre><code>
+// Pattern for general URL detection
+const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+
+// Simpler pattern for common URLs
+const simpleUrlRegex = /https?:\/\/\S+/g;
+
+// Function to extract URLs from text
+function extractUrls(text) {
+    return text.match(urlRegex) || [];
+}
+
+// Function to validate if a string is a valid URL
+function isValidUrl(url) {
+    return urlRegex.test(url);
+}
+
+// Examples
+const text = "Visit https://example.com and http://github.com/user/repo for more info.";
+console.log(extractUrls(text)); 
+// ["https://example.com", "http://github.com/user/repo"]
+
+console.log(isValidUrl("https://example.com")); // true
+console.log(isValidUrl("not-a-url")); // false
+                    </code></pre>
+                </div>
+                <div id="url-java" class="code-content">
+                    <pre><code>
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class UrlExtractor {
+    // Pattern for general URL detection
+    private static final String URL_REGEX = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
+    private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+    
+    // Extract URLs from text
+    public static List<String> extractUrls(String text) {
+        List<String> urls = new ArrayList<>();
+        Matcher matcher = URL_PATTERN.matcher(text);
+        
+        while (matcher.find()) {
+            urls.add(matcher.group());
+        }
+        
+        return urls;
+    }
+    
+    // Validate if a string is a valid URL
+    public static boolean isValidUrl(String url) {
+        return URL_PATTERN.matcher(url).matches();
+    }
+    
+    public static void main(String[] args) {
+        String text = "Visit https://example.com and http://github.com/user/repo for more info.";
+        
+        List<String> urls = extractUrls(text);
+        System.out.println(urls); 
+        // [https://example.com, http://github.com/user/repo]
+        
+        System.out.println(isValidUrl("https://example.com")); // true
+        System.out.println(isValidUrl("not-a-url")); // false
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="date-format" class="section">
+            <h2>Date Format Validation</h2>
+            <p>Validate and extract dates in various formats.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="date-js">JavaScript</button>
+                    <button class="tab-button" data-target="date-java">Java</button>
+                </div>
+                <div id="date-js" class="code-content active">
+                    <pre><code>
+// YYYY-MM-DD format (ISO)
+const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+// MM/DD/YYYY format (US)
+const usDateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+
+// DD/MM/YYYY format (UK/EU)
+const euDateRegex = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+
+// Function to validate dates in different formats
+function validateDate(date, format = 'iso') {
+    switch(format) {
+        case 'iso':
+            return isoDateRegex.test(date);
+        case 'us':
+            return usDateRegex.test(date);
+        case 'eu':
+            return euDateRegex.test(date);
+        default:
+            return false;
+    }
+}
+
+// Function to extract dates from text
+function extractDates(text) {
+    // Combined pattern for common date formats
+    const datePattern = /\b(\d{4}-\d{2}-\d{2}|\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2}-\d{1,2}-\d{4})\b/g;
+    return text.match(datePattern) || [];
+}
+
+// Examples
+console.log(validateDate("2023-01-15", "iso")); // true
+console.log(validateDate("01/15/2023", "us")); // true
+console.log(validateDate("15/01/2023", "eu")); // true
+
+const text = "Meeting on 2023-01-15 and deadline is 02/28/2023.";
+console.log(extractDates(text)); // ["2023-01-15", "02/28/2023"]
+                    </code></pre>
+                </div>
+                <div id="date-java" class="code-content">
+                    <pre><code>
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class DateValidator {
+    // YYYY-MM-DD format (ISO)
+    private static final Pattern ISO_DATE_PATTERN = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
+    
+    // MM/DD/YYYY format (US)
+    private static final Pattern US_DATE_PATTERN = 
+        Pattern.compile("^(0[1-9]|1[0-2])\\/(0[1-9]|[12]\\d|3[01])\\/\\d{4}$");
+    
+    // DD/MM/YYYY format (UK/EU)
+    private static final Pattern EU_DATE_PATTERN = 
+        Pattern.compile("^(0[1-9]|[12]\\d|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$");
+    
+    // Combined pattern for extraction
+    private static final Pattern ANY_DATE_PATTERN = 
+        Pattern.compile("\\b(\\d{4}-\\d{2}-\\d{2}|\\d{1,2}\\/\\d{1,2}\\/\\d{4}|\\d{1,2}-\\d{1,2}-\\d{4})\\b");
+    
+    // Validate date string against a specific format
+    public static boolean validateDate(String date, String format) {
+        switch(format) {
+            case "iso":
+                return ISO_DATE_PATTERN.matcher(date).matches();
+            case "us":
+                return US_DATE_PATTERN.matcher(date).matches();
+            case "eu":
+                return EU_DATE_PATTERN.matcher(date).matches();
+            default:
+                return false;
+        }
+    }
+    
+    // Extract dates from text
+    public static List<String> extractDates(String text) {
+        List<String> dates = new ArrayList<>();
+        Matcher matcher = ANY_DATE_PATTERN.matcher(text);
+        
+        while (matcher.find()) {
+            dates.add(matcher.group());
+        }
+        
+        return dates;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(validateDate("2023-01-15", "iso")); // true
+        System.out.println(validateDate("01/15/2023", "us")); // true
+        System.out.println(validateDate("15/01/2023", "eu")); // true
+        
+        String text = "Meeting on 2023-01-15 and deadline is 02/28/2023.";
+        System.out.println(extractDates(text)); // [2023-01-15, 02/28/2023]
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="html-tag-removal" class="section">
+            <h2>HTML 태그 제거</h2>
+            <p>텍스트에서 HTML 태그를 제거하는 정규 표현식.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="html-js">JavaScript</button>
+                    <button class="tab-button" data-target="html-java">Java</button>
+                </div>
+                <div id="html-js" class="code-content active">
+                    <pre><code>
+// 간단한 HTML 태그 제거
+function stripHtmlTags(html) {
+    return html.replace(/<[^>]*>/g, '');
+}
+
+// HTML 태그 제거 및 엔티티 처리
+function stripHtmlTagsAndEntities(html) {
+    // 먼저 일반적인 HTML 엔티티 치환
+    const withoutEntities = html
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+    
+    // 그 다음 모든 HTML 태그 제거
+    return withoutEntities.replace(/<[^>]*>/g, '');
+}
+
+// 예제
+const htmlContent = "<p>이것은 <b>굵은</b> 그리고 <i>이탤릭</i> 텍스트와 <a href='#'>링크</a>입니다.</p>";
+console.log(stripHtmlTags(htmlContent)); 
+// "이것은 굵은 그리고 이탤릭 텍스트와 링크입니다."
+
+const htmlWithEntities = "<p>이것 &amp; 저것 &quot;따옴표&quot;와 &lt;태그&gt;.</p>";
+console.log(stripHtmlTagsAndEntities(htmlWithEntities));
+// "이것 & 저것 "따옴표"와 <태그>."
+                    </code></pre>
+                </div>
+                <div id="html-java" class="code-content">
+                    <pre><code>
+public class HtmlTagRemover {
+    // 간단한 HTML 태그 제거
+    public static String stripHtmlTags(String html) {
+        return html.replaceAll("<[^>]*>", "");
+    }
+    
+    // HTML 태그 제거 및 엔티티 처리
+    public static String stripHtmlTagsAndEntities(String html) {
+        // 먼저 일반적인 HTML 엔티티 치환
+        String withoutEntities = html
+            .replaceAll("&nbsp;", " ")
+            .replaceAll("&amp;", "&")
+            .replaceAll("&lt;", "<")
+            .replaceAll("&gt;", ">")
+            .replaceAll("&quot;", "\"")
+            .replaceAll("&#39;", "'");
+        
+        // 그 다음 모든 HTML 태그 제거
+        return withoutEntities.replaceAll("<[^>]*>", "");
+    }
+    
+    public static void main(String[] args) {
+        String htmlContent = "<p>이것은 <b>굵은</b> 그리고 <i>이탤릭</i> 텍스트와 <a href='#'>링크</a>입니다.</p>";
+        System.out.println(stripHtmlTags(htmlContent));
+        // "이것은 굵은 그리고 이탤릭 텍스트와 링크입니다."
+        
+        String htmlWithEntities = "<p>이것 &amp; 저것 &quot;따옴표&quot;와 &lt;태그&gt;.</p>";
+        System.out.println(stripHtmlTagsAndEntities(htmlWithEntities));
+        // "이것 & 저것 "따옴표"와 <태그>."
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="ip-address" class="section">
+            <h2>IP 주소(IPv4) 검증</h2>
+            <p>IPv4 주소를 검증하고 추출합니다.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="ip-js">JavaScript</button>
+                    <button class="tab-button" data-target="ip-java">Java</button>
+                </div>
+                <div id="ip-js" class="code-content active">
+                    <pre><code>
+// IPv4 주소 패턴
+const ipv4Regex = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+
+// IPv4 주소 검증 함수
+function isValidIpv4(ip) {
+    return ipv4Regex.test(ip);
+}
+
+// 텍스트에서 IPv4 주소 추출 함수
+function extractIpv4Addresses(text) {
+    const ipRegex = new RegExp(ipv4Regex.source, 'g');
+    return text.match(ipRegex) || [];
+}
+
+// 예제
+console.log(isValidIpv4("192.168.1.1")); // true
+console.log(isValidIpv4("255.255.255.255")); // true
+console.log(isValidIpv4("256.256.256.256")); // false (유효하지 않은 값)
+console.log(isValidIpv4("192.168.1")); // false (불완전)
+
+const networkLog = "클라이언트 192.168.1.5가 게이트웨이 192.168.1.1을 통해 서버 10.0.0.1에 연결되었습니다";
+console.log(extractIpv4Addresses(networkLog));
+// ["192.168.1.5", "10.0.0.1", "192.168.1.1"]
+                    </code></pre>
+                </div>
+                <div id="ip-java" class="code-content">
+                    <pre><code>
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class IPv4Validator {
+    // IPv4 주소 패턴
+    private static final String IPV4_PATTERN = 
+        "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+    
+    private static final Pattern IPV4_REGEX = Pattern.compile(IPV4_PATTERN);
+    
+    // IPv4 주소 검증
+    public static boolean isValidIpv4(String ip) {
+        return IPV4_REGEX.matcher(ip).matches();
+    }
+    
+    // 텍스트에서 IPv4 주소 추출
+    public static List<String> extractIpv4Addresses(String text) {
+        List<String> ipAddresses = new ArrayList<>();
+        Matcher matcher = IPV4_REGEX.matcher(text);
+        
+        while (matcher.find()) {
+            ipAddresses.add(matcher.group());
+        }
+        
+        return ipAddresses;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(isValidIpv4("192.168.1.1")); // true
+        System.out.println(isValidIpv4("255.255.255.255")); // true
+        System.out.println(isValidIpv4("256.256.256.256")); // false (유효하지 않은 값)
+        System.out.println(isValidIpv4("192.168.1")); // false (불완전)
+        
+        String networkLog = "클라이언트 192.168.1.5가 게이트웨이 192.168.1.1을 통해 서버 10.0.0.1에 연결되었습니다";
+        System.out.println(extractIpv4Addresses(networkLog));
+        // [192.168.1.5, 10.0.0.1, 192.168.1.1]
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="password-strength" class="section">
+            <h2>비밀번호 강도 검사기</h2>
+            <p>비밀번호 강도 검증 - 최소 8자, 대문자, 소문자, 숫자, 특수 문자 포함.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="pwd-js">JavaScript</button>
+                    <button class="tab-button" data-target="pwd-java">Java</button>
+                </div>
+                <div id="pwd-js" class="code-content active">
+                    <pre><code>
+// 통합 비밀번호 강도 패턴
+const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+// 비밀번호가 강력한지 확인하는 함수
+function isStrongPassword(password) {
+    return strongPasswordRegex.test(password);
+}
+
+// 비밀번호 강도 상세 정보 확인 함수
+function getPasswordStrength(password) {
+    const checks = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        number: /\d/.test(password),
+        special: /[@$!%*?&]/.test(password)
+    };
+    
+    // 통과된 검사 개수
+    const passedChecks = Object.values(checks).filter(Boolean).length;
+    
+    // 강도 레벨과 상세 정보 반환
+    return {
+        strength: passedChecks / 5, // 0에서 1 사이 점수
+        isStrong: passedChecks === 5,
+        details: checks
+    };
+}
+
+// 예제
+console.log(isStrongPassword("Weak123")); // false (특수 문자 없음)
+console.log(isStrongPassword("Strong123!")); // true
+
+const password1 = "password";
+const password2 = "Password1";
+const password3 = "Password1!";
+
+console.log(getPasswordStrength(password1)); 
+// { strength: 0.4, isStrong: false, details: { ... } }
+
+console.log(getPasswordStrength(password2)); 
+// { strength: 0.8, isStrong: false, details: { ... } }
+
+console.log(getPasswordStrength(password3)); 
+// { strength: 1, isStrong: true, details: { ... } }
+                    </code></pre>
+                </div>
+                <div id="pwd-java" class="code-content">
+                    <pre><code>
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+public class PasswordStrengthChecker {
+    // Patterns for different criteria
+    private static final Pattern HAS_LOWERCASE = Pattern.compile("[a-z]");
+    private static final Pattern HAS_UPPERCASE = Pattern.compile("[A-Z]");
+    private static final Pattern HAS_DIGIT = Pattern.compile("\\d");
+    private static final Pattern HAS_SPECIAL = Pattern.compile("[@$!%*?&]");
+    
+    // Combined strong password pattern
+    private static final Pattern STRONG_PASSWORD = 
+        Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+    
+    // Check if password is strong
+    public static boolean isStrongPassword(String password) {
+        return STRONG_PASSWORD.matcher(password).matches();
+    }
+    
+    // Get detailed password strength
+    public static Map<String, Object> getPasswordStrength(String password) {
+        Map<String, Boolean> checks = new HashMap<>();
+        checks.put("length", password.length() >= 8);
+        checks.put("lowercase", HAS_LOWERCASE.matcher(password).find());
+        checks.put("uppercase", HAS_UPPERCASE.matcher(password).find());
+        checks.put("number", HAS_DIGIT.matcher(password).find());
+        checks.put("special", HAS_SPECIAL.matcher(password).find());
+        
+        // Count passed checks
+        long passedChecks = checks.values().stream().filter(Boolean::booleanValue).count();
+        
+        // Create result map
+        Map<String, Object> result = new HashMap<>();
+        result.put("strength", (double) passedChecks / 5); // 0 to 1 scale
+        result.put("isStrong", passedChecks == 5);
+        result.put("details", checks);
+        
+        return result;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(isStrongPassword("Weak123")); // false (특수 문자 없음)
+        System.out.println(isStrongPassword("Strong123!")); // true
+        
+        String password1 = "password";
+        String password2 = "Password1";
+        String password3 = "Password1!";
+        
+        System.out.println(getPasswordStrength(password1)); 
+        // {strength=0.4, details={...}, isStrong=false}
+        
+        System.out.println(getPasswordStrength(password2)); 
+        // {strength=0.8, details={...}, isStrong=false}
+        
+        System.out.println(getPasswordStrength(password3)); 
+        // {strength=1.0, details={...}, isStrong=true}
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div id="word-boundaries" class="section">
+            <h2>단어 경계 매칭</h2>
+            <p>단어 경계(\b)를 사용하여 텍스트에서 완전한 단어를 추출합니다.</p>
+            <div class="code-container">
+                <div class="code-tabs">
+                    <button class="tab-button active" data-target="word-js">JavaScript</button>
+                    <button class="tab-button" data-target="word-java">Java</button>
+                </div>
+                <div id="word-js" class="code-content active">
+                    <pre><code>
+// 모든 단어 추출
+function extractWords(text) {
+    return text.match(/\b\w+\b/g) || [];
+}
+
+// 특정 패턴과 일치하는 단어 찾기
+function findWords(text, pattern) {
+    const wordPattern = new RegExp(`\\b${pattern}\\b`, 'g');
+    return text.match(wordPattern) || [];
+}
+
+// 최소 길이를 가진 단어 찾기
+function findLongWords(text, minLength) {
+    const longWordPattern = new RegExp(`\\b\\w{${minLength},}\\b`, 'g');
+    return text.match(longWordPattern) || [];
+}
+
+// 예제
+const text = "안녕 세계! 이것은 몇 가지 길고 짧은 단어가 포함된 샘플 텍스트입니다.";
+
+console.log(extractWords(text));
+// ["안녕", "세계", "이것은", "몇", "가지", "길고", "짧은", "단어가", "포함된", "샘플", "텍스트입니다"]
+
+console.log(findWords(text, "세계|텍스트|샘플"));
+// ["세계", "샘플", "텍스트"]
+
+console.log(findLongWords(text, 3));
+// ["안녕", "세계", "이것은", "가지", "길고", "짧은", "단어가", "포함된", "샘플", "텍스트입니다"]
+                    </code></pre>
+                </div>
+                <div id="word-java" class="code-content">
+                    <pre><code>
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class WordBoundaryMatcher {
+    // 모든 단어 추출
+    public static List<String> extractWords(String text) {
+        List<String> words = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\b\\w+\\b");
+        Matcher matcher = pattern.matcher(text);
+        
+        while (matcher.find()) {
+            words.add(matcher.group());
+        }
+        
+        return words;
+    }
+    
+    // 특정 패턴과 일치하는 단어 찾기
+    public static List<String> findWords(String text, String wordPattern) {
+        List<String> matchedWords = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\b(" + wordPattern + ")\\b");
+        Matcher matcher = pattern.matcher(text);
+        
+        while (matcher.find()) {
+            matchedWords.add(matcher.group());
+        }
+        
+        return matchedWords;
+    }
+    
+    // 최소 길이를 가진 단어 찾기
+    public static List<String> findLongWords(String text, int minLength) {
+        List<String> longWords = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\b\\w{" + minLength + ",}\\b");
+        Matcher matcher = pattern.matcher(text);
+        
+        while (matcher.find()) {
+            longWords.add(matcher.group());
+        }
+        
+        return longWords;
+    }
+    
+    public static void main(String[] args) {
+        String text = "안녕 세계! 이것은 몇 가지 길고 짧은 단어가 포함된 샘플 텍스트입니다.";
+        
+        System.out.println(extractWords(text));
+        // [안녕, 세계, 이것은, 몇, 가지, 길고, 짧은, 단어가, 포함된, 샘플, 텍스트입니다]
+        
+        System.out.println(findWords(text, "세계|텍스트|샘플"));
+        // [세계, 샘플, 텍스트]
+        
+        System.out.println(findLongWords(text, 3));
+        // [안녕, 세계, 이것은, 가지, 길고, 짧은, 단어가, 포함된, 샘플, 텍스트입니다]
+    }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab functionality
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const container = this.closest('.code-container');
+                    container.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    container.querySelectorAll('.code-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+            // Add JSFiddle buttons to JavaScript examples
+            document.querySelectorAll('.code-tabs').forEach(tabContainer => {
+                const jsTab = tabContainer.querySelector('[data-target$="-js"]');
+                if (jsTab) {
+                    const targetId = jsTab.getAttribute('data-target');
+                    const codeContainer = document.getElementById(targetId);
+                    const codeElement = codeContainer.querySelector('code');
+                    const jsCode = codeElement.textContent.trim();
+                    
+                    // Create JSFiddle button
+                    const button = document.createElement('button');
+                    button.className = 'jsfiddle-button';
+                    button.innerHTML = '<span class="icon icon-play"></span>Run in JSFiddle';
+                    
+                    // Button click event
+                    button.addEventListener('click', function() {
+                        sendToJSFiddle(jsCode, button);
+                    });
+                    
+                    // Add button to code container
+                    codeContainer.style.position = 'relative';
+                    codeContainer.appendChild(button);
+                }
+            });
+
+            // Add smooth scrolling for table of contents links
+            document.querySelectorAll('.toc-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update URL
+                    history.pushState(null, null, targetId);
+                });
+            });
+
+            // Highlight active section in TOC based on scroll position
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                
+                document.querySelectorAll('.section').forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        document.querySelectorAll('.toc-link').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        
+                        const activeLink = document.querySelector(`.toc-link[href="#${sectionId}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                        }
+                    }
+                });
+            });
+        });
+
+        // Send code to JSFiddle
+        function sendToJSFiddle(jsCode, button) {
+            // Show loading state
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<span class="spinner"></span>Sending...';
+            button.disabled = true;
+
+            // Prepare HTML, CSS, and JavaScript
+            const html = '<div id="result"></div>';
+            const css = '#result { padding: 10px; font-family: monospace; white-space: pre; }';
+            
+            // Add execution output logic to code
+            const wrappedCode = `
+                // Original code
+                ${jsCode}
+
+                // Capture console output to display results
+                const originalConsoleLog = console.log;
+                const resultDiv = document.getElementById('result');
+                
+                console.log = function(...args) {
+                    originalConsoleLog.apply(console, args);
+                    resultDiv.innerHTML += '<div>Output: ' + args.join(' ') + '</div>';
+                };
+                
+                // Execute code
+                try {
+                    // Call functions defined or run immediately
+                    resultDiv.innerHTML = '<div><strong>Execution Results:</strong></div>';
+                    
+                    // Extract and execute function calls from code
+                    ${extractFunctionCalls(jsCode)}
+                } catch(e) {
+                    resultDiv.innerHTML += '<div style="color: red;">Error: ' + e.message + '</div>';
+                }
+            `;
+
+            // Data to send to JSFiddle
+            const data = {
+                html: html,
+                css: css,
+                js: wrappedCode,
+                title: 'Regex Example',
+                description: 'Testing regex patterns',
+                wrap: 'b'  // JavaScript in <body>
+            };
+
+            // Create form for JSFiddle API submission
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://jsfiddle.net/api/post/library/pure/';
+            form.target = '_blank';
+            form.style.display = 'none';
+
+            // Add form data
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = data[key];
+                    form.appendChild(input);
+                }
+            }
+
+            // Add form to document and submit
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+
+            // Restore button state
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }, 1000);
+        }
+
+        // Extract function calls from code
+        function extractFunctionCalls(code) {
+            // Find last console.log or function call sets
+            const lines = code.split('\n');
+            let calls = [];
+            let inFunction = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // If function definition starts, set flag
+                if (line.startsWith('function ') || line.includes(' = function(')) {
+                    inFunction = true;
+                }
+                
+                // If function definition ends, clear flag
+                if (inFunction && line === '}') {
+                    inFunction = false;
+                    continue;
+                }
+                
+                // If not in a function definition and has console.log or function call
+                if (!inFunction && 
+                    (line.includes('console.log') || 
+                     /\w+\(.*\);?/.test(line))) {
+                    calls.push(line);
+                }
+            }
+            
+            // Join collected calls into a string
+            return calls.join('\n');
+        }
+    </script>
+</body>
+</html>

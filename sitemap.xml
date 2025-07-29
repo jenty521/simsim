@@ -1,197 +1,171 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-   <url>
-      <loc>https://tool.wisenote2.com/calc.html</loc>
-      <lastmod>2025-04-10</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url>
+<?xml version="2.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">   
    <url>
       <loc>https://tool.wisenote2.com/index.html</loc>
-      <lastmod>2025-04-10</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>0.5</priority>
+      <priority>2.0</priority>
    </url>
    <url>
-      <loc>https://tool.wisenote2.com/addline_blog.html</loc>
-      <lastmod>2025-04-10</lastmod>
+      <loc>https://tool.wisenote2.com/tools/calc.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>0.8</priority>
+      <priority>2.0</priority>
+   </url>
+
+   <url>
+      <loc>https://tool.wisenote2.com/tools/addline_blog.html</loc>
+      <lastmod>2025-07-29</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>2.0</priority>
    </url>  
    <url>
-      <loc>https://tool.wisenote2.com/unit-converter.html</loc>
-      <lastmod>2025-04-10</lastmod>
+      <loc>https://tool.wisenote2.com/tools/unit-converter.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>   
    <url>
-      <loc>https://tool.wisenote2.com/node_diagram.html</loc>
-      <lastmod>2025-04-10</lastmod>
+      <loc>https://tool.wisenote2.com/tools/node_diagram.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>  
    <url>
-      <loc>https://tool.wisenote2.com/regex.html</loc>
-      <lastmod>2025-04-16</lastmod>
+      <loc>https://tool.wisenote2.com/tools/regex.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>  
    <url>
-      <loc>https://tool.wisenote2.com/regex_en.html</loc>
-      <lastmod>2025-04-16</lastmod>
+      <loc>https://tool.wisenote2.com/tools/regex_en.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>  
    <url>
-      <loc>https://tool.wisenote2.com/qr_maker.html</loc>
-      <lastmod>2025-04-17</lastmod>
+      <loc>https://tool.wisenote2.com/tools/qr_maker.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>  
    <url>
-      <loc>https://tool.wisenote2.com/qr_maker_en.html</loc>
-      <lastmod>2025-04-17</lastmod>
+      <loc>https://tool.wisenote2.com/tools/qr_maker_en.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>     
    <url>
-      <loc>https://tool.wisenote2.com/image_size_converter_en.html</loc>
-      <lastmod>2025-04-17</lastmod>
+      <loc>https://tool.wisenote2.com/tools/image_size_converter_en.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>  
    <url>
-      <loc>https://tool.wisenote2.com/image_size_converter.html</loc>
-      <lastmod>2025-04-17</lastmod>
+      <loc>https://tool.wisenote2.com/tools/image_size_converter.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
    <url>
-      <loc>http://tool.wisenote2.com/internet_speed_check.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <loc>http://tool.wisenote2.com/tools/internet_speed_check.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
    <url> 
-      <loc>https://tool.wisenote2.com/make_easy_password.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <loc>https://tool.wisenote2.com/tools/make_easy_password.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url>   
+      <priority>2.0</priority>
+   </url> 
    <url> 
-      <loc>https://tool.wisenote2.com/make_easy_pallet.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <loc>https://tool.wisenote2.com/tools/calc_between_date.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url>   
-   <url> 
-      <loc>https://tool.wisenote2.com/calc_between_date.html</loc>
-      <lastmod>2025-06-12</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>  
    <url> 
-      <loc>https://tool.wisenote2.com/calc_bmi_health.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <loc>https://tool.wisenote2.com/tools/calc_bmi_health.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url>
-    <url> 
-      <loc>https://tool.wisenote2.com/calc_easy_ja.html</loc>
-      <lastmod>2025-06-12</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url> 
    
     <url> 
       <loc>https://tool.wisenote2.com/make_easy_memo.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>https://tool.wisenote2.com/tools/text-converter.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>https://tool.wisenote2.com/tools/unit-converter.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>https://tool.wisenote2.com/tools/color-picker.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
     <url> 
       <loc>https://tool.wisenote2.com/tools/password-generator.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>https://tool.wisenote2.com/tools/calculator.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>https://tool.wisenote2.com/tools/loan-calculator.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>https://tool.wisenote2.com/tools/json-formatter.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
       <loc>http://tool.wisenote2.com/tools/image-compressor.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
+   </url> 
+   <url> 
+      <loc>http://tool.wisenote2.com/tools/code_press.html</loc>
+      <lastmod>2025-07-29</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>2.0</priority>
    </url> 
 
    <url> 
-      <loc>http://tool.wisenote2.com/postit.html</loc>
-      <lastmod>2025-06-12</lastmod>
+      <loc>http://tool.wisenote2.com/tools/code_press_en.html</loc>
+      <lastmod>2025-07-29</lastmod>
       <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url> 
-
-   <url> 
-      <loc>http://tool.wisenote2.com/postit_en.html</loc>
-      <lastmod>2025-06-12</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url> 
-
-   <url> 
-      <loc>http://tool.wisenote2.com/code_press.html</loc>
-      <lastmod>2025-06-12</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
-   </url> 
-
-   <url> 
-      <loc>http://tool.wisenote2.com/code_press_en.html</loc>
-      <lastmod>2025-06-12</lastmod>
-      <changefreq>monthly</changefreq>
-      <priority>1.0</priority>
+      <priority>2.0</priority>
    </url> 
 
 
